@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dot Mania</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Top header -->
+    <header class="card header">
+      <div class="logo" aria-hidden="true">
+        <svg width="42" height="42" viewBox="0 0 42 42" fill="#fff">
+          <circle cx="14" cy="14" r="2.4"/><circle cx="21" cy="14" r="2.4" opacity=".55"/><circle cx="28" cy="14" r="2.4"/>
+          <circle cx="14" cy="21" r="2.4" opacity=".55"/><circle cx="21" cy="21" r="3.4"/><circle cx="28" cy="21" r="2.4" opacity=".55"/>
+          <circle cx="14" cy="28" r="2.4"/><circle cx="21" cy="28" r="2.4" opacity=".55"/><circle cx="28" cy="28" r="2.4"/>
+        </svg>
+      </div>
+
+      <div class="well bar">
+        <span class="wordmark">DOT MANIA</span>
+        <span class="divider"></span>
+        <nav class="tools" aria-label="Edit">
+          <button class="navbtn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>Undo</button>
+          <button class="navbtn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
+          <button class="navbtn" id="invertBtn" title="Invert selection">Invert</button>
+          <button class="navbtn" id="clearBtn" title="Clear everything">Clear</button>
+        </nav>
+        <span class="spacer"></span>
+        <span class="divider"></span>
+        <span class="readout" id="gridInfo">Grid</span>
+        <span class="divider"></span>
+        <span class="readout" id="cellCount">0 cells</span>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- Left: tool bar (tools + canvas size) -->
+      <aside class="card sidebar" aria-label="Tools">
+        <div class="toolstrip well" id="toolstrip" role="toolbar" aria-label="Drawing tools"></div>
+        <div class="sizeblock">
+          <span class="side-label">Size</span>
+          <div class="well sizes" role="group" aria-label="Canvas size">
+            <button class="key" data-size="1920x1080" aria-pressed="true" title="1920 x 1080">
+              <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="1.5" width="20" height="11.25" rx="1.5"/></svg>
+              <span>1920<br>1080</span>
+            </button>
+            <button class="key" data-size="1080x1080" aria-pressed="false" title="1080 x 1080">
+              <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="1" width="12" height="12" rx="1.5"/></svg>
+              <span>1080<br>1080</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Middle: main canvas -->
+      <section class="card stage-card" aria-label="Canvas">
+        <div class="stage-area" id="stageArea">
+          <div class="stage" id="stage">
+            <canvas id="cv" aria-label="Dot grid. Click and drag to draw."></canvas>
+            <div class="hint" id="hint">
+              <span class="hint-title">Draw on the grid</span>
+              <span class="hint-sub">Pick a tool, or upload an image</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: control panel -->
+      <aside class="card panel" aria-label="Controls">
+        <div class="panel-head" data-flag="statusHeader">
+          <div class="well titlebar">
+            <i class="led"></i>
+            <span class="title">Preset</span>
+            <span class="status" id="status">Looping</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="group-label first">Animations</div>
+          <div class="presets" id="presets" role="group" aria-label="Animation presets"></div>
+          <div class="group-label">Look</div>
+          <div class="group" id="controls"></div>
+          <div class="group-label" data-flag="interaction">Interaction</div>
+          <div class="group" id="interactionControls" data-flag="interaction"></div>
+          <div class="group-label">Color</div>
+          <div class="group" id="colorControls"></div>
+          <div class="group-label" data-flag="dotShapes">Shapes</div>
+          <div class="group" id="shapeControls" data-flag="dotShapes"></div>
+          <div class="group-label" data-flag="starterShapes">Starters</div>
+          <div class="group" id="starterControls" data-flag="starterShapes"></div>
+          <div class="group-label" data-flag="imageUpload">Image</div>
+          <div class="group" id="imageControls" data-flag="imageUpload"></div>
+          <div class="group-label" data-flag="drawOptions">Draw</div>
+          <div class="group" id="drawControls" data-flag="drawOptions"></div>
+          <div class="group-label" data-flag="gridPanel">Grid</div>
+          <div class="group" id="gridControls" data-flag="gridPanel"></div>
+          <div class="group-label">Export</div>
+          <div class="group" id="exportControls"></div>
+        </div>
+        <div class="panel-foot">
+          <button class="key" id="playBtn" aria-pressed="false" title="Play / pause (Space)">
+            <svg id="playIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+            <span id="playLabel">Pause</span>
+          </button>
+        </div>
+      </aside>
+
+    </main>
+  </div>
+
+  <input type="file" id="imageFile" accept="image/*" hidden>
+
+  <script src="js/flags.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/shapes.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/image.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/gif.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
