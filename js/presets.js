@@ -164,17 +164,6 @@
       }
     },
     {
-      id: 'blink', name: 'Blink', defaults: base(0.6, 0.3),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [{ key: 'duty', label: 'On time', min: 0.05, max: 0.95, step: 0.01, def: 0.35, fmt: pct }],
-      // Each dot switches on and off by itself, like a field of indicator lights.
-      fn: function (c, t, p) {
-        var k = 1 + Math.floor(c.rnd2 * 2);
-        return frac(t * p.speed * 0.5 * k + c.rnd) < p.duty ? 1 : 0.06;
-      }
-    },
-    {
       id: 'flicker', name: 'Flicker', defaults: base(0.7, 0.6),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },
@@ -214,6 +203,17 @@
 
   // Behind FLAGS.extraPresets (see flags.js). Same shape as the presets above; each loops seamlessly at period().
   window.EXTRA_PRESETS = [
+    {
+      id: 'blink', name: 'Blink', defaults: base(0.6, 0.3),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'duty', label: 'On time', min: 0.05, max: 0.95, step: 0.01, def: 0.35, fmt: pct }],
+      // Each dot switches on and off by itself, like a field of indicator lights.
+      fn: function (c, t, p) {
+        var k = 1 + Math.floor(c.rnd2 * 2);
+        return frac(t * p.speed * 0.5 * k + c.rnd) < p.duty ? 1 : 0.06;
+      }
+    },
     {
       id: 'burst', name: 'Burst', defaults: base(0.7, 0.7),
       // seconds for one seamless loop
