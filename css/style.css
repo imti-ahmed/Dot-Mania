@@ -454,37 +454,38 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   left: 3px;
   top: 4px;
   height: 6px;
-  width: calc((100% - 12px) * var(--p, 0) + 5px);
+  width: calc((100% - 20px) * var(--p, 0) + 7px);
   border-radius: 2px;
   background: var(--accent);
   box-shadow: 0 0 4px var(--accent);
   pointer-events: none;
 }
-/* Handle: a small raised key with a red notch */
+/* Handle: a round knob with a glowing red centre */
 .slider .thumb {
   position: absolute;
-  top: -5px;
-  left: calc((100% - 12px) * var(--p, 0));
-  width: 12px;
-  height: 24px;
-  border-radius: 5px;
-  background: linear-gradient(#3a3a3a, #262626);
-  box-shadow: 0 2px 0 #080808, 0 3px 7px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .14);
+  top: -3px;
+  left: calc((100% - 20px) * var(--p, 0));
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #4a4a4a, #2a2a2a 55%, #1c1c1c);
+  box-shadow: 0 2px 0 #080808, 0 3px 7px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .18), inset 0 -2px 3px rgba(0, 0, 0, .45);
   pointer-events: none;
-  transition: box-shadow .1s;
+  transition: box-shadow .1s, transform .08s;
 }
 .slider .thumb::after {
   content: '';
   position: absolute;
-  left: 5px;
+  left: 7px;
   top: 7px;
-  width: 2px;
-  height: 10px;
-  border-radius: 1px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 5px var(--accent);
+  box-shadow: 0 0 6px var(--accent);
 }
-.slider:hover .thumb { box-shadow: 0 2px 0 #080808, 0 3px 9px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .24); }
+.slider:hover .thumb { box-shadow: 0 2px 0 #080808, 0 3px 9px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .26), inset 0 -2px 3px rgba(0, 0, 0, .45); }
+.slider:active .thumb { transform: translateY(1px) scale(.94); }
 .slider input {
   position: absolute;
   inset: -8px 0;
@@ -494,6 +495,9 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   opacity: 0;
   cursor: pointer;
 }
+.slider input { -webkit-appearance: none; appearance: none; background: transparent; }
+.slider input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; }
+.slider input::-moz-range-thumb { width: 20px; height: 20px; border: 0; }
 .slider:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Key grids used inside groups (colour modes, shapes) */

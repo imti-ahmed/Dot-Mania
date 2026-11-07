@@ -6,6 +6,10 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.37', date: '2026-11-07', items: [
+    'Sliders have a new round knob with a glowing centre.',
+    'The Look section is now called Tuning.'
+  ] },
   { v: '0.0.36', date: '2026-11-07', items: [
     'Randomize now makes a whole new piece: a full canvas, a ready-made shape or random art, with a new mark shape, animation and color, and plays it. You can undo it.'
   ] },
