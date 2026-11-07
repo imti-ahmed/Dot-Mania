@@ -3,7 +3,10 @@
 
   var $ = function (s) { return document.querySelector(s); };
   var FLAGS = window.FLAGS;     // feature flags, see flags.js
-  var PRESETS = window.PRESETS.concat(FLAGS.extraPresets ? window.EXTRA_PRESETS : []);
+  var TRIAL = window.TRIAL_PRESETS || [];
+  TRIAL.forEach(function (p) { p.trial = true; });
+  var PRESETS = window.PRESETS.concat(FLAGS.extraPresets ? window.EXTRA_PRESETS : [], TRIAL);
+  var MAIN = PRESETS.filter(function (p) { return !p.trial; });   // the Animations list (trial ones have their own group)
   var COMMON = window.COMMON_PARAMS, SWATCHES = window.SWATCHES;
   var TAU = Math.PI * 2;
   var E = window.DotEngine;
@@ -515,7 +518,7 @@
   // that reveals the rest (and turns into "Less").
   var PRESET_SLOTS = 12, presetsOpen = false, presetMore = null;
   function renderPresets() {
-    var keys = $('#presets').querySelectorAll('.key[data-id]'), fits = PRESETS.length <= PRESET_SLOTS;
+    var keys = $('#presets').querySelectorAll('.key[data-id]'), fits = MAIN.length <= PRESET_SLOTS;
     keys.forEach(function (b, i) { b.hidden = !fits && !presetsOpen && i >= PRESET_SLOTS - 1; });
     if (presetMore) {
       presetMore.hidden = fits;
@@ -525,13 +528,19 @@
   }
   function buildPresets() {
     var el = $('#presets');
-    PRESETS.forEach(function (p, i) {
+    function make(p, i, into) {
       var b = document.createElement('button');
       b.className = 'key'; b.textContent = p.name; b.dataset.id = p.id;
-      b.title = p.name + (i < 9 ? ' (' + (i + 1) + ')' : '');
+      b.title = p.name + (i < 9 && !p.trial ? ' (' + (i + 1) + ')' : '');
       b.addEventListener('click', function () { selectPreset(p.id); });
-      el.appendChild(b);
-    });
+      into.appendChild(b);
+    }
+    MAIN.forEach(function (p, i) { make(p, i, el); });
+    if (TRIAL.length) {
+      var tg = $('#trialPresets');
+      TRIAL.forEach(function (p, i) { make(p, i, tg); });
+      tg.hidden = false; $('#trialLabel').hidden = false;
+    }
     presetMore = document.createElement('button');
     presetMore.className = 'key secondary';
     presetMore.title = 'Show or hide the other animations';
@@ -542,10 +551,10 @@
 
   function selectPreset(id) {
     state.preset = id;
-    if (PRESETS.length > PRESET_SLOTS && PRESETS.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1 && !presetsOpen) {
+    if (MAIN.length > PRESET_SLOTS && MAIN.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1 && !presetsOpen) {
       presetsOpen = true; renderPresets();      // never leave the chosen animation hidden
     }
-    $('#presets').querySelectorAll('.key').forEach(function (b) {
+    document.querySelectorAll('#presets .key[data-id], #trialPresets .key').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.id === id));
     });
     buildControls();

@@ -312,6 +312,63 @@
     }
   ];
 
+  // New animations being tried out. They show in their own "Trying Out" group in the panel.
+  // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
+  // To drop one: move it into EXTRA_PRESETS (behind the extraPresets flag) or delete it.
+  window.TRIAL_PRESETS = [
+    {
+      id: 'blob', name: 'Blob', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'radius', label: 'Radius', min: 0.1, max: 0.9, step: 0.01, def: 0.35, fmt: pct }],
+      // A glowing blob roams the shape along a looping path.
+      fn: function (c, t, p) {
+        var th = t * p.speed * 0.5 * TAU;
+        var dx = c.ux - 0.75 * Math.sin(2 * th), dy = c.uy - 0.75 * Math.sin(3 * th + 1.1);
+        var e = Math.sqrt(dx * dx + dy * dy) / p.radius;
+        return 0.04 + 0.96 * Math.exp(-e * e);
+      }
+    },
+    {
+      id: 'tunnel', name: 'Tunnel', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'rings', label: 'Rings', min: 1, max: 6, step: 1, def: 3, fmt: num }],
+      // Square rings rush towards the centre, like flying down a corridor.
+      fn: function (c, t, p) {
+        var m = Math.max(Math.abs(c.ux), Math.abs(c.uy));
+        var v = 0.5 + 0.5 * Math.cos((m * p.rings + t * p.speed * 0.5) * TAU);
+        return v * v;
+      }
+    },
+    {
+      id: 'equalizer', name: 'Equalizer', defaults: base(0.75, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'barw', label: 'Bar width', min: 1, max: 6, step: 1, def: 2, fmt: num }],
+      // Columns rise and fall like the bars of an audio level meter.
+      fn: function (c, t, p) {
+        var b = Math.floor(c.col / p.barw);
+        var r1 = frac(Math.sin(b * 127.1 + 13.7) * 43758.5453), r2 = frac(Math.sin(b * 311.7 + 7.3) * 43758.5453);
+        var level = 0.55 + 0.4 * Math.sin((t * p.speed * 0.5 * (1 + Math.floor(r1 * 3)) + r2) * TAU);
+        var v = (level - (1 - c.vy)) * 8;
+        return v < 0.06 ? 0.06 : v > 1 ? 1 : v;
+      }
+    },
+    {
+      id: 'plasma', name: 'Plasma', defaults: base(0.7, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'scale', label: 'Scale', min: 0.5, max: 3, step: 0.1, def: 1.2, fmt: dec1 }],
+      // Slow, swirling bands from two waves crossing each other.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5;
+        var v = 0.5 + 0.25 * Math.sin((c.ux * p.scale + f) * TAU) + 0.25 * Math.sin((c.uy * p.scale * 1.3 - 2 * f + c.ux * 0.5) * TAU);
+        return Math.pow(v < 0 ? 0 : v > 1 ? 1 : v, 1.5);
+      }
+    }
+  ];
+
   // Slider ranges for the controls every preset shares.
   window.COMMON_PARAMS = {
     speed: { label: 'Speed', min: 0.1, max: 3, step: 0.05, fmt: function (v) { return v.toFixed(2) + '×'; } },

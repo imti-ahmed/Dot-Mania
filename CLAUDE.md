@@ -43,3 +43,4 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 
 ### Flags
 - Do not delete cut features. Put them behind `js/flags.js`.
+- New animations go in `window.TRIAL_PRESETS` (js/presets.js): they show in the "Trying Out" group. When the user approves one, move its block into `window.PRESETS`.
