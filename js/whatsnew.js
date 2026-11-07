@@ -6,9 +6,11 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.29', date: '2026-11-07', items: [
+    'New animation: Dissolve, dots fade in and out in random order.'
+  ] },
   { v: '0.0.28', date: '2026-11-07', items: [
-    'New animation: Bars, columns that rise and fall like an audio meter.',
-    'New Trying Out group with four animations to test: Stripes, Dissolve, Blinds and Cross.'
+    'New animation: Bars, columns that rise and fall like an audio meter.'
   ] },
   { v: '0.0.26', date: '2026-11-07', items: [
     'The Twinkle animation has been retired.'

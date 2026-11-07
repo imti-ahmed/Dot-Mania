@@ -202,11 +202,62 @@
         var v = (level - (1 - c.vy)) * 8;
         return v < 0.06 ? 0.06 : v > 1 ? 1 : v;
       }
+    },
+    {
+      id: 'dissolve', name: 'Dissolve', defaults: base(0.65, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.3); },
+      params: [{ key: 'soft', label: 'Softness', min: 0.05, max: 1, step: 0.01, def: 0.35, fmt: pct }],
+      // The shape fades in and out dot by dot in random order, like a pixel dissolve.
+      fn: function (c, t, p) {
+        var progress = Math.abs(frac(t * p.speed * 0.3) * 2 - 1);
+        var v = (progress * (1 + p.soft) - c.rnd) / p.soft;
+        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
+      }
     }
   ];
 
   // Behind FLAGS.extraPresets (see flags.js). Same shape as the presets above; each loops seamlessly at period().
   window.EXTRA_PRESETS = [
+    {
+      id: 'stripes', name: 'Stripes', defaults: base(0.7, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'width', label: 'Width', min: 1, max: 12, step: 1, def: 4, fmt: num },
+        { key: 'angle', label: 'Angle', min: 0, max: 180, step: 5, def: 45, fmt: deg }
+      ],
+      // Hard-edged stripes slide across the shape, on and off.
+      fn: function (c, t, p) {
+        var a = p.angle * Math.PI / 180;
+        var x = frac((c.col * Math.cos(a) + c.row * Math.sin(a)) / (2 * p.width) - t * p.speed * 0.5);
+        return x < 0.5 ? 1 : 0.08;
+      }
+    },
+    {
+      id: 'blinds', name: 'Blinds', defaults: base(0.75, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'band', label: 'Band', min: 1, max: 8, step: 1, def: 3, fmt: num }],
+      // Chunky bands of rows rise and fall in turn, like window blinds.
+      fn: function (c, t, p) {
+        var v = 0.5 + 0.5 * Math.sin((Math.floor(c.row / p.band) * 0.5 - t * p.speed * 0.5) * TAU);
+        return 0.05 + 0.95 * v * v;
+      }
+    },
+    {
+      id: 'cross', name: 'Cross', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.25); },
+      params: [{ key: 'width', label: 'Thickness', min: 0.05, max: 0.5, step: 0.01, def: 0.12, fmt: pct }],
+      // A plus sign made of two bars spins around the centre.
+      fn: function (c, t, p) {
+        var th = frac(t * p.speed * 0.25) * Math.PI / 2, co = Math.cos(th), si = Math.sin(th);
+        var a = (c.ux * co + c.uy * si) / p.width, b = (-c.ux * si + c.uy * co) / p.width;
+        var v = Math.max(Math.exp(-a * a), Math.exp(-b * b));
+        return v < 0.05 ? 0.05 : v;
+      }
+    },
     {
       id: 'blob', name: 'Blob', defaults: base(0.7, 0.8),
       // seconds for one seamless loop
@@ -367,57 +418,6 @@
   // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
   // To drop one: move it into EXTRA_PRESETS (behind the extraPresets flag) or delete it.
   window.TRIAL_PRESETS = [
-    {
-      id: 'stripes', name: 'Stripes', defaults: base(0.7, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'width', label: 'Width', min: 1, max: 12, step: 1, def: 4, fmt: num },
-        { key: 'angle', label: 'Angle', min: 0, max: 180, step: 5, def: 45, fmt: deg }
-      ],
-      // Hard-edged stripes slide across the shape, on and off.
-      fn: function (c, t, p) {
-        var a = p.angle * Math.PI / 180;
-        var x = frac((c.col * Math.cos(a) + c.row * Math.sin(a)) / (2 * p.width) - t * p.speed * 0.5);
-        return x < 0.5 ? 1 : 0.08;
-      }
-    },
-    {
-      id: 'dissolve', name: 'Dissolve', defaults: base(0.65, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.3); },
-      params: [{ key: 'soft', label: 'Softness', min: 0.05, max: 1, step: 0.01, def: 0.35, fmt: pct }],
-      // The shape fades in and out dot by dot in random order, like a pixel dissolve.
-      fn: function (c, t, p) {
-        var progress = Math.abs(frac(t * p.speed * 0.3) * 2 - 1);
-        var v = (progress * (1 + p.soft) - c.rnd) / p.soft;
-        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
-      }
-    },
-    {
-      id: 'blinds', name: 'Blinds', defaults: base(0.75, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [{ key: 'band', label: 'Band', min: 1, max: 8, step: 1, def: 3, fmt: num }],
-      // Chunky bands of rows rise and fall in turn, like window blinds.
-      fn: function (c, t, p) {
-        var v = 0.5 + 0.5 * Math.sin((Math.floor(c.row / p.band) * 0.5 - t * p.speed * 0.5) * TAU);
-        return 0.05 + 0.95 * v * v;
-      }
-    },
-    {
-      id: 'cross', name: 'Cross', defaults: base(0.7, 0.7),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.25); },
-      params: [{ key: 'width', label: 'Thickness', min: 0.05, max: 0.5, step: 0.01, def: 0.12, fmt: pct }],
-      // A plus sign made of two bars spins around the centre.
-      fn: function (c, t, p) {
-        var th = frac(t * p.speed * 0.25) * Math.PI / 2, co = Math.cos(th), si = Math.sin(th);
-        var a = (c.ux * co + c.uy * si) / p.width, b = (-c.ux * si + c.uy * co) / p.width;
-        var v = Math.max(Math.exp(-a * a), Math.exp(-b * b));
-        return v < 0.05 ? 0.05 : v;
-      }
-    }
   ];
 
   // Slider ranges for the controls every preset shares.
