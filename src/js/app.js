@@ -2061,6 +2061,30 @@
     [$('.logo'), $('.wordmark')].forEach(function (el) { el.addEventListener('click', function () { goTo('home'); }); });
   }
 
+  /* ---------- For AI agents (src/js/agent.js) ---------- */
+
+  // agent.js gives AI agents that visit the page a small set of helper tools (window.dotMania). They work through
+  // the editor's own functions below, so the panels, the canvas and undo stay in step as if the change was made by
+  // hand. Switched off with the agentTools flag.
+  if (FLAGS.agentTools) window.DotApp = {
+    state: state, presets: PRESETS, colorModes: COLOR_MODES, dotShapes: DOT_SHAPES, interactions: INTERACTIONS,
+    stackMax: STACK_MAX, exportOpts: exportOpts,
+    grid: function () { return { cols: cols, rows: rows, cell: CELL }; },
+    cells: cellArray,
+    history: function () { return { undo: undoStack.length, redo: redoStack.length }; },
+    busy: function () { return { gif: gifBusy, video: videoBusy }; },
+    view: function () { return { view: view, welcomeOpen: welcomeOpen }; },
+    // One undoable change, like a hand stroke: fn changes the drawing with setCell / clearCells / floodFill.
+    edit: function (fn) { var before = beginEdit(); fn(); sel = null; dirty = true; endEdit(before); updateInfo(); },
+    setCell: setCell, clearCells: function () { cells.clear(); }, floodFill: floodFill, lineCells: lineCells, shapeCells: shapeCells,
+    undo: undo, redo: redo, randomize: randomize, setArt: setArt,
+    selectPreset: selectPreset, onPresetClick: onPresetClick, setStacking: setStacking,
+    repaintColor: function () { repaintColor(); }, repaintShapes: function () { repaintShapes(); }, drawIdle: drawIdle,
+    setInteraction: setInteraction, setPlaying: setPlaying, playPressed: playPressed,
+    buildExport: buildExport, download: download, funkyName: funkyName, notify: notify,
+    exportGif: exportGif, exportPng: exportPng, recordVideo: recordVideo, videoMime: videoMime
+  };
+
   /* ---------- Boot ---------- */
 
   // Show or hide everything a flag controls (flags.js), then build only what is switched on.

@@ -13,6 +13,19 @@ An animated dot-grid editor. Draw on a grid of dots (or turn a picture into dots
 - **Randomize** a whole new piece in one click.
 - **Export:** GIF, PNG, WebM, MP4, or a dependency-free HTML file. A **Quality** option sets GIF size and video quality. Exported HTML files can be reopened with **Open HTML** to keep editing.
 
+## For AI agents
+
+An AI agent that can run JavaScript in the page (for example Claude in Chrome) can make designs without clicking around. The page exposes `window.dotMania`:
+
+```js
+dotMania.help()                                                     // plain-text guide to every function and the grid
+dotMania.drawShape({ type: 'ellipse', from: [14, 14], to: [52, 52] })
+dotMania.setAnimation('ripple', { rings: 3 }); dotMania.setColor({ mode: 'neon' }); dotMania.play()
+dotMania.exportFile('gif')
+```
+
+Every call goes through the editor's own functions, so the panels stay in step and drawing changes undo with `Ctrl+Z`. Calls return `{ ok: true, ... }`, or `{ ok: false, error, valid }` listing what would have worked. In browsers that support [WebMCP](https://webmachinelearning.github.io/webmcp/) the same functions are also registered as tools. A hidden note in the page and a `<meta name="ai-agent-tools">` tag tell agents it is there. Switch it all off with the `agentTools` flag (or `?off=agentTools`).
+
 ## Closed beta
 
 Visitors land straight in the editor, with a welcome popup over it: a live preview, a short intro, and the buttons **Let's Go**, **How to use** and **Feedback**. It shows on the first visit, then not again until 5 hours after it was dismissed (kept in the browser). Add `?welcome=0` to the address to skip it, or `?welcome=1` to see it again. Turning the `welcomeOnce` flag off makes it show on every visit.
@@ -53,6 +66,7 @@ src/
   css/style.css
   js/
     app.js                     editor UI, tools, state
+    agent.js                   helper tools for AI agents (see "For AI agents" above)
     core/                      engine, animations (presets), shapes, image conversion, feature flags
     export/                    HTML component export, GIF encoder
     data/                      site settings, template list, What's New content

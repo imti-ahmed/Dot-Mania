@@ -4,7 +4,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 
 ## Stack
 - Static app: `index.html`, plain `<script>` tags (no modules, no build step, no dependencies).
-- Script load order matters (see the tags in `index.html`): core, then export, then data, then `app.js`.
+- Script load order matters (see the tags in `index.html`): core, then export, then data, then `app.js`, then `agent.js`.
 - The tool is the front door: `/` opens the editor with the closed beta welcome popup (`welcomePopup` flag; `welcomeOnce`: first visit only, back after 5 hours). A separate welcome page exists behind the `homePage` flag (the only view in the site-style narrow layout like theladybug.app: max-width 1440px, side gutter clamp(16px, 4.4vw, 64px)); with it on, the tool moves to `/pages/canvas`. Every other view, including About, is full width. Other pages live at /pages/about, /pages/library, /pages/whats-new, /pages/guide (small entry folders inside pages/), so use a server for those. Page addresses need a server.
 
 ## Structure
@@ -15,6 +15,7 @@ src/
   css/style.css
   js/
     app.js                     editor UI, tools, state
+    agent.js                   helper tools for AI agents (window.dotMania, WebMCP), through window.DotApp at the end of app.js
     core/                      engine.js (rendering), presets.js (animations), shapes.js, image.js, flags.js (feature flags)
     export/                    export.js (HTML component), gif.js (GIF encoder)
     data/                      site.js (version, repo, views), library.js (template list), whatsnew.js (What's New content)
