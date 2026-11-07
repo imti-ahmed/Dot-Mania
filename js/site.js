@@ -7,7 +7,7 @@
  *             e.g. a hosted counter service. Leave '' to hide views.
  */
 window.SITE = {
-  version: '0.0.44',
+  version: '0.0.45',
   repo: 'imti-ahmed/Dot-Mania',
   viewsUrl: ''
 };

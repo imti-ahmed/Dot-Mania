@@ -1435,7 +1435,9 @@
 
   /* ---------- Export (lives in the right panel) ---------- */
 
-  var exportOpts = { bg: 'dark', grid: true, gifSize: 960 };   // gifSize: longest side of the GIF in px
+  var exportOpts = { bg: 'dark', grid: true, quality: 'medium' };
+  // Quality: the GIF's longest side in px, and the video bitrate. Higher looks sharper but makes heavier files and takes longer.
+  var GIF_SIDE = { low: 480, medium: 960, high: 1440 }, VIDEO_BPS = { low: 5000000, medium: 12000000, high: 20000000 };
   // GIF tuning: 30 fps, small tolerance (a bigger one makes fades step instead of glide), and a palette sized
   // to the content: single-colour looks need few colours, multi-colour modes need more.
   var GIF_MAX_SECONDS = 8, GIF_FPS = 30, GIF_TOLERANCE = 12, GIF_COLORS_SIMPLE = 31, GIF_COLORS_RICH = 63;
@@ -1499,7 +1501,7 @@
       E: E, list: E.buildList(cellArray()), preset: preset, vals: vals, color: color, T: T, secs: Math.min(T, GIF_MAX_SECONDS),
       art: state.art, geo: exportGeo(), cols: cols, rows: rows, gridVis: GRID_VIS, grid: exportOpts.grid,
       transparent: exportOpts.bg === 'transparent', bg: '#0b0b0a',
-      maxSide: exportOpts.gifSize, fps: GIF_FPS, tolerance: GIF_TOLERANCE,
+      maxSide: GIF_SIDE[exportOpts.quality], fps: GIF_FPS, tolerance: GIF_TOLERANCE,
       colors: color.mode === 'solid' || color.mode === 'white' ? GIF_COLORS_SIMPLE : GIF_COLORS_RICH
     }).then(function (blob) {
       download(funkyName('gif'), blob, 'image/gif');
@@ -1541,7 +1543,7 @@
     }
 
     var labelEl = $('#export' + VIDEO_KINDS[kind].label + ' span'), original = labelEl.textContent;
-    var rec = new MediaRecorder(vc.captureStream(30), { mimeType: mime, videoBitsPerSecond: 12000000 });
+    var rec = new MediaRecorder(vc.captureStream(30), { mimeType: mime, videoBitsPerSecond: VIDEO_BPS[exportOpts.quality] });
     var chunks = [], t0;
     function draw(t) {
       vx.fillStyle = '#0b0b0a';
@@ -1652,13 +1654,13 @@
     if (FLAGS.exportPng) media.push(key('exportPng', 'PNG', 'Download the frame on screen as a PNG'));
     if (FLAGS.exportSvg) media.push(key('exportSvg', 'SVG', 'Download the frame on screen as a scalable vector'));
     var mel = $('#exportMedia');
-    if (FLAGS.exportGif) {
-      var sizeRow = segRow('GIF size', [{ v: 480, label: 'Small' }, { v: 960, label: 'Medium' }, { v: 1440, label: 'Large' }],
-        function () { return exportOpts.gifSize; }, function (v) { exportOpts.gifSize = +v; });
-      sizeRow.classList.add('three');
-      sizeRow.title = 'Small 480 px, Medium 960 px, Large 1440 px on the longest side. Bigger is sharper but makes a heavier file and takes longer.';
-      mel.appendChild(sizeRow);
-    }
+    // Quality: its own option, applies to GIF size and video bitrate
+    var q = segRow('', [{ v: 'low', label: 'Low' }, { v: 'medium', label: 'Medium' }, { v: 'high', label: 'High' }],
+      function () { return exportOpts.quality; }, function (v) { exportOpts.quality = v; });
+    q.classList.add('three');
+    q.title = 'GIF: Low 480 px, Medium 960 px, High 1440 px on the longest side. Video: bitrate. Higher is sharper but makes a heavier file and takes longer.';
+    $('#exportQuality').appendChild(q);
+
     var mhtml = '<div class="pair" style="grid-template-columns:repeat(' + Math.max(1, media.length) + ',1fr)">' + media.join('') + '</div>';
     var vids = [];
     if (FLAGS.exportWebm) vids.push(key('exportWebm', 'WebM', 'Download a video of the full loop (1-2 cycles, dark background)').replace('data-export', 'data-export data-video="webm"'));

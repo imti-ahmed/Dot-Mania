@@ -6,8 +6,11 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.45', date: '2026-11-07', items: [
+    'Quality is now its own option in Export, and it also sets video quality.'
+  ] },
   { v: '0.0.42', date: '2026-11-07', items: [
-    'GIF exports are bigger and sharper: Medium (960 px) is the new default, with Small and Large to choose from.',
+    'GIF exports are bigger and sharper, and a new Quality option (Low, Medium, High) in Export sets GIF size and video quality. Medium is the default.',
     'The Code File button is now called Download Html File.'
   ] },
   { v: '0.0.40', date: '2026-11-07', items: [
