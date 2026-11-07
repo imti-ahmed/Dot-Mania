@@ -6,8 +6,11 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.24', date: '2026-11-07', items: [
+    'Sweep now runs left to right by default.'
+  ] },
   { v: '0.0.23', date: '2026-11-07', items: [
-    'Seven new animations: Breathe, Sweep, Burst, Blink, Flicker, Zigzag and Reveal.',
+    'Six new animations: Breathe, Sweep, Blink, Flicker, Zigzag and Reveal. The Heartbeat animation is now called Beats.',
     'Animations show in three rows. Tap More to see the rest.'
   ] },
   { v: '0.0.22', date: '2026-11-07', items: [

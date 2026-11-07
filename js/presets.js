@@ -125,7 +125,7 @@
       }
     },
     {
-      id: 'heartbeat', name: 'Heartbeat', defaults: base(0.7, 0.6),
+      id: 'heartbeat', name: 'Beats', defaults: base(0.7, 0.6),
       // seconds for one seamless loop
       period: function (p) { return 1 / (p.speed * 0.6); },
       params: [{ key: 'spread', label: 'Spread', min: 0, max: 1, step: 0.01, def: 0.3, fmt: pct }],
@@ -152,7 +152,7 @@
       // seconds for one seamless loop
       period: function (p) { return 1 / (p.speed * 0.4); },
       params: [
-        { key: 'angle', label: 'Angle', min: 0, max: 360, step: 5, def: 45, fmt: deg },
+        { key: 'angle', label: 'Angle', min: 0, max: 360, step: 5, def: 0, fmt: deg },
         { key: 'trail', label: 'Trail', min: 0.05, max: 1, step: 0.01, def: 0.5, fmt: pct }
       ],
       // A bright front crosses the shape in one direction and leaves a fading trail.
@@ -161,20 +161,6 @@
         var proj = c.ux * Math.cos(a) + c.uy * Math.sin(a);
         var ph = frac(proj * 0.5 - t * p.speed * 0.4);
         return Math.pow(1 - ph, 1 + (1 - p.trail) * 12);
-      }
-    },
-    {
-      id: 'burst', name: 'Burst', defaults: base(0.7, 0.7),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'rings', label: 'Rings', min: 1, max: 4, step: 1, def: 1, fmt: num },
-        { key: 'width', label: 'Thickness', min: 0.05, max: 0.5, step: 0.01, def: 0.14, fmt: pct }
-      ],
-      // Thin rings shoot out from the centre.
-      fn: function (c, t, p) {
-        var x = frac(c.d * p.rings - t * p.speed * 0.5), e = Math.min(x, 1 - x) / p.width;
-        return Math.exp(-e * e);
       }
     },
     {
@@ -228,6 +214,20 @@
 
   // Behind FLAGS.extraPresets (see flags.js). Same shape as the presets above; each loops seamlessly at period().
   window.EXTRA_PRESETS = [
+    {
+      id: 'burst', name: 'Burst', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'rings', label: 'Rings', min: 1, max: 4, step: 1, def: 1, fmt: num },
+        { key: 'width', label: 'Thickness', min: 0.05, max: 0.5, step: 0.01, def: 0.14, fmt: pct }
+      ],
+      // Thin rings shoot out from the centre.
+      fn: function (c, t, p) {
+        var x = frac(c.d * p.rings - t * p.speed * 0.5), e = Math.min(x, 1 - x) / p.width;
+        return Math.exp(-e * e);
+      }
+    },
     {
       id: 'diamond', name: 'Diamond', defaults: base(0.7, 0.5),
       // seconds for one seamless loop
