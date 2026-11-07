@@ -1069,10 +1069,11 @@
   }
   /* ---------- Admin (/idiot): add a template to the Library ---------- */
 
-  // The app is a static site, so "adding a file" means writing into the project folder on disk. The browser's
+  // The app is a static site, so "adding" means writing into the project folder on disk. The browser's
   // folder access (Chrome / Edge) is used for that: pick the Dot-Mania folder once per visit, then each add
-  // saves library/<name>.html and updates js/library.js. Commit the result as usual.
-  var adminDir = null;
+  // saves the current canvas as library/<name>.html (the same file as Export > Code File) and updates
+  // js/library.js. Commit the result as usual.
+  var adminDir = null, adminJsDir = null;
 
   function slugify(name) {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'template';
@@ -1096,31 +1097,21 @@
   function setupAdmin() {
     if (!window.ADMIN) return;
     $('#adminGroup').hidden = false;
-    var dlg = $('#adminDialog'), nameIn = $('#adminName'), fileIn = $('#adminFile'), fileLbl = $('#adminFileName');
-    var msg = $('#adminMsg'), addBtn = $('#adminAdd'), file = null;
+    var dlg = $('#adminDialog'), nameIn = $('#adminName'), msg = $('#adminMsg'), addBtn = $('#adminAdd');
     function say(t) { msg.textContent = t || ''; }
 
     $('#adminAddBtn').addEventListener('click', function () {
-      nameIn.value = ''; file = null; fileLbl.textContent = 'No file chosen'; say('');
+      nameIn.value = ''; say('');
       dlg.showModal();
       nameIn.focus();
     });
     $('#adminCancel').addEventListener('click', function () { dlg.close(); });
-    $('#adminPick').addEventListener('click', function () { fileIn.click(); });
-    fileIn.addEventListener('change', function () {
-      file = fileIn.files[0] || null;
-      fileLbl.textContent = file ? file.name : 'No file chosen';
-      if (file && !nameIn.value) {
-        nameIn.value = file.name.replace(/\.html?$/i, '').replace(/[-_]+/g, ' ').replace(/\b\w/g, function (m) { return m.toUpperCase(); });
-      }
-      fileIn.value = '';
-      say('');
-    });
+    nameIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') addBtn.click(); });
 
     addBtn.addEventListener('click', function () {
       var name = nameIn.value.trim();
       if (!name) { say('Add a name.'); return; }
-      if (!file) { say('Choose an HTML file.'); return; }
+      if (!cells.size) { say('Draw something on the canvas first.'); return; }
       if (!window.showDirectoryPicker) { say('This needs Chrome or Edge (folder access).'); return; }
       addBtn.disabled = true;
       say('');
@@ -1130,18 +1121,17 @@
       var libDir, text, fname;
       getDir.then(function (dir) {
         adminDir = dir;
-        return Promise.all([dir.getDirectoryHandle('library'), dir.getDirectoryHandle('js').then(function (j) { return j.getFileHandle('library.js').then(function () { return j; }); })]);
+        return Promise.all([
+          dir.getDirectoryHandle('library'),
+          dir.getDirectoryHandle('js').then(function (j) { return j.getFileHandle('library.js').then(function () { return j; }); })
+        ]);
       }).catch(function (e) {
         if (e && e.name === 'AbortError') throw new Error('No folder chosen.');
         adminDir = null;
         throw new Error('Pick the Dot-Mania project folder (the one with index.html).');
       }).then(function (dirs) {
-        libDir = dirs[0]; jsDir = dirs[1];
-        return file.text();
-      }).then(function (t) {
-        text = t;
-        var parsed = parseExport(text);
-        if (!parsed || !parsed.preset) throw new Error('That is not a Dot Mania Code File.');
+        libDir = dirs[0]; adminJsDir = dirs[1];
+        text = buildExport().html;                       // the canvas as it is right now
         var base = slugify(name), n = 1, taken = (window.LIBRARY || []).map(function (x) { return x.file; });
         function next() {
           fname = base + (n > 1 ? '-' + n : '') + '.html';
@@ -1153,7 +1143,7 @@
         return writeFile(libDir, fname, text);
       }).then(function () {
         var list = (window.LIBRARY || []).concat({ file: fname, name: name });
-        return writeFile(jsDir, 'library.js', libraryManifest(list)).then(function () { window.LIBRARY = list; });
+        return writeFile(adminJsDir, 'library.js', libraryManifest(list)).then(function () { window.LIBRARY = list; });
       }).then(function () {
         buildLibrary();
         dlg.close();
@@ -1163,7 +1153,6 @@
       }).then(function () { addBtn.disabled = false; });
     });
   }
-  var jsDir = null;
 
   // Right panel tabs: Edit (look, color, image...) and Export (room for more export options).
   function setupPanelTabs() {

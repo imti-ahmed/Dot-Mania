@@ -184,7 +184,6 @@
 
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
-  <input type="file" id="adminFile" accept=".html,.htm,text/html" hidden>
 
   <!-- Admin only (/idiot): add a template to the Library -->
   <dialog class="dialog" id="adminDialog" aria-labelledby="adminTitle">
@@ -193,13 +192,7 @@
       <span>Name</span>
       <input id="adminName" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Heartbeats">
     </label>
-    <div class="dialog-field">
-      <span>File</span>
-      <div class="dialog-file">
-        <button class="key" id="adminPick" type="button">Choose file</button>
-        <span id="adminFileName">No file chosen</span>
-      </div>
-    </div>
+    <p class="dialog-note">Saves what is on the canvas right now as a template.</p>
     <p class="dialog-msg" id="adminMsg" role="alert"></p>
     <div class="dialog-actions">
       <button class="key" id="adminCancel" type="button">Cancel</button>
