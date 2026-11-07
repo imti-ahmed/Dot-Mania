@@ -3,6 +3,7 @@
  * `commit` is a short hash, or '' for the entry that is still being written.
  */
 window.UPDATES = [
+  { v: '0.0.21', date: '2026-11-07', commit: 'c907870', note: 'Stars/views cached for 30 min (avoids GitHub rate limit), stale value kept on failure, console logs the reason a fetch fails' },
   { v: '0.0.20', date: '2026-11-07', commit: '837d096', note: 'Library cards: divider above buttons, roomier; status bar spread out with filled icons and units (1 Star, 0 Views); exported file names are random funky combos' },
   { v: '0.0.19', date: '2026-11-07', commit: '9670b4a', note: 'Removed the /idiot admin page and add-to-Library dialog; templates are added to /library by hand' },
   { v: '0.0.18', date: '2026-11-07', commit: '2a5a692', note: 'Admin add now saves the current canvas as the Library template (no file picking); dialog centred' },
