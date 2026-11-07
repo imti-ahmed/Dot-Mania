@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.57 | 2026-11-07 | `b84ae05` | Candy is back in Color; Holo moved behind holoColor flag |
 | 0.0.56 | 2026-11-07 | `4c9202e` | Color swatches: removed the off-white swatch, remaining ones plus the custom picker spread evenly so the last ends flush with the colour buttons above |
 | 0.0.55 | 2026-11-07 | `fe1b28d` | Forest moved behind forestColor flag; new Holo gradient (5 colors, two crossing waves) takes its place |
 | 0.0.54 | 2026-11-07 | `584c514` | Candy moved behind candyColor flag; new Forest gradient (deep green to lime) takes its place in Color |
