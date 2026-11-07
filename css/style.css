@@ -837,3 +837,5 @@ a.stat:hover { color: var(--text); }
   background: #070707;
   box-shadow: 0 1px 0 #3a3a3a;
 }
+/* The animation keys cast a shadow below them, so the top divider needs a little more room to look as spaced as the bottom one */
+.panel-divider.top { margin-top: 12px; }
