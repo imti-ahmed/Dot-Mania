@@ -413,7 +413,8 @@
   function segRow(label, items, get, set) {
     var row = document.createElement('div');
     row.className = 'row';
-    row.innerHTML = '<span class="lbl">' + label + '</span><div class="seg wide"></div>';
+    row.innerHTML = (label ? '<span class="lbl">' + label + '</span>' : '') + '<div class="seg wide"></div>';
+    if (!label) row.classList.add('nolabel');
     var box = row.querySelector('.seg');
     function paint() {
       box.querySelectorAll('.key').forEach(function (k) { k.setAttribute('aria-pressed', String(k.dataset.v === String(get()))); });
@@ -1197,39 +1198,99 @@
     requestAnimationFrame(step);
   }
 
+  // The animation as it is on screen right now, for the still-image exports.
+  function currentFrame() {
+    var preset = currentPreset(), vals = state.values[preset.id], T = preset.period(vals);
+    return { preset: preset, vals: vals, color: Object.assign({}, state.color, { steps: Math.max(2, Math.round(T * 6)) }) };
+  }
+
+  // PNG: the frame on screen, full artboard size. Honours the Background choice (Transparent = alpha).
+  function exportPng() {
+    if (!cells.size) return;
+    var f = currentFrame(), g = exportGeo(), c = document.createElement('canvas');
+    c.width = state.art.w; c.height = state.art.h;
+    var x = c.getContext('2d');
+    if (exportOpts.bg === 'dark') { x.fillStyle = '#0b0b0a'; x.fillRect(0, 0, c.width, c.height); }
+    if (exportOpts.grid) E.drawIdle(x, cols, rows, g, GRID_VIS);
+    E.drawCells(x, E.buildList(cellArray()), f.preset.fn, f.vals, f.color, tl.t, tl.ph, g, false);
+    c.toBlob(function (blob) { if (blob) download('dot-mania.png', blob, 'image/png'); }, 'image/png');
+  }
+
+  // SVG: the same frame as scalable vector (marks mirror engine.dot). Small, sharp at any size.
+  function svgMark(x, y, s, shape, fill, op) {
+    var h = s / 2, r;
+    function n(v) { return Math.round(v * 10) / 10; }
+    function pts(a) { return a.map(function (p) { return n(p[0]) + ',' + n(p[1]); }).join(' '); }
+    var attrs = ' fill="' + fill + '"' + (op < 1 ? ' fill-opacity="' + op.toFixed(3) + '"' : '') + '/>';
+    if (shape === 'square') return '<rect x="' + n(x - h) + '" y="' + n(y - h) + '" width="' + n(s) + '" height="' + n(s) + '"' + attrs;
+    if (shape === 'diamond') { r = h * 1.25; return '<polygon points="' + pts([[x, y - r], [x + r, y], [x, y + r], [x - r, y]]) + '"' + attrs; }
+    if (shape === 'triangle') { r = h * 1.4; return '<polygon points="' + pts([[x, y - r * 0.85], [x + r * 0.9, y + r * 0.85], [x - r * 0.9, y + r * 0.85]]) + '"' + attrs; }
+    return '<circle cx="' + n(x) + '" cy="' + n(y) + '" r="' + n(h) + '"' + attrs;
+  }
+  function buildSvg() {
+    var f = currentFrame(), g = exportGeo(), W = state.art.w, H = state.art.h, p = f.vals, out = [];
+    out.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">');
+    if (exportOpts.bg === 'dark') out.push('<rect width="' + W + '" height="' + H + '" fill="#0b0b0a"/>');
+    if (exportOpts.grid) {
+      var vis = (0.03 + 0.3 * GRID_VIS).toFixed(3), m = svgMark(g.cell / 2, g.cell / 2, g.cell * 0.3, g.shape, '#f6efe3', +vis);
+      out.push('<defs><pattern id="grid" x="' + g.ox + '" y="' + g.oy + '" width="' + g.cell + '" height="' + g.cell + '" patternUnits="userSpaceOnUse">' + m + '</pattern></defs>');
+      out.push('<rect x="' + g.ox + '" y="' + g.oy + '" width="' + cols * g.cell + '" height="' + rows * g.cell + '" fill="url(#grid)"/>');
+    }
+    E.buildList(cellArray()).forEach(function (c) {
+      var v = f.preset.fn(c, tl.t, p);
+      v = v < 0 ? 0 : v > 1 ? 1 : v;
+      var x = g.ox + (c.col + 0.5) * g.cell, y = g.oy + (c.row + 0.5) * g.cell, sz = g.cell * p.size * (0.4 + 0.6 * v);
+      var fill = E.colorFor(f.color, c, v, tl.ph);
+      if (p.glow > 0.01 && v > 0.05) out.push(svgMark(x, y, sz * 1.9, g.shape, fill, 0.2 * p.glow * v));
+      out.push(svgMark(x, y, sz, g.shape, fill, 0.18 + 0.82 * v));
+    });
+    out.push('</svg>');
+    return out.join('\n');
+  }
+
   function buildExportUI() {
-    var el = $('#exportControls');
-    el.appendChild(segRow('Background', [{ v: 'dark', label: 'Black' }, { v: 'transparent', label: 'Transparent' }],
+    function on(sel, fn) { var b = $(sel); if (b) b.addEventListener('click', fn); }
+    function key(id, label, title) { return '<button class="key" id="' + id + '" data-export title="' + title + '"><span>' + label + '</span></button>'; }
+
+    // Background (plus the grid option when its flag is on)
+    var bg = $('#exportBg');
+    bg.appendChild(segRow('', [{ v: 'dark', label: 'Black' }, { v: 'transparent', label: 'Transparent' }],
       function () { return exportOpts.bg; }, function (v) { exportOpts.bg = v; }));
     if (FLAGS.exportGridOption) {
-      el.appendChild(segRow('Grid', [{ v: 'show', label: 'Visible' }, { v: 'hide', label: 'Hidden' }],
+      bg.appendChild(segRow('Grid', [{ v: 'show', label: 'Visible' }, { v: 'hide', label: 'Hidden' }],
         function () { return exportOpts.grid ? 'show' : 'hide'; }, function (v) { exportOpts.grid = v === 'show'; }));
     }
+
+    // Code: an HTML file, or text to paste into an AI assistant
+    var code = [];
+    if (FLAGS.exportCodeFile) code.push(key('exportCode', 'Code File (.html)', 'Download a ready-to-open HTML file with the component'));
+    if (FLAGS.exportCopyForLlm) code.push(key('exportLlm', 'Copy for LLM', 'Copy instructions plus the code, ready to paste into an AI assistant'));
+    if (FLAGS.exportCopyEmbed) code.push(key('exportEmbed', 'Copy embed code', 'Copy just the component snippet'));
+    if (FLAGS.exportDownloadJs) code.push(key('exportJs', 'Download .js', 'Download the component script on its own'));
+    $('#exportCodeGroup').innerHTML = '<div class="stack">' + code.join('') + '</div>';
+
+    // Media: animated and still images
+    var media = [];
+    if (FLAGS.exportGif) media.push(key('exportGif', 'GIF', 'Download one seamless loop as an animated GIF'));
+    if (FLAGS.exportPng) media.push(key('exportPng', 'PNG', 'Download the frame on screen as a PNG'));
+    if (FLAGS.exportSvg) media.push(key('exportSvg', 'SVG', 'Download the frame on screen as a scalable vector'));
+    var mel = $('#exportMedia');
     if (FLAGS.videoExport) {
-      el.appendChild(sliderRow({
+      mel.appendChild(sliderRow({
         label: 'Length', min: 3, max: 30, step: 1, value: exportOpts.seconds,
         fmt: function (v) { return v + 's'; }, onChange: function (v) { exportOpts.seconds = v; }
       }));
     }
+    var mhtml = '<div class="pair" style="grid-template-columns:repeat(' + Math.max(1, media.length) + ',1fr)">' + media.join('') + '</div>';
+    if (FLAGS.videoExport) mhtml += '<div class="stack">' + key('exportVideo', 'Record video (.mp4)', 'Record the animation to a video (real time)') + '</div>';
+    var wrap = document.createElement('div');
+    wrap.innerHTML = mhtml;
+    while (wrap.firstChild) mel.appendChild(wrap.firstChild);
 
-    var top = [], html = '';
-    if (FLAGS.exportCodeFile) top.push('<button class="key" id="exportCode" data-export title="Download a ready-to-open HTML file with the component"><span>Code File</span></button>');
-    if (FLAGS.exportGif) top.push('<button class="key" id="exportGif" data-export title="Download one seamless loop as an animated GIF"><span>GIF</span></button>');
-    if (top.length) html += '<div class="pair" style="grid-template-columns:repeat(' + top.length + ',1fr)">' + top.join('') + '</div>';
-    if (FLAGS.exportCopyForLlm) html += '<button class="key" id="exportLlm" data-export title="Copy instructions plus the code, ready to paste into an AI assistant"><span>Copy for LLM</span></button>';
-    if (FLAGS.exportCopyEmbed) html += '<button class="key" id="exportEmbed" data-export title="Copy just the component snippet"><span>Copy embed code</span></button>';
-    if (FLAGS.exportDownloadJs) html += '<button class="key" id="exportJs" data-export title="Download the component script on its own"><span>Download .js</span></button>';
-    if (FLAGS.videoExport) html += '<button class="key" id="exportVideo" data-export title="Record the animation to a video (real time)"><span>Record video (.mp4)</span></button>';
-    if (html) {
-      var stack = document.createElement('div');
-      stack.className = 'stack';
-      stack.innerHTML = html;
-      el.appendChild(stack);
-    }
-
-    function on(sel, fn) { var b = $(sel); if (b) b.addEventListener('click', fn); }
     on('#exportCode', function () { download('dot-mania.html', buildExport().html, 'text/html'); });
     on('#exportGif', exportGif);
+    on('#exportPng', exportPng);
+    on('#exportSvg', function () { if (cells.size) download('dot-mania.svg', buildSvg(), 'image/svg+xml'); });
     on('#exportLlm', function () { copyText(buildExport().llm, $('#exportLlm span'), 'Copy for LLM'); });
     on('#exportEmbed', function () { copyText(buildExport().snippet, $('#exportEmbed span'), 'Copy embed code'); });
     on('#exportJs', function () { download('dot-mania.js', buildExport().script, 'text/javascript'); });

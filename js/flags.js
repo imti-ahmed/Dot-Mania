@@ -18,6 +18,8 @@
     dotShapes: true,            // Shapes group: Dot / Square / Diamond / Triangle marks
     imageUpload: true,          // Image group: upload a picture (or drop one on the canvas) and animate it
     exportCodeFile: true,       // Export: "Code File" (ready-to-open .html with the component)
+    exportPng: true,            // Export > Media: "PNG" (the frame on screen, at full size)
+    exportSvg: true,            // Export > Media: "SVG" (the frame on screen as scalable vector)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
 

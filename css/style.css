@@ -759,3 +759,6 @@ kbd {
   .sidebar > * + * { border-top: 0; border-left: 2px solid #070707; box-shadow: inset 1px 0 0 #3a3a3a; }
   .sizes { margin-top: 0; }
 }
+
+.row.nolabel { grid-template-columns: 1fr; padding: 0; }
+.row.nolabel .wide { grid-column: 1; }
