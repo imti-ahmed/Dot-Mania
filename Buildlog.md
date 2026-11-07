@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.54 | 2026-11-07 | `584c514` | Candy moved behind candyColor flag; new Forest gradient (deep green to lime) takes its place in Color |
 | 0.0.53 | 2026-11-07 | `9d99807` | Cache-busting: css/js links carry ?v=<version> and entry pages fetch index.html fresh, so a stale cached file (e.g. old engine.js showing Candy as white) can't linger |
 | 0.0.52 | 2026-11-07 | `163d309` | New Candy gradient color; custom color picker is our own popup (saturation square, hue bar, hex field) instead of the browser's; color Randomize button moved behind colorRandom flag |
 | 0.0.51 | 2026-11-07 | `2ff089d` | Favicon: the top-left logo (red rounded square with dots) as favicon.svg, favicon.ico, apple-touch-icon.png and a 512 px PNG |
