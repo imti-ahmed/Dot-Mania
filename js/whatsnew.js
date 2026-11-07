@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.47', date: '2026-11-07', items: [
+    'The status bar now shows a real view count.'
+  ] },
   { v: '0.0.45', date: '2026-11-07', items: [
     'Quality is now its own option in Export, and it also sets video quality.'
   ] },

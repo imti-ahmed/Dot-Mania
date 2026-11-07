@@ -1113,7 +1113,23 @@
       }).catch(function (err) { console.warn('[status] could not load ' + key + ':', err.message); });
     }
     if (site.repo) load('#statStars', 'dm-stars', 'https://api.github.com/repos/' + site.repo, function (d) { return d.stargazers_count; });
-    if (site.viewsUrl) load('#statViews', 'dm-views', site.viewsUrl, function (d) { return d.count !== undefined ? d.count : d.value; });
+    if (site.views && site.views.namespace) {
+      // Count this visit once per session, only on the live site; otherwise just read the number.
+      var path = '/' + encodeURIComponent(site.views.namespace) + '/' + encodeURIComponent(site.views.key || 'views');
+      var live = /^https?:$/.test(location.protocol) && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+      var counted = false;
+      try { counted = !!sessionStorage.getItem('dm-counted'); } catch (e) {}
+      var hit = live && !counted;
+      fetch('https://abacus.jasoncameron.dev/' + (hit ? 'hit' : 'get') + path).then(function (r) {
+        if (r.status === 404) return { value: 0 };           // no visits recorded yet
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function (d) {
+        if (typeof d.value !== 'number') throw new Error('no number in response');
+        if (hit) { try { sessionStorage.setItem('dm-counted', '1'); } catch (e) {} }
+        put('#statViews', d.value.toLocaleString(), d.value);
+      }).catch(function (err) { console.warn('[status] could not load views:', err.message); });
+    }
   }
 
   // The exported file holds `var DATA={...};` (drawing, values, colour) and `var presetFn=...;` (the animation).

@@ -20,7 +20,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 | `js/flags.js` | Feature flags (cut features stay here, off by default) |
 | `library/*.html` | Library templates, each one a Dot Mania Code File export |
 | `js/library.js` | Library manifest (add a row per template file) |
-| `js/site.js` | Status bar settings: GitHub repo for stars, views counter URL |
+| `js/site.js` | Status bar settings: version, GitHub repo for stars, Abacus views counter |
 | `js/whatsnew.js` | What's New page content: plain language for users, NOT a copy of the build log |
 | `library/index.html`, `about/`, `whats-new/`, `guide/` | Entry pages so each page has its own address (/library, /about, /whats-new, /guide); each loads the one real app |
 
