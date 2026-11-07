@@ -3,6 +3,7 @@
  * `commit` is a short hash, or '' for the entry that is still being written.
  */
 window.UPDATES = [
+  { v: '0.0.20', date: '2026-11-07', commit: '837d096', note: 'Library cards: divider above buttons, roomier; status bar spread out with filled icons and units (1 Star, 0 Views); exported file names are random funky combos' },
   { v: '0.0.19', date: '2026-11-07', commit: '9670b4a', note: 'Removed the /idiot admin page and add-to-Library dialog; templates are added to /library by hand' },
   { v: '0.0.18', date: '2026-11-07', commit: '2a5a692', note: 'Admin add now saves the current canvas as the Library template (no file picking); dialog centred' },
   { v: '0.0.17', date: '2026-11-07', commit: 'f772da5', note: 'Status bar: version (tag), views (eye) and GitHub stars (logo, links to the repo) always shown with icons, dash when unavailable; text centred; divider made visible' },
