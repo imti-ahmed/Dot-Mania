@@ -20,6 +20,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 | `js/flags.js` | Feature flags (cut features stay here, off by default) |
 | `library/*.html` | Library templates, each one a Dot Mania Code File export |
 | `js/library.js` | Library manifest (add a row per template file) |
+| `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `icon-512.png` | The logo from the top left of the app as the favicon and app icons |
 | `js/site.js` | Status bar settings: version, GitHub repo for stars, Abacus views counter |
 | `.github/workflows/views-backup.yml` | Saves the Abacus view count to `views.json` on the `stats` branch every 6 hours (backup for switching services) |
 | `js/whatsnew.js` | What's New page content: plain language for users, NOT a copy of the build log |
