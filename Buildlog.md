@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.10 | 2026-11-07 | `b4fbb98` | Right panel split into Edit and Export tabs, separated by a carved divider |
 | 0.0.9 | 2026-11-07 | `391e2db` | Right panel divider above Play is full width, grey groove (carved look) |
 | 0.0.8 | 2026-11-07 | `36c45e8` | Loading a Library template or HTML file ignores whatever is on the canvas and opens the file exactly as saved |
 | 0.0.7 | 2026-11-07 | `230eed8` | Faster Library previews: drawn small from one shared loop, only visible cards animate (iframe fallback when opened as a file) |
