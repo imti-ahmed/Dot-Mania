@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.22 | 2026-11-07 | `d951e3a` | What's New moved to its own user-facing file (js/whatsnew.js), no longer a copy of the build log; version now set in js/site.js; Library, About, What's New and Guide each get their own address (/library, /about, /whats-new, /guide) |
 | 0.0.21 | 2026-11-07 | `c907870` | Stars/views cached for 30 min (avoids GitHub rate limit), stale value kept on failure, console logs the reason a fetch fails |
 | 0.0.20 | 2026-11-07 | `837d096` | Library cards: divider above buttons, roomier; status bar spread out with filled icons and units (1 Star, 0 Views); exported file names are random funky combos |
 | 0.0.19 | 2026-11-07 | `9670b4a` | Removed the /idiot admin page and add-to-Library dialog; templates are added to /library by hand |
