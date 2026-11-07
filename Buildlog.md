@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.39 | 2026-11-07 | `1d9533e` | Top bar: gap between the logo and the bar is now 16px, matching the gap between the panels below |
 | 0.0.38 | 2026-11-07 | `92385c2` | Randomize art is now designed patterns (nested rings/squares/diamonds, tiled motifs, stripes, sunburst, checkerboard, mirrored emblems), optionally cut to a shape |
 | 0.0.37 | 2026-11-07 | `a241820` | Slider handle redesigned as a round knob with a glowing red centre; Look group renamed Tuning |
 | 0.0.36 | 2026-11-07 | `b297837` | Randomize now also picks canvas art (full, starter shape or random art, undoable), a mark shape, then plays |
