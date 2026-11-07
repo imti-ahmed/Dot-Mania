@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.50 | 2026-11-07 | `5d4ee28` | Randomize color now picks only from our own options (7 presets + 8 solid swatches, equally likely) instead of 60% gradients and random hues |
 | 0.0.49 | 2026-11-07 | `188363a` | View count backed up to views.json on a stats branch by a scheduled GitHub Action (every 6 h, only ever goes up); app shows the larger of Abacus and the backup |
 | 0.0.48 | 2026-11-07 | `ee39a78` | Color: White preset moved behind whiteColor flag; Randomize color button (filled dice icon) is the last option |
 | 0.0.47 | 2026-11-07 | `358c210` | Views wired to a free Abacus counter: one count per browser session on the live site only, read-only on localhost/file; shows 0 until the first visit |
