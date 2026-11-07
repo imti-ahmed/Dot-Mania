@@ -647,6 +647,33 @@
     buildControls();
   }
 
+  // Randomize (left bar): a fresh look. New animation(s), sliders and color; the drawing is left alone.
+  // With Stacking on it fills the stack with the same number of different animations.
+  function randomize() {
+    function rnd(min, max, step) { return +(min + Math.round(Math.random() * (max - min) / step) * step).toFixed(4); }
+    var pool = PRESETS.slice(), ids = [];
+    for (var n = state.stacking ? state.stack.length : 1; n > 0; n--) ids.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0].id);
+
+    ids.forEach(function (id) {
+      var v = state.values[id];
+      presetById(id).params.forEach(function (q) { v[q.key] = rnd(q.min, q.max, q.step); });
+    });
+    var base = state.values[ids[0]];            // Speed, Size and Glow are the base animation's
+    base.speed = rnd(0.6, 1.6, 0.05); base.size = rnd(0.5, 1, 0.01); base.glow = rnd(0.2, 0.9, 0.01);
+
+    if (Math.random() < 0.6) state.color.mode = COLOR_MODES[Math.floor(Math.random() * COLOR_MODES.length)].id;
+    else { state.color.mode = 'solid'; state.color.hex = SWATCHES[Math.floor(Math.random() * SWATCHES.length)]; }
+    repaintColor();
+
+    state.stack = ids; state.preset = ids[0];
+    if (MAIN.length > PRESET_SLOTS && !presetsOpen && ids.some(function (id) { return MAIN.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1; })) {
+      presetsOpen = true; renderPresets();      // never leave a chosen animation hidden
+    }
+    refreshPresets();
+    buildControls();
+    notify('Randomized');
+  }
+
   var stackRow = null;
   function setStacking(on) {
     state.stacking = on;
@@ -785,6 +812,7 @@
   stage.addEventListener('pointerenter', function () { if (tl.mode === 'hover') E.tlStart(tl); });
   stage.addEventListener('pointerleave', function () { if (tl.mode === 'hover') E.tlStop(tl); });
 
+  $('#randomBtn').addEventListener('click', randomize);
   $('#clearBtn').addEventListener('click', function () {
     var before = beginEdit(); cells.clear(); dirty = true; endEdit(before); updateInfo();
   });
