@@ -42,7 +42,7 @@
   var dirty = true;
   var repaintColor = function () {}, repaintShapes = function () {};   // set once those panels are built
   var cols = 0, rows = 0, ox = 0, oy = 0;
-  var hover = null, drag = null;
+  var hover = null, drag = null, sel = null;   // sel: the Select tool's rectangle {c0,r0,c1,r1}
   var undoStack = [], redoStack = [];
   var tl = E.makeTimeline('auto');   // what time the animation is at (see engine.js)
 
@@ -229,8 +229,21 @@
       ctx.globalAlpha = 1;
     }
 
+    // Select tool: the rectangle being dragged out, or the chosen one (dashed)
+    var box = drag && drag.mode === 'marquee' ? { c0: Math.min(drag.start.col, drag.cur.col), r0: Math.min(drag.start.row, drag.cur.row), c1: Math.max(drag.start.col, drag.cur.col), r1: Math.max(drag.start.row, drag.cur.row) } : sel;
+    if (box) {
+      var bx = ox + box.c0 * CELL, by = oy + box.r0 * CELL, bw = (box.c1 - box.c0 + 1) * CELL, bh = (box.r1 - box.r0 + 1) * CELL;
+      ctx.fillStyle = 'rgba(94,160,255,.14)';
+      ctx.fillRect(bx, by, bw, bh);
+      ctx.strokeStyle = 'rgba(94,160,255,.95)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(bx + 1, by + 1, bw - 2, bh - 2);
+      ctx.setLineDash([]);
+    }
+
     // hover marker: the brush footprint for pencil / eraser, a single cell otherwise
-    if (hover && !(drag && drag.shapeTool)) {
+    if (hover && state.tool !== 'select' && !(drag && drag.shapeTool)) {
       var f = footprint(hover.col, hover.row, (state.tool === 'pencil' || state.tool === 'eraser') ? state.brush : 1);
       var fw = (f.c1 - f.c0 + 1) * CELL, fh = (f.r1 - f.r0 + 1) * CELL;
       ctx.fillStyle = state.tool === 'eraser' ? '#ffffff' : previewColor();
@@ -270,13 +283,13 @@
   function undo() {
     if (!undoStack.length) return;
     redoStack.push(new Set(cells));
-    cells = undoStack.pop();
+    cells = undoStack.pop(); sel = null;
     dirty = true; updateInfo();
   }
   function redo() {
     if (!redoStack.length) return;
     undoStack.push(new Set(cells));
-    cells = redoStack.pop();
+    cells = redoStack.pop(); sel = null;
     dirty = true; updateInfo();
   }
   /* ---------- Drawing ---------- */
@@ -457,6 +470,21 @@
     cv.setPointerCapture(e.pointerId);
     var p = cellAt(e), erase = state.tool === 'eraser' || e.button === 2;
     var before = beginEdit();
+    if (state.tool === 'select') {
+      if (sel && p.col >= sel.c0 && p.col <= sel.c1 && p.row >= sel.r0 && p.row <= sel.r1) {
+        // grab the chosen rectangle: its dots move together
+        var picked = [];
+        before.forEach(function (k) {
+          var q = k.split(','), c = +q[0], r = +q[1];
+          if (c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1) picked.push([c, r]);
+        });
+        drag = { tool: 'select', mode: 'move', start: p, cur: p, before: before, base: { c0: sel.c0, r0: sel.r0, c1: sel.c1, r1: sel.r1 }, picked: picked };
+      } else {
+        sel = null;
+        drag = { tool: 'select', mode: 'marquee', start: p, cur: p, before: before };
+      }
+      return;
+    }
     if (state.tool === 'fill') {
       floodFill(p, erase);
       endEdit(before);
@@ -473,6 +501,22 @@
     var p = cellAt(e);
     hover = p;
     if (!drag) return;
+    if (drag.mode === 'marquee') { drag.cur = p; return; }
+    if (drag.mode === 'move') {
+      var b = drag.base;
+      var dc = Math.max(-b.c0, Math.min(cols - 1 - b.c1, p.col - drag.start.col));
+      var dr = Math.max(-b.r0, Math.min(rows - 1 - b.r1, p.row - drag.start.row));
+      var next = new Set();
+      drag.before.forEach(function (k) {
+        var q = k.split(','), c = +q[0], r = +q[1];
+        if (!(c >= b.c0 && c <= b.c1 && r >= b.r0 && r <= b.r1)) next.add(k);
+      });
+      drag.picked.forEach(function (q) { next.add((q[0] + dc) + ',' + (q[1] + dr)); });
+      cells = next;
+      sel = { c0: b.c0 + dc, r0: b.r0 + dr, c1: b.c1 + dc, r1: b.r1 + dr };
+      dirty = true; updateInfo();
+      return;
+    }
     if (drag.shapeTool) { drag.cur = constrain(drag, p, e.shiftKey); return; }
     if (e.shiftKey) {
       // Shift: the stroke so far becomes one straight line from where it began (move the pointer to aim it)
@@ -491,6 +535,15 @@
 
   function endDrag() {
     if (!drag) return;
+    if (drag.mode === 'marquee') {
+      var m = { c0: Math.min(drag.start.col, drag.cur.col), r0: Math.min(drag.start.row, drag.cur.row), c1: Math.max(drag.start.col, drag.cur.col), r1: Math.max(drag.start.row, drag.cur.row) };
+      var any = false;
+      cells.forEach(function (k) {
+        var q = k.split(','), c = +q[0], r = +q[1];
+        if (c >= m.c0 && c <= m.c1 && r >= m.r0 && r <= m.r1) any = true;
+      });
+      sel = any ? m : null;                       // an empty rectangle selects nothing
+    }
     if (drag.shapeTool) shapeCells(drag).forEach(function (q) { setCell(q[0], q[1], !drag.erase); });
     endEdit(drag.before);
     drag = null;
@@ -511,6 +564,7 @@
     { sep: true, extra: true },
     { id: 'line',    extra: true, name: 'Line', key: 'l', icon: ICON('<path d="M3 13L13 3"/><circle cx="3" cy="13" r="1" fill="currentColor"/><circle cx="13" cy="3" r="1" fill="currentColor"/>') },
     { id: 'rect',    name: 'Shape', key: 'r', icon: ICON('<rect x="2.8" y="4" width="10.4" height="8" rx="1"/>') },
+    { id: 'select',  name: 'Select', key: 'v', icon: ICON('<rect x="2.5" y="2.5" width="11" height="11" rx="1" stroke-dasharray="2.2 2"/><path d="M8 5.5v5M5.5 8h5"/>') },
     { id: 'ellipse', name: 'Circle',   key: 'o', icon: ICON('<ellipse cx="8" cy="8" rx="5.5" ry="4"/>') },
     { sep: true, extra: true },
     { id: 'fill',    name: 'Fill',      key: 'f', icon: ICON('<g transform="scale(.6667)" stroke-width="2.25"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></g>') }
@@ -532,6 +586,7 @@
   }
   function setTool(id) {
     state.tool = id;
+    if (id !== 'select') sel = null;
     document.querySelectorAll('[data-tool]').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.tool === id));
     });
@@ -1120,6 +1175,17 @@
       return;
     }
     if (e.altKey) return;
+    if (sel && e.key === 'Escape') { sel = null; return; }
+    if (sel && (e.key === 'Delete' || e.key === 'Backspace')) {
+      e.preventDefault();
+      var bf = beginEdit();
+      Array.from(cells).forEach(function (k) {
+        var q = k.split(','), c = +q[0], r = +q[1];
+        if (c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1) cells.delete(k);
+      });
+      dirty = true; endEdit(bf); updateInfo();
+      return;
+    }
     if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); playPressed(); return; }
     if (/^[1-9]$/.test(e.key) && PRESETS[+e.key - 1]) { onPresetClick(PRESETS[+e.key - 1].id); return; }
     var t = TOOLS.find(function (x) { return x.key === e.key.toLowerCase(); });
@@ -1708,7 +1774,7 @@
     else fallback();
   }
 
-  // One seamless cycle of the animation, looping forever, cropped to the drawing.
+  // One seamless cycle of the animation, looping forever, covering the whole artboard.
   // Clear background gives a transparent GIF (1-bit transparency); Dark gives the dark editor look.
   function exportGif() {
     if (gifBusy || !cells.size) return;

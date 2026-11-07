@@ -2,7 +2,7 @@
  * Small, dependency-free GIF89a encoder, tuned for this app's content (soft glowing dots on a dark field).
  *
  * Keeping files small (tens to a few hundred KB):
- *  - crops to the drawing (plus a margin) instead of the whole canvas, and scales it down
+ *  - renders the whole artboard (never crops to the drawing) and scales it down
  *  - one adaptive, deliberately small palette built by median cut over the whole animation
  *  - frame differencing: each frame stores only the rectangle that changed
  *  - slightly lossy: a pixel whose new colour is nearly the colour already on screen is left alone
@@ -15,7 +15,7 @@
  * "restore to background" between frames.
  *
  *   DotGif.encode(opts)            low level: draw(ctx, i, frames) paints each frame (delay: number or fn(i))
- *   DotGif.encodeAnimation(opts)   what the app calls: crops, scales and renders the animation
+ *   DotGif.encodeAnimation(opts)   what the app calls: scales and renders the animation
  *   both return Promise<Blob>
  */
 (function () {
@@ -279,17 +279,9 @@
   //      art: {w,h}, geo: {ox,oy,cell}, cols, rows, gridVis, transparent, bg, maxSide, fps, colors, tolerance }
   function encodeAnimation(o) {
     var E = o.E, geo = o.geo, cell = geo.cell, list = o.list, art = o.art;
-    var minC = Infinity, maxC = -1, minR = Infinity, maxR = -1, i;
-    for (i = 0; i < list.length; i++) {
-      if (list[i].col < minC) minC = list[i].col;
-      if (list[i].col > maxC) maxC = list[i].col;
-      if (list[i].row < minR) minR = list[i].row;
-      if (list[i].row > maxR) maxR = list[i].row;
-    }
-    // crop to the drawing plus room for the glow
-    var pad = 1.6;
-    var x0 = Math.max(0, Math.floor(geo.ox + (minC - pad) * cell)), y0 = Math.max(0, Math.floor(geo.oy + (minR - pad) * cell));
-    var x1 = Math.min(art.w, Math.ceil(geo.ox + (maxC + 1 + pad) * cell)), y1 = Math.min(art.h, Math.ceil(geo.oy + (maxR + 1 + pad) * cell));
+    var i;
+    // the whole artboard, so the GIF is the complete grid size, not just the part you drew on
+    var x0 = 0, y0 = 0, x1 = art.w, y1 = art.h;
     var cw = x1 - x0, ch = y1 - y0;
     // Whole pixels per grid cell, so every dot is rasterised identically (no uneven dot sizes or wobble).
     var cellPx = Math.max(3, Math.floor(cell * Math.min(1, o.maxSide / Math.max(cw, ch))));

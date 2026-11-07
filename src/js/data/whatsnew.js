@@ -6,6 +6,10 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.24.0', date: '2026-11-07', items: [
+    'New Select tool: drag a rectangle over any dots, then drag inside it to move them around.',
+    'GIF export now includes the whole grid, not just the part you drew on.'
+  ] },
   { v: '0.23.4', date: '2026-11-07', items: [
     'The welcome popup now shows every time you open Dot Mania.'
   ] },

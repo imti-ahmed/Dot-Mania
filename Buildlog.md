@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.24.0 | 2026-11-07 | `v0.24.0` | New Select tool (V): drag a rectangle over any dots, then drag inside it to move them (Delete removes, Esc clears). GIF export now covers the whole artboard instead of cropping to the drawing |
 | 0.23.8 | 2026-11-07 | `v0.23.8` | Portfolio link corrected to imtiyazahmed.com everywhere (credit, welcome popup, About, home footer) |
 | 0.23.7 | 2026-11-07 | `v0.23.7` | Left panel: the credit is centred in the space between the randomizer and the size options, with a divider under the randomizer |
 | 0.23.6 | 2026-11-07 | `v0.23.6` | Left panel: vertical "Crafted by Imtiyaz Ahmed" credit above the size options, name linked to the portfolio (hidden on narrow screens where the panel is a row) |
