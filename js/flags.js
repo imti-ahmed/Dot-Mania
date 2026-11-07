@@ -23,6 +23,7 @@
 
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */
 
+    extraTools: false,          // Left bar: Eraser and Line tools (right-click on the canvas still erases)
     interaction: false,         // Interaction group: Auto / Hover / Click playback (exported component too)
     extraPresets: false,        // 6 more animations: Bounce, Strobe, Glitch, Checker, Orbit, Radar
     starterShapes: false,       // Starters group: whole drawings (Full, Checkers, Disc, Ring, Diamond, Star, Heart, Snowflake)

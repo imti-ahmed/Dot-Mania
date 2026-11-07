@@ -84,7 +84,7 @@
       if (c >= 0 && r >= 0 && c < cols && r < rows) next.add(c + ',' + r);
     });
     cells = next;
-    undoStack = []; redoStack = []; updateHistoryUI();
+    undoStack = []; redoStack = [];
     hover = null; drag = null;
     layout();
     if (imgSrc) { imgRaster = null; applyImage(); }
@@ -180,25 +180,19 @@
     undoStack.push(before);
     if (undoStack.length > 80) undoStack.shift();
     redoStack = [];
-    updateHistoryUI();
   }
   function undo() {
     if (!undoStack.length) return;
     redoStack.push(new Set(cells));
     cells = undoStack.pop();
-    dirty = true; updateHistoryUI(); updateInfo();
+    dirty = true; updateInfo();
   }
   function redo() {
     if (!redoStack.length) return;
     undoStack.push(new Set(cells));
     cells = redoStack.pop();
-    dirty = true; updateHistoryUI(); updateInfo();
+    dirty = true; updateInfo();
   }
-  function updateHistoryUI() {
-    $('#undoBtn').disabled = !undoStack.length;
-    $('#redoBtn').disabled = !redoStack.length;
-  }
-
   /* ---------- Drawing ---------- */
 
   // Pointer position -> grid cell, accounting for the artboard being scaled to fit.
@@ -354,19 +348,20 @@
     return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
   };
   var TOOLS = [
-    { id: 'pencil',  name: 'Pencil',    key: 'p', icon: ICON('<path d="M2.5 13.5l.8-3.2 7.2-7.2 2.4 2.4-7.2 7.2z"/><path d="M9.2 4.4l2.4 2.4"/>') },
-    { id: 'eraser',  name: 'Eraser',    key: 'e', icon: ICON('<path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/>') },
-    { sep: true },
-    { id: 'line',    name: 'Line',      key: 'l', icon: ICON('<path d="M3 13L13 3"/><circle cx="3" cy="13" r="1" fill="currentColor"/><circle cx="13" cy="3" r="1" fill="currentColor"/>') },
-    { id: 'rect',    name: 'Rectangle', key: 'r', icon: ICON('<rect x="2.8" y="4" width="10.4" height="8" rx="1"/>') },
-    { id: 'ellipse', name: 'Ellipse',   key: 'o', icon: ICON('<ellipse cx="8" cy="8" rx="5.5" ry="4"/>') },
-    { sep: true },
+    { id: 'pencil',  name: 'Pen',    key: 'p', icon: ICON('<path d="M2.5 13.5l.8-3.2 7.2-7.2 2.4 2.4-7.2 7.2z"/><path d="M9.2 4.4l2.4 2.4"/>') },
+    { id: 'eraser',  extra: true, name: 'Eraser', key: 'e', icon: ICON('<path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/>') },
+    { sep: true, extra: true },
+    { id: 'line',    extra: true, name: 'Line', key: 'l', icon: ICON('<path d="M3 13L13 3"/><circle cx="3" cy="13" r="1" fill="currentColor"/><circle cx="13" cy="3" r="1" fill="currentColor"/>') },
+    { id: 'rect',    name: 'Shape', key: 'r', icon: ICON('<rect x="2.8" y="4" width="10.4" height="8" rx="1"/>') },
+    { id: 'ellipse', name: 'Circle',   key: 'o', icon: ICON('<ellipse cx="8" cy="8" rx="5.5" ry="4"/>') },
+    { sep: true, extra: true },
     { id: 'fill',    name: 'Fill',      key: 'f', icon: ICON('<path d="M3.2 8.6L7.6 4.2l4.6 4.6-4.2 4.2a1.3 1.3 0 01-1.9 0z"/><path d="M13.2 11.2c.9 1.1 1.3 1.8 1.3 2.3a1.3 1.3 0 01-2.6 0c0-.5.4-1.2 1.3-2.3z"/>') }
   ];
 
   function buildTools() {
     var el = $('#toolstrip');
     TOOLS.forEach(function (t) {
+      if (t.extra && !FLAGS.extraTools) return;
       if (t.sep) { var s = document.createElement('div'); s.className = 'sep'; el.appendChild(s); return; }
       var b = document.createElement('button');
       b.className = 'key'; b.dataset.tool = t.id; b.innerHTML = t.icon;
@@ -606,7 +601,7 @@
   }
   function commitCellSize() {
     sizeBase = null;
-    undoStack = []; redoStack = []; updateHistoryUI();   // older snapshots belong to the previous grid
+    undoStack = []; redoStack = [];   // older snapshots belong to the previous grid
   }
   function buildGrid() {
     var el = $('#gridControls');
@@ -653,8 +648,6 @@
   stage.addEventListener('pointerenter', function () { if (tl.mode === 'hover') E.tlStart(tl); });
   stage.addEventListener('pointerleave', function () { if (tl.mode === 'hover') E.tlStop(tl); });
 
-  $('#undoBtn').addEventListener('click', undo);
-  $('#redoBtn').addEventListener('click', redo);
   $('#clearBtn').addEventListener('click', function () {
     var before = beginEdit(); cells.clear(); dirty = true; endEdit(before); updateInfo();
   });
@@ -682,7 +675,7 @@
     if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); playPressed(); return; }
     if (/^[1-9]$/.test(e.key) && PRESETS[+e.key - 1]) { selectPreset(PRESETS[+e.key - 1].id); return; }
     var t = TOOLS.find(function (x) { return x.key === e.key.toLowerCase(); });
-    if (t) setTool(t.id);
+    if (t && (FLAGS.extraTools || !t.extra)) setTool(t.id);
   });
 
   /* ---------- Image: upload -> black & white -> cells (conversion lives in image.js) ---------- */
@@ -854,7 +847,41 @@
     drawIdle();
     dirty = true;
     updateInfo();
+    setFileLoaded(true);
     toast(parsed.preset ? 'Opened ' + parsed.preset.name : 'Opened drawing (animation not recognised)');
+  }
+
+  var FILE_OPEN = '<path d="M2.5 4.5h4l1.5 1.5h5.5v6.5h-11z"/>', FILE_CLOSE = '<path d="M4 4l8 8M12 4l-8 8"/>';
+  var fileLoaded = false;
+  function setFileLoaded(on) {
+    fileLoaded = on;
+    $('#fileLabel').textContent = on ? 'Close File' : 'Open HTML';
+    $('#fileIcon').innerHTML = on ? FILE_CLOSE : FILE_OPEN;
+    $('#importBtn').title = on ? 'Close this file and start a fresh session' : 'Open an HTML file exported from Dot Mania (or drop it on the canvas)';
+  }
+
+  // Back to a blank first-launch session: empty canvas, default animation, look and size.
+  function closeFile() {
+    PRESETS.forEach(function (p) {
+      var v = Object.assign({}, p.defaults);
+      p.params.forEach(function (q) { v[q.key] = q.def; });
+      state.values[p.id] = v;
+    });
+    Object.assign(state.color, { mode: 'solid', hex: '#ef282d', cycle: 1 });
+    state.dotShape = 'dot';
+    CELL = 16;
+    imgSrc = null; imgRaster = null;
+    if (imgUI.opts) setImageActive(false);
+    if (FLAGS.interaction) setInteraction('auto');
+    cells = new Set();
+    setArt(1920, 1080);                     // also clears history
+    repaintShapes(); repaintColor();
+    selectPreset(PRESETS[0].id);
+    drawIdle();
+    dirty = true;
+    updateInfo();
+    setFileLoaded(false);
+    toast('Fresh session');
   }
 
   function loadHtmlFile(file) {
@@ -866,7 +893,8 @@
 
   function setupFiles() {
     var input = $('#htmlFile');
-    $('#importBtn').addEventListener('click', function () { input.click(); });
+    setFileLoaded(false);
+    $('#importBtn').addEventListener('click', function () { if (fileLoaded) closeFile(); else input.click(); });
     input.addEventListener('change', function () { if (input.files[0]) loadHtmlFile(input.files[0]); input.value = ''; });
 
     // drop a picture or an exported HTML file straight onto the canvas

@@ -44,31 +44,24 @@
 
     <main class="main" data-page="canvas">
 
-      <!-- Left: tool bar (tools + canvas size) -->
+      <!-- Left: tool bar (tools, actions, canvas size) -->
       <aside class="card sidebar" aria-label="Tools">
         <div class="toolstrip well" id="toolstrip" role="toolbar" aria-label="Drawing tools"></div>
-        <div class="sizeblock">
-          <span class="side-label">Edit</span>
-          <div class="well editstrip" role="group" aria-label="Edit">
-            <button class="key" id="undoBtn" title="Undo (Ctrl+Z)" disabled>Undo</button>
-            <button class="key" id="redoBtn" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
-            <button class="key" id="invertBtn" title="Invert selection">Invert</button>
-            <button class="key" id="clearBtn" title="Clear everything">Clear</button>
-            <button class="key" id="importBtn" title="Open an HTML file exported from Dot Mania (or drop it on the canvas)">Open<br>HTML</button>
-          </div>
+        <div class="well editstrip" role="group" aria-label="Canvas actions">
+          <button class="key" id="invertBtn" title="Invert selection" aria-label="Invert selection">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5a5.5 5.5 0 010 11z" fill="currentColor"/></svg>
+          </button>
+          <button class="key" id="clearBtn" title="Clear everything" aria-label="Clear everything">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8h5.8l.6-8M7 7v3.5M9 7v3.5"/></svg>
+          </button>
         </div>
-        <div class="sizeblock">
-          <span class="side-label">Size</span>
-          <div class="well sizes" role="group" aria-label="Canvas size">
-            <button class="key" data-size="1920x1080" aria-pressed="true" title="1920 x 1080">
-              <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="1.5" width="20" height="11.25" rx="1.5"/></svg>
-              <span>1920<br>1080</span>
-            </button>
-            <button class="key" data-size="1080x1080" aria-pressed="false" title="1080 x 1080">
-              <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="1" width="12" height="12" rx="1.5"/></svg>
-              <span>1080<br>1080</span>
-            </button>
-          </div>
+        <div class="well sizes" role="group" aria-label="Canvas size">
+          <button class="key" data-size="1920x1080" aria-pressed="true" title="1920 x 1080" aria-label="Landscape canvas">
+            <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="1.5" width="20" height="11.25" rx="1.5"/></svg>
+          </button>
+          <button class="key" data-size="1080x1080" aria-pressed="false" title="1080 x 1080" aria-label="Square canvas">
+            <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="1" width="12" height="12" rx="1.5"/></svg>
+          </button>
         </div>
       </aside>
 
@@ -121,6 +114,10 @@
             <svg id="playIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
             <span id="playLabel">Pause</span>
           </button>
+          <button class="key" id="importBtn" title="Open an HTML file exported from Dot Mania (or drop it on the canvas)">
+            <svg id="fileIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+            <span id="fileLabel">Open HTML</span>
+          </button>
         </div>
       </aside>
 
@@ -152,11 +149,11 @@
         <li><b>Draw.</b> Pick a tool on the left and paint cells on the canvas, or upload an image in the right panel.</li>
         <li><b>Animate.</b> Choose an animation, then tune the sliders and colors.</li>
         <li><b>Export.</b> Download a GIF or a Code File, or copy the code for an LLM.</li>
-        <li><b>Come back later.</b> Use Open HTML to load a Code File you exported before and keep editing it.</li>
+        <li><b>Come back later.</b> Use Open HTML (bottom right) to load a Code File you exported before and keep editing it. Close File starts a fresh session.</li>
       </ol>
       <h2 class="page-sub">Shortcuts</h2>
       <table class="page-table">
-        <tr><td><kbd>P</kbd> <kbd>E</kbd> <kbd>L</kbd> <kbd>R</kbd> <kbd>O</kbd> <kbd>F</kbd></td><td>Pencil, eraser, line, rectangle, ellipse, fill</td></tr>
+        <tr><td><kbd>P</kbd> <kbd>R</kbd> <kbd>O</kbd> <kbd>F</kbd></td><td>Pen, shape, circle, fill</td></tr>
         <tr><td><kbd>1</kbd>&ndash;<kbd>9</kbd></td><td>Pick an animation</td></tr>
         <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>Z</kbd></td><td>Undo</td></tr>
