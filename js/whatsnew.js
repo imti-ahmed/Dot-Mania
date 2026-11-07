@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.26', date: '2026-11-07', items: [
+    'The Twinkle animation has been retired.'
+  ] },
   { v: '0.0.24', date: '2026-11-07', items: [
     'Sweep now runs left to right by default.'
   ] },

@@ -75,16 +75,6 @@
       }
     },
     {
-      id: 'twinkle', name: 'Twinkle', defaults: base(0.6, 0.7),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.3); },
-      params: [{ key: 'sparkle', label: 'Sparkle', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct }],
-      fn: function (c, t, p) {
-        var s = 0.5 + 0.5 * Math.sin((t * p.speed * 0.3 * (1 + Math.floor(c.rnd2 * 2)) + c.rnd) * TAU);
-        return Math.pow(s, 1 + p.sparkle * 8);
-      }
-    },
-    {
       id: 'spiral', name: 'Spiral', defaults: base(0.7, 0.5),
       // seconds for one seamless loop
       period: function (p) { return 1 / (p.speed * 0.4); },
@@ -203,6 +193,16 @@
 
   // Behind FLAGS.extraPresets (see flags.js). Same shape as the presets above; each loops seamlessly at period().
   window.EXTRA_PRESETS = [
+    {
+      id: 'twinkle', name: 'Twinkle', defaults: base(0.6, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.3); },
+      params: [{ key: 'sparkle', label: 'Sparkle', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct }],
+      fn: function (c, t, p) {
+        var s = 0.5 + 0.5 * Math.sin((t * p.speed * 0.3 * (1 + Math.floor(c.rnd2 * 2)) + c.rnd) * TAU);
+        return Math.pow(s, 1 + p.sparkle * 8);
+      }
+    },
     {
       id: 'blink', name: 'Blink', defaults: base(0.6, 0.3),
       // seconds for one seamless loop
