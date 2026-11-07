@@ -6,8 +6,11 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.36', date: '2026-11-07', items: [
+    'Randomize now makes a whole new piece: a full canvas, a ready-made shape or random art, with a new mark shape, animation and color, and plays it. You can undo it.'
+  ] },
   { v: '0.0.35', date: '2026-11-07', items: [
-    'New Randomize button in the left bar: a fresh animation, sliders and color in one click. Your drawing stays as it is.'
+    'New Randomize button in the left bar: a fresh animation, sliders and color in one click.'
   ] },
   { v: '0.0.30', date: '2026-11-07', items: [
     'New Stacking switch: turn it on to run up to 3 animations together. The first one you click is the base, and each next one shapes it.'

@@ -647,10 +647,60 @@
     buildControls();
   }
 
-  // Randomize (left bar): a fresh look. New animation(s), sliders and color; the drawing is left alone.
+  // A random piece of art: a few overlapping circles, rings, rectangles and diamonds, usually mirrored left to right.
+  function randomArtCells() {
+    var set = new Set(), mirror = Math.random() < 0.7, n = 3 + Math.floor(Math.random() * 4), side = Math.min(cols, rows);
+    function add(c, r) {
+      if (c < 0 || r < 0 || c >= cols || r >= rows) return;
+      set.add(c + ',' + r);
+      if (mirror) set.add((cols - 1 - c) + ',' + r);
+    }
+    for (var i = 0; i < n; i++) {
+      var cx = Math.random() * cols, cy = Math.random() * rows, rad = (0.08 + Math.random() * 0.22) * side;
+      var kind = Math.floor(Math.random() * 4), ry = rad * (0.4 + Math.random() * 0.6);
+      for (var r = Math.floor(cy - rad - 1); r <= cy + rad + 1; r++) {
+        for (var c = Math.floor(cx - rad - 1); c <= cx + rad + 1; c++) {
+          var dx = c - cx, dy = r - cy, d = Math.sqrt(dx * dx + dy * dy);
+          var on = kind === 0 ? d <= rad
+            : kind === 1 ? Math.abs(d - rad) <= rad * 0.3 + 0.5
+            : kind === 2 ? Math.abs(dx) <= rad && Math.abs(dy) <= ry
+            : Math.abs(dx) + Math.abs(dy) <= rad;
+          if (on) add(c, r);
+        }
+      }
+    }
+    return set;
+  }
+
+  // Randomize (left bar): a whole new piece. It picks a fresh canvas (everything filled, a starter shape or random
+  // art), a mark shape, new animation(s) with random sliders, and a color, then plays it.
   // With Stacking on it fills the stack with the same number of different animations.
   function randomize() {
     function rnd(min, max, step) { return +(min + Math.round(Math.random() * (max - min) / step) * step).toFixed(4); }
+
+    // canvas (undoable)
+    var before = beginEdit(), roll = Math.random(), next = new Set(), shapes = window.SHAPES || [];
+    if (roll < 0.25) {
+      for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) next.add(c + ',' + r);
+    } else if (roll < 0.65 && shapes.length) {
+      var starters = shapes.filter(function (s) { return s.id !== 'full'; });
+      var sh = starters[Math.floor(Math.random() * starters.length)];
+      sh.gen(cols, rows, 0.55 + Math.random() * 0.35).forEach(function (q) { next.add(q[0] + ',' + q[1]); });
+    } else {
+      next = randomArtCells();
+    }
+    if (!next.size) next = randomArtCells();
+    imgSrc = null; imgRaster = null;
+    if (imgUI.opts) setImageActive(false);
+    cells = next; dirty = true;
+    endEdit(before);
+    updateInfo();
+
+    // mark shape
+    state.dotShape = DOT_SHAPES[Math.floor(Math.random() * DOT_SHAPES.length)].id;
+    repaintShapes();
+    drawIdle();
+
     var pool = PRESETS.slice(), ids = [];
     for (var n = state.stacking ? state.stack.length : 1; n > 0; n--) ids.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0].id);
 
@@ -671,6 +721,7 @@
     }
     refreshPresets();
     buildControls();
+    setPlaying(true);
     notify('Randomized');
   }
 
