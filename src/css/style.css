@@ -1323,3 +1323,10 @@ body[data-view="home"] .app {
   white-space: nowrap;
   color: var(--text);
 }
+
+/* Credit in the left panel: vertical text that sits just above the size options */
+.sidebar > .crafted { margin: auto 0 0; padding: 12px 0; border: 0; box-shadow: none; flex: none; writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: var(--muted); }
+.sidebar > .sizes { margin-top: 0; }
+.crafted a { color: var(--text); font-weight: 700; text-decoration: none; transition: color .15s; }
+.crafted a:hover { color: var(--accent); }
+@media (max-width: 900px) { .sidebar > .crafted { display: none; } }

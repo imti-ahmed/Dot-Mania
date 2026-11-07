@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.23.6 | 2026-11-07 | `v0.23.6` | Left panel: vertical "Crafted by Imtiyaz Ahmed" credit above the size options, name linked to the portfolio (hidden on narrow screens where the panel is a row) |
 | 0.23.5 | 2026-11-07 | `v0.23.5` | Submit Feedback tab no longer underlined (link styling removed) |
 | 0.23.4 | 2026-11-07 | `v0.23.4` | Welcome popup shows on every visit (`welcomeOnce` flag turned off) |
 | 0.23.3 | 2026-11-07 | `v0.23.3` | New "Submit Feedback" tab at the end of the top bar; it opens the GitHub new-issue page in a new tab |
