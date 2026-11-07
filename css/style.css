@@ -378,7 +378,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px 14px 4px;
+  margin-top: 10px;           /* scrolling content is clipped here, below the tabs divider, like above the Play divider */
+  padding: 6px 14px 4px;
   scrollbar-width: thin;
   scrollbar-color: #2a2a2a transparent;
 }
