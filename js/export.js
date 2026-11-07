@@ -198,7 +198,7 @@
       'function frac(x){return x-Math.floor(x);}',
       'var STOPS=' + JSON.stringify(E.STOPS) + ';'
     ].concat(fns.map(function (n) { return E[n].toString(); }), [
-      'var presetFn=' + snapshot.preset.fn.toString() + ';',
+      'var presetFn=' + (snapshot.preset.source || snapshot.preset.fn.toString()) + ';',
       'var DATA=' + json + ';',
       '(' + boot.toString() + ')(' + JSON.stringify(tag) + ',DATA,presetFn,{' +
         fns.map(function (n) { return n + ':' + n; }).join(',') + '});'

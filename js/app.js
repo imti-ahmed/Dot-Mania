@@ -22,7 +22,9 @@
     playing: true,
     art: { w: 1920, h: 1080 },     // artboard size in px (1920x1080 or 1080x1080)
     dotShape: 'dot',               // mark shape: dot | square | diamond | triangle
-    preset: PRESETS[0].id,
+    preset: PRESETS[0].id,         // the base animation (first of the stack)
+    stacking: false,               // Stacking switch: pick up to 3 animations that run together
+    stack: [PRESETS[0].id],        // animation ids in the order they were clicked
     interaction: 'auto',           // auto | hover | click
     values: {},
     color: { mode: 'solid', hex: '#ef282d', cycle: 1 },
@@ -130,7 +132,58 @@
     { id: 'aurora', name: 'Aurora' }
   ];
   function previewColor() { return state.color.mode === 'solid' ? state.color.hex : '#f6efe3'; }
-  function currentPreset() { return PRESETS.find(function (p) { return p.id === state.preset; }); }
+  /* ---------- Stacking ----------
+   * With Stacking on, up to 3 animations run together. The first is the base; each later one shapes it:
+   *   v = v * (FLOOR + (1 - FLOOR) * next)
+   * so the order matters. Speed, Size and Glow are shared (the base's); each animation keeps its own sliders.
+   * To keep the loop seamless, every layer is time-scaled to whole cycles of the longest one.
+   */
+  var STACK_MAX = 3, STACK_FLOOR = 0.25, stackLayers = [], stackT = 1;
+  function presetById(id) { return PRESETS.find(function (p) { return p.id === id; }); }
+  function isStacked() { return state.stacking && state.stack.length > 1; }
+  function refreshStack() {
+    var base = state.values[state.stack[0]], periods = [];
+    stackLayers = state.stack.map(function (id, i) {
+      var preset = presetById(id), v = Object.assign({}, state.values[id], { speed: base.speed, size: base.size, glow: base.glow });
+      periods.push(preset.period(v));
+      return { preset: preset, vals: v, k: 1 };
+    });
+    stackT = Math.max.apply(null, periods);
+    stackLayers.forEach(function (l, i) { l.k = Math.max(1, Math.round(stackT / periods[i])) * periods[i] / stackT; });
+  }
+  function stackSource() {
+    refreshStack();
+    var meta = stackLayers.map(function (l) { return { id: l.preset.id, v: l.vals, k: l.k }; });
+    var out = '/*STACK:' + JSON.stringify(meta) + '*/(function(){';
+    stackLayers.forEach(function (l, i) { out += 'var f' + i + '=' + l.preset.fn.toString() + ';var v' + i + '=' + JSON.stringify(l.vals) + ';'; });
+    out += 'return function(c,t,p){var v=1,x;';
+    stackLayers.forEach(function (l, i) {
+      out += 'x=f' + i + '(c,t*' + l.k + ',v' + i + ');x=x<0?0:x>1?1:x;v=' + (i ? 'v*(' + STACK_FLOOR + '+' + (1 - STACK_FLOOR) + '*x)' : 'x') + ';';
+    });
+    return out + 'return v;};})()';
+  }
+  var STACK = {
+    id: '__stack', defaults: {}, params: [],
+    get name() { return state.stack.map(function (id) { return presetById(id).name; }).join(' + '); },
+    period: function () { return stackT; },
+    fn: function (c, t) {
+      var v = 1;
+      for (var i = 0; i < stackLayers.length; i++) {
+        var l = stackLayers[i], x = l.preset.fn(c, t * l.k, l.vals);
+        x = x < 0 ? 0 : x > 1 ? 1 : x;
+        v = i ? v * (STACK_FLOOR + (1 - STACK_FLOOR) * x) : x;
+      }
+      return v;
+    },
+    get source() { return stackSource(); }
+  };
+  // The stack's Speed / Size / Glow are the base animation's.
+  Object.defineProperty(state.values, STACK.id, { get: function () { return state.values[state.stack[0]]; }, enumerable: false });
+
+  function currentPreset() {
+    if (isStacked()) { refreshStack(); return STACK; }
+    return presetById(state.preset);
+  }
   function currentPeriod() { var p = currentPreset(); return p.period(state.values[p.id]); }
 
   function render() {
@@ -493,23 +546,31 @@
   }
 
   function buildControls() {
-    var preset = PRESETS.find(function (p) { return p.id === state.preset; });
-    var vals = state.values[preset.id], el = $('#controls');
+    var el = $('#controls');
     el.innerHTML = '';
+    var layers = state.stack.map(presetById), base = state.values[layers[0].id];
     function common(key) {
       var c = COMMON[key];
       el.appendChild(sliderRow({
         label: c.label, min: c.min, max: c.max, step: c.step, fmt: c.fmt,
-        value: vals[key], onChange: function (v) { vals[key] = v; }
+        value: base[key], onChange: function (v) { base[key] = v; }
       }));
     }
     common('speed');
     common('size');
-    preset.params.forEach(function (q) {
-      el.appendChild(sliderRow({
-        label: q.label, min: q.min, max: q.max, step: q.step, fmt: q.fmt,
-        value: vals[q.key], onChange: function (v) { vals[q.key] = v; }
-      }));
+    layers.forEach(function (preset) {
+      var vals = state.values[preset.id];
+      if (layers.length > 1) {
+        var sub = document.createElement('div');
+        sub.className = 'sub-label'; sub.textContent = preset.name;
+        el.appendChild(sub);
+      }
+      preset.params.forEach(function (q) {
+        el.appendChild(sliderRow({
+          label: q.label, min: q.min, max: q.max, step: q.step, fmt: q.fmt,
+          value: vals[q.key], onChange: function (v) { vals[q.key] = v; }
+        }));
+      });
     });
     common('glow');
   }
@@ -532,7 +593,7 @@
       var b = document.createElement('button');
       b.className = 'key'; b.textContent = p.name; b.dataset.id = p.id;
       b.title = p.name + (i < 9 && !p.trial ? ' (' + (i + 1) + ')' : '');
-      b.addEventListener('click', function () { selectPreset(p.id); });
+      b.addEventListener('click', function () { onPresetClick(p.id); });
       into.appendChild(b);
     }
     MAIN.forEach(function (p, i) { make(p, i, el); });
@@ -549,15 +610,56 @@
     renderPresets();
   }
 
+  function refreshPresets() {
+    document.querySelectorAll('#presets .key[data-id], #trialPresets .key').forEach(function (b) {
+      var i = state.stack.indexOf(b.dataset.id);
+      b.setAttribute('aria-pressed', String(i > -1));
+      if (state.stacking && i > -1) b.dataset.order = String(i + 1); else delete b.dataset.order;
+    });
+  }
+
+  // Choose one animation (this also ends any stack).
   function selectPreset(id) {
     state.preset = id;
+    state.stack = [id];
     if (MAIN.length > PRESET_SLOTS && MAIN.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1 && !presetsOpen) {
       presetsOpen = true; renderPresets();      // never leave the chosen animation hidden
     }
-    document.querySelectorAll('#presets .key[data-id], #trialPresets .key').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(b.dataset.id === id));
-    });
+    refreshPresets();
     buildControls();
+  }
+
+  // A click on an animation: picks it, or with Stacking on adds it to / removes it from the stack.
+  function onPresetClick(id) {
+    if (!state.stacking) { selectPreset(id); return; }
+    var i = state.stack.indexOf(id);
+    if (i > -1) {
+      if (state.stack.length === 1) return;
+      state.stack.splice(i, 1);
+    } else if (state.stack.length < STACK_MAX) {
+      state.stack.push(id);
+    } else {
+      notify('Stacking holds up to ' + STACK_MAX + ' animations');
+      return;
+    }
+    state.preset = state.stack[0];
+    refreshPresets();
+    buildControls();
+  }
+
+  var stackRow = null;
+  function setStacking(on) {
+    state.stacking = on;
+    if (!on) { state.stack = [state.stack[0]]; state.preset = state.stack[0]; }
+    if (stackRow) stackRow.repaint();
+    $('#stackHint').hidden = !on;
+    refreshPresets();
+    buildControls();
+  }
+  function buildStacking() {
+    stackRow = segRow('Stacking', [{ v: 'off', label: 'Off' }, { v: 'on', label: 'On' }],
+      function () { return state.stacking ? 'on' : 'off'; }, function (v) { setStacking(v === 'on'); });
+    $('#stackControls').appendChild(stackRow);
   }
 
   // The shape of every mark on the grid.
@@ -709,7 +811,7 @@
     }
     if (e.altKey) return;
     if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); playPressed(); return; }
-    if (/^[1-9]$/.test(e.key) && PRESETS[+e.key - 1]) { selectPreset(PRESETS[+e.key - 1].id); return; }
+    if (/^[1-9]$/.test(e.key) && PRESETS[+e.key - 1]) { onPresetClick(PRESETS[+e.key - 1].id); return; }
     var t = TOOLS.find(function (x) { return x.key === e.key.toLowerCase(); });
     if (t && (FLAGS.extraTools || !t.extra)) setTool(t.id);
   });
@@ -893,12 +995,21 @@
     if (!data || !data.runs || !data.w || !data.h) return null;
 
     var squash = function (str) { return str.replace(/\s+/g, ''); };
-    var fa = text.indexOf('var presetFn='), fb = text.indexOf(';\nvar DATA=', fa), preset = null;
+    var fa = text.indexOf('var presetFn='), fb = text.indexOf(';\nvar DATA=', fa), preset = null, stack = null;
     if (fa > -1 && fb > fa) {
-      var fn = squash(text.slice(fa + 13, fb));
-      preset = PRESETS.find(function (p) { return squash(p.fn.toString()) === fn; }) || null;
+      var raw = text.slice(fa + 13, fb);
+      if (raw.indexOf('/*STACK:') === 0) {
+        // a stacked export: the layers are listed in the leading comment
+        try {
+          var meta = JSON.parse(raw.slice(8, raw.indexOf('*/')));
+          if (meta.every(function (l) { return presetById(l.id); })) stack = meta;
+        } catch (err) { stack = null; }
+      } else {
+        var fn = squash(raw);
+        preset = PRESETS.find(function (p) { return squash(p.fn.toString()) === fn; }) || null;
+      }
     }
-    return { data: data, preset: preset };
+    return { data: data, preset: preset, stack: stack };
   }
 
   function importHtml(text, name) {
@@ -923,7 +1034,14 @@
       if (d.color.cycle !== undefined) state.color.cycle = d.color.cycle;
       repaintColor();
     }
-    if (parsed.preset) {
+    if (parsed.stack) {
+      parsed.stack.forEach(function (l) { Object.assign(state.values[l.id], l.v); });
+      state.stack = parsed.stack.map(function (l) { return l.id; });
+      state.preset = state.stack[0];
+      state.stacking = state.stack.length > 1;
+      stackRow.repaint(); $('#stackHint').hidden = !state.stacking;
+      refreshPresets(); buildControls();
+    } else if (parsed.preset) {
       Object.assign(state.values[parsed.preset.id], d.p);
       selectPreset(parsed.preset.id);
     }
@@ -932,7 +1050,7 @@
     dirty = true;
     updateInfo();
     setFileLoaded(true);
-    notify(parsed.preset ? 'Opened ' + (name || parsed.preset.name) : 'Opened drawing (animation not recognised)');
+    notify(parsed.preset || parsed.stack ? 'Opened ' + (name || (parsed.preset ? parsed.preset.name : 'stack')) : 'Opened drawing (animation not recognised)');
   }
 
   var FILE_OPEN = '<path d="M2.5 4.5h4l1.5 1.5h5.5v6.5h-11z"/>', FILE_CLOSE = '<path d="M4 4l8 8M12 4l-8 8"/>';
@@ -961,6 +1079,7 @@
     cells = new Set();
     setArt(1920, 1080);                     // also clears history
     repaintShapes(); repaintColor();
+    setStacking(false);
     selectPreset(PRESETS[0].id);
     drawIdle();
     dirty = true;
@@ -1427,6 +1546,7 @@
 
   buildTools();
   buildPresets();
+  buildStacking();
   buildColor();
   if (FLAGS.interaction) buildInteraction();
   if (FLAGS.dotShapes) buildDotShapes();

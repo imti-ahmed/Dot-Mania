@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.30', date: '2026-11-07', items: [
+    'New Stacking switch: turn it on to run up to 3 animations together. The first one you click is the base, and each next one shapes it.'
+  ] },
   { v: '0.0.29', date: '2026-11-07', items: [
     'New animation: Dissolve, dots fade in and out in random order.'
   ] },
