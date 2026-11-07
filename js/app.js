@@ -122,7 +122,7 @@
 
   // Eight colour presets with fixed palettes. A swatch or the custom picker switches to 'solid'.
   var COLOR_MODES = [
-    { id: 'white', name: 'White' },
+    { id: 'white', name: 'White', flag: 'whiteColor' },
     { id: 'rainbow', name: 'Rainbow' },
     { id: 'glitter', name: 'Glitter' },
     { id: 'fire', name: 'Fire' },
@@ -130,7 +130,20 @@
     { id: 'sunset', name: 'Sunset' },
     { id: 'neon', name: 'Neon' },
     { id: 'aurora', name: 'Aurora' }
-  ];
+  ].filter(function (c) { return !c.flag || FLAGS[c.flag]; });
+
+  function hslHex(h, s, l) {
+    s /= 100; l /= 100;
+    var k = function (n) { return (n + h / 30) % 12; }, q = s * Math.min(l, 1 - l);
+    var f = function (n) { return l - q * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); };
+    return '#' + [f(0), f(8), f(4)].map(function (x) { return Math.round(x * 255).toString(16).padStart(2, '0'); }).join('');
+  }
+  // A random look for the colour: one of the colour presets, or a solid colour of a random hue.
+  function randomColor() {
+    if (Math.random() < 0.6) state.color.mode = COLOR_MODES[Math.floor(Math.random() * COLOR_MODES.length)].id;
+    else { state.color.mode = 'solid'; state.color.hex = hslHex(Math.floor(Math.random() * 360), 85, 60); }
+    repaintColor();
+  }
   function previewColor() { return state.color.mode === 'solid' ? state.color.hex : '#f6efe3'; }
   /* ---------- Stacking ----------
    * With Stacking on, up to 3 animations run together. The first is the base; each later one shapes it:
@@ -496,6 +509,11 @@
       b.addEventListener('click', function () { m.mode = c.id; paint(); });
       grid.appendChild(b);
     });
+    var rb = document.createElement('button');
+    rb.className = 'key'; rb.title = 'Randomize color'; rb.setAttribute('aria-label', 'Randomize color');
+    rb.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.5h8A2.5 2.5 0 0 1 14.5 4v8a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5zM5 4a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2zM8 7a1 1 0 100 2 1 1 0 000-2zm-3 3a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z"/></svg>';
+    rb.addEventListener('click', randomColor);
+    grid.appendChild(rb);
     el.appendChild(grid);
 
     var row = document.createElement('div');
@@ -531,7 +549,7 @@
 
     function paint() {
       var solid = m.mode === 'solid';
-      grid.querySelectorAll('.key').forEach(function (k) { k.setAttribute('aria-pressed', String(k.dataset.mode === m.mode)); });
+      grid.querySelectorAll('.key[data-mode]').forEach(function (k) { k.setAttribute('aria-pressed', String(k.dataset.mode === m.mode)); });
       box.querySelectorAll('.swatch:not(.custom)').forEach(function (s) {
         s.setAttribute('aria-pressed', String(solid && s.dataset.color === m.hex));
       });
@@ -771,9 +789,7 @@
     var base = state.values[ids[0]];            // Speed, Size and Glow are the base animation's
     base.speed = rnd(0.6, 1.6, 0.05); base.size = rnd(0.5, 1, 0.01); base.glow = rnd(0.2, 0.9, 0.01);
 
-    if (Math.random() < 0.6) state.color.mode = COLOR_MODES[Math.floor(Math.random() * COLOR_MODES.length)].id;
-    else { state.color.mode = 'solid'; state.color.hex = SWATCHES[Math.floor(Math.random() * SWATCHES.length)]; }
-    repaintColor();
+    randomColor();
 
     state.stack = ids; state.preset = ids[0];
     if (MAIN.length > PRESET_SLOTS && !presetsOpen && ids.some(function (id) { return MAIN.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1; })) {

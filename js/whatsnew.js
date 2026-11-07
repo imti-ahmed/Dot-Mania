@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.48', date: '2026-11-07', items: [
+    'Color has its own Randomize button, and the White preset has been retired.'
+  ] },
   { v: '0.0.47', date: '2026-11-07', items: [
     'The status bar now shows a real view count.'
   ] },
