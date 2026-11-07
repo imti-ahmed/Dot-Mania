@@ -11,7 +11,7 @@
   to open this page. There is only one copy of the app. Needs the app served over http.
 -->
 <script>
-  fetch('../index.html').then(function (r) { return r.text(); }).then(function (html) {
+  fetch('../index.html', { cache: 'no-cache' }).then(function (r) { return r.text(); }).then(function (html) {
     html = html.replace('<head>', '<head><base href="../">');
     document.open();
     document.write(html);

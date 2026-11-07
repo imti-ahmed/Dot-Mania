@@ -41,6 +41,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 - Versioning: stay on `0.0.x` (bump patch per entry). Move to `1.0.0` only when the user declares the public release.
 - Keep entries short: one table row with version, date, commit hash and a one-line summary. Newest on top.
 - Bump `version` in `js/site.js` with every entry (status bar and About show it).
+- Set the same version as `?v=<version>` on every css/js link in `index.html` (cache-busting: browsers keep old files otherwise, which shows up as new features missing or looking broken).
 - `js/whatsnew.js` is separate: add an entry only for changes users can see, in plain language. Do not mirror the build log.
 
 ### Flags
