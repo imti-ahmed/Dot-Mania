@@ -812,7 +812,7 @@
   // Version, views and GitHub stars. A value that is not available (no counter set up, offline)
   // shows a dash.
   function buildStatus() {
-    var site = window.SITE || {}, U = window.UPDATES || [];
+    var site = window.SITE || {};
     // n = 1 reads "1 Star" / "1 View"
     function put(id, text, n) {
       var el = $(id), unit = el.querySelector('.unit');
@@ -820,7 +820,7 @@
       if (unit) unit.textContent = ' ' + unit.dataset.word + (n === 1 ? '' : 's');
     }
     document.querySelectorAll('.stat .unit').forEach(function (u) { u.dataset.word = u.textContent.replace(/s$/, ''); });
-    put('#statVersion', U.length ? 'v' + U[0].v : '-');
+    put('#statVersion', site.version ? 'v' + site.version : '-');
     put('#statViews', '-', 0);
     put('#statStars', '-', 0);
     if (site.repo) $('#statStars').href = 'https://github.com/' + site.repo;
@@ -975,6 +975,18 @@
 
   var view = 'canvas';
   var VIEWS = ['canvas', 'library', 'about', 'updates', 'guide'];
+  var SLUGS = { canvas: '', library: 'library', about: 'about', updates: 'whats-new', guide: 'guide' };
+  // Where the app lives (works at the site root or in a sub-folder, and from the /about etc. entry pages).
+  var ROOT = new URL('.', document.baseURI).pathname;
+  function viewFromPath() {
+    var slug = location.pathname.slice(ROOT.length).replace(/index\.html$/, '').replace(/\/+$/, '');
+    return VIEWS.find(function (v) { return SLUGS[v] === slug; }) || 'canvas';
+  }
+  function goTo(id) {
+    var url = ROOT + SLUGS[id];
+    if (location.pathname !== url) { try { history.pushState(null, '', url); } catch (e) {} }
+    showView(id);
+  }
   function showView(id) {
     if (VIEWS.indexOf(id) < 0) id = 'canvas';
     view = id;
@@ -1057,7 +1069,7 @@
     grid.innerHTML = '';
     libItems = [];
     (window.LIBRARY || []).forEach(function (t) {
-      var url = 'library/' + t.file, card = document.createElement('article');
+      var url = ROOT + 'library/' + t.file, card = document.createElement('article');
       card.className = 'lib-card';
       card.innerHTML =
         '<div class="lib-preview"></div>' +
@@ -1076,7 +1088,7 @@
       card.querySelector('[data-act="load"]').addEventListener('click', function () {
         notify('Loading ' + t.name + '…', { busy: true });
         fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (text) {
-          showView('canvas');
+          goTo('canvas');
           importHtml(text, t.name);
         }).catch(function () { notify('Could not load. Open the app from a local server'); });
       });
@@ -1095,14 +1107,16 @@
   function buildPages() {
     setupPanelTabs();
     buildLibrary();
-    var U = window.UPDATES || [];
-    $('#aboutVersion').textContent = U.length ? 'Version ' + U[0].v : '';
+    var U = window.WHATS_NEW || [], site = window.SITE || {};
+    $('#aboutVersion').textContent = site.version ? 'Version ' + site.version : '';
     $('#updatesTable').innerHTML = '<tr><th>Version</th><th>Date</th><th>Changes</th></tr>' + U.map(function (u) {
-      return '<tr><td>' + u.v + '</td><td>' + u.date + '</td><td>' + u.note.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</td></tr>';
+      var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+      return '<tr><td>' + esc(u.v) + '</td><td>' + esc(u.date) + '</td><td><ul>' + u.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></td></tr>';
     }).join('');
     document.querySelectorAll('#tabs .navbtn').forEach(function (b) {
-      b.addEventListener('click', function () { showView(b.dataset.view); });
+      b.addEventListener('click', function () { goTo(b.dataset.view); });
     });
+    window.addEventListener('popstate', function () { showView(viewFromPath()); });
   }
 
   /* ---------- Interaction ---------- */
@@ -1400,6 +1414,6 @@
   setPlaying(true);
   new ResizeObserver(fitStage).observe(area);
   layout();
-  showView(location.hash.slice(1));
+  showView(viewFromPath());
   requestAnimationFrame(frame);
 })();

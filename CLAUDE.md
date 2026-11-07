@@ -5,7 +5,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 ## Stack
 - Static app: `index.html`, `css/style.css`, plain `<script>` tags in `js/` (no modules, no build step, no dependencies).
 - Script load order matters: `flags` → `presets` → `shapes` → `engine` → `image` → `export` → `gif` → `app`.
-- Run: open `index.html`, or `python -m http.server 8000` and visit http://localhost:8000. Add `?flags=all` to enable hidden features.
+- Pages live at /library, /about, /whats-new, /guide (served from folders of the same names), so use a server for those. Run: open `index.html`, or `python -m http.server 8000` and visit http://localhost:8000. Add `?flags=all` to enable hidden features.
 
 ## Structure
 | File | Role |
@@ -21,7 +21,8 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 | `library/*.html` | Library templates, each one a Dot Mania Code File export |
 | `js/library.js` | Library manifest (add a row per template file) |
 | `js/site.js` | Status bar settings: GitHub repo for stars, views counter URL |
-| `js/updates.js` | Data for the What's New page (mirrors `Buildlog.md`) |
+| `js/whatsnew.js` | What's New page content: plain language for users, NOT a copy of the build log |
+| `library/index.html`, `about/`, `whats-new/`, `guide/` | Entry pages so each page has its own address (/library, /about, /whats-new, /guide); each loads the one real app |
 
 ## Rules
 
@@ -37,7 +38,8 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 - Right after each commit, add an entry to `Buildlog.md`, then commit that too.
 - Versioning: stay on `0.0.x` (bump patch per entry). Move to `1.0.0` only when the user declares the public release.
 - Keep entries short: one table row with version, date, commit hash and a one-line summary. Newest on top.
-- Mirror every new entry in `js/updates.js` (feeds the What's New page).
+- Bump `version` in `js/site.js` with every entry (status bar and About show it).
+- `js/whatsnew.js` is separate: add an entry only for changes users can see, in plain language. Do not mirror the build log.
 
 ### Flags
 - Do not delete cut features. Put them behind `js/flags.js`.

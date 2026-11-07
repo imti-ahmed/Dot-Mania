@@ -790,3 +790,5 @@ a.stat:hover { color: var(--text); }
 
 .row.nolabel { grid-template-columns: 1fr; padding: 0; }
 .row.nolabel .wide { grid-column: 1; }
+
+.whatsnew ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
