@@ -3,6 +3,7 @@
  * `commit` is a short hash, or '' for the entry that is still being written.
  */
 window.UPDATES = [
+  { v: '0.0.12', date: '2026-11-07', commit: '65459e9', note: 'Export tab split into Background, Code (HTML file, Copy for LLM) and Media (GIF, new PNG, new SVG)' },
   { v: '0.0.11', date: '2026-11-07', commit: 'd4b7a14', note: 'Left bar groups (tools, Invert/Clear, size) separated by the same carved dividers as the right panel' },
   { v: '0.0.10', date: '2026-11-07', commit: 'b4fbb98', note: 'Right panel split into Edit and Export tabs, separated by a carved divider' },
   { v: '0.0.9', date: '2026-11-07', commit: '391e2db', note: 'Right panel divider above Play is full width, grey groove (carved look)' },
