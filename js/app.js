@@ -132,16 +132,12 @@
     { id: 'aurora', name: 'Aurora' }
   ].filter(function (c) { return !c.flag || FLAGS[c.flag]; });
 
-  function hslHex(h, s, l) {
-    s /= 100; l /= 100;
-    var k = function (n) { return (n + h / 30) % 12; }, q = s * Math.min(l, 1 - l);
-    var f = function (n) { return l - q * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); };
-    return '#' + [f(0), f(8), f(4)].map(function (x) { return Math.round(x * 255).toString(16).padStart(2, '0'); }).join('');
-  }
-  // A random look for the colour: one of the colour presets, or a solid colour of a random hue.
+  // A random pick from the colour options we offer: every colour preset and every solid swatch, equally likely
+  // (so solids come up about as often as the gradient-style presets).
   function randomColor() {
-    if (Math.random() < 0.6) state.color.mode = COLOR_MODES[Math.floor(Math.random() * COLOR_MODES.length)].id;
-    else { state.color.mode = 'solid'; state.color.hex = hslHex(Math.floor(Math.random() * 360), 85, 60); }
+    var n = Math.floor(Math.random() * (COLOR_MODES.length + SWATCHES.length));
+    if (n < COLOR_MODES.length) state.color.mode = COLOR_MODES[n].id;
+    else { state.color.mode = 'solid'; state.color.hex = SWATCHES[n - COLOR_MODES.length]; }
     repaintColor();
   }
   function previewColor() { return state.color.mode === 'solid' ? state.color.hex : '#f6efe3'; }
