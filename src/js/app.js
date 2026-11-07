@@ -1494,7 +1494,7 @@
     view = id;
     document.body.dataset.view = id;           // the tool is full width, every other page sits in the narrower site container
     document.querySelectorAll('[data-page]').forEach(function (el) { el.hidden = el.dataset.page !== id; });
-    document.querySelectorAll('#tabs .navbtn').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === id)); });
+    document.querySelectorAll('#tabs button.navbtn').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === id)); });
     if (id === 'canvas') fitStage();
     if (id === 'about' && !aboutPreviewLoaded) { aboutPreviewLoaded = true; loadAboutPreview(); }
     if (id === 'library' || id === 'home' || id === 'about') libStart();
@@ -1622,7 +1622,7 @@
       var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
       return '<tr><td>' + esc(u.v) + '</td><td>' + esc(u.date) + '</td><td><ul>' + u.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></td></tr>';
     }).join('');
-    document.querySelectorAll('#tabs .navbtn').forEach(function (b) {
+    document.querySelectorAll('#tabs button.navbtn').forEach(function (b) {
       b.addEventListener('click', function () { goTo(b.dataset.view); });
     });
     window.addEventListener('popstate', function () { showView(viewFromPath()); });
