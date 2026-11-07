@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.23.4', date: '2026-11-07', items: [
+    'The welcome popup now shows every time you open Dot Mania.'
+  ] },
   { v: '0.23.3', date: '2026-11-07', items: [
     'New Submit Feedback tab in the top bar takes you straight to the GitHub feedback page.'
   ] },
