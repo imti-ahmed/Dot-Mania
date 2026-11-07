@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Dot Mania</title>
+</head>
+<body style="margin:0;background:#0e0e0e">
+<!--
+  Admin entry (/idiot). It loads the normal app (../index.html) unchanged, with the admin tools switched on,
+  so there is only one copy of the app to maintain. Needs the app served over http (not opened as a file).
+-->
+<script>
+  fetch('../index.html').then(function (r) { return r.text(); }).then(function (html) {
+    html = html.replace('<head>', '<head><base href="../"><script>window.ADMIN = true;<\/script>');
+    document.open();
+    document.write(html);
+    document.close();
+  }).catch(function () {
+    document.body.textContent = 'Open this page from a local server.';
+  });
+</script>
+</body>
+</html>

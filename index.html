@@ -57,6 +57,11 @@
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8h5.8l.6-8M7 7v3.5M9 7v3.5"/></svg>
           </button>
         </div>
+        <div class="adminstrip" id="adminGroup" role="group" aria-label="Admin" hidden>
+          <button class="key" id="adminAddBtn" title="Add a file to the Library" aria-label="Add a file to the Library">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5h4l1.5 1.5h5.5v6.5h-11z"/><path d="M8 7.8v3.4M6.3 9.5h3.4"/></svg>
+          </button>
+        </div>
         <div class="sizes" role="group" aria-label="Canvas size">
           <button class="key" data-size="1920x1080" aria-pressed="true" title="1920 x 1080" aria-label="Landscape canvas">
             <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="1.5" width="20" height="11.25" rx="1.5"/></svg>
@@ -179,6 +184,28 @@
 
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
+  <input type="file" id="adminFile" accept=".html,.htm,text/html" hidden>
+
+  <!-- Admin only (/idiot): add a template to the Library -->
+  <dialog class="dialog" id="adminDialog" aria-labelledby="adminTitle">
+    <h2 class="dialog-title" id="adminTitle">Add to Library</h2>
+    <label class="dialog-field">
+      <span>Name</span>
+      <input id="adminName" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Heartbeats">
+    </label>
+    <div class="dialog-field">
+      <span>File</span>
+      <div class="dialog-file">
+        <button class="key" id="adminPick" type="button">Choose file</button>
+        <span id="adminFileName">No file chosen</span>
+      </div>
+    </div>
+    <p class="dialog-msg" id="adminMsg" role="alert"></p>
+    <div class="dialog-actions">
+      <button class="key" id="adminCancel" type="button">Cancel</button>
+      <button class="key" id="adminAdd" type="button">Add to Library</button>
+    </div>
+  </dialog>
 
   <script src="js/flags.js"></script>
   <script src="js/presets.js"></script>
