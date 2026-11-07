@@ -19,6 +19,8 @@
     imageUpload: true,          // Image group: upload a picture (or drop one on the canvas) and animate it
     exportCodeFile: true,       // Export: "Code File" (ready-to-open .html with the component)
     exportPng: true,            // Export > Media: "PNG" (the frame on screen, at full size)
+    exportWebm: true,           // Export > Media: "WebM" video of the full loop (1-2 cycles, loops seamlessly)
+    exportMp4: true,            // Export > Media: "MP4" video of the full loop (needs a browser that can record MP4)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
 
@@ -36,7 +38,6 @@
     exportGridOption: false,    // Export: show / hide the empty grid
     exportCopyEmbed: false,     // Export: "Copy embed code" (just the component snippet, no instructions)
     exportDownloadJs: false,    // Export: "Download .js" (the component script on its own)
-    videoExport: false,         // Export: "Record video" (.mp4, or .webm where mp4 is unsupported) + Length slider
     statusHeader: false         // the "Preset / Looping" title bar above the panel
   };
 

@@ -1085,7 +1085,7 @@
 
   /* ---------- Export (lives in the right panel) ---------- */
 
-  var exportOpts = { bg: 'dark', grid: true, seconds: 10 };
+  var exportOpts = { bg: 'dark', grid: true };
   // GIF tuning: 30 fps, small tolerance (a bigger one makes fades step instead of glide), and a palette sized
   // to the content: single-colour looks need few colours, multi-colour modes need more.
   var GIF_MAX_SECONDS = 8, GIF_MAX_SIDE = 480, GIF_FPS = 30, GIF_TOLERANCE = 12, GIF_COLORS_SIMPLE = 31, GIF_COLORS_RICH = 63;
@@ -1111,7 +1111,7 @@
 
   function setExportEnabled(on) {
     document.querySelectorAll('[data-export]').forEach(function (b) {
-      b.disabled = !on || (gifBusy && b.id === 'exportGif') || (videoBusy && b.id === 'exportVideo');
+      b.disabled = !on || (gifBusy && b.id === 'exportGif') || (videoBusy && !!b.dataset.video) || !!b.dataset.unsupported;
     });
   }
 
@@ -1151,25 +1151,35 @@
     });
   }
 
-  // Video (flag): records the animation in real time to .mp4 (or .webm where mp4 isn't supported). Always a dark background.
-  var VIDEO_TYPES = ['video/mp4;codecs=avc1.640028', 'video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'];
-  function recordVideo() {
+  // Video (WebM and MP4): records the animation on a canvas as it plays, so it takes as long as the clip.
+  // The clip covers whole cycles only (1, or 2 when one cycle is under 3 s) so it loops seamlessly.
+  // Always a dark background: the browser recorder can't keep transparency.
+  var VIDEO_KINDS = {
+    webm: { label: 'Webm', types: ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'] },
+    mp4: { label: 'Mp4', types: ['video/mp4;codecs=avc1.640028', 'video/mp4;codecs=avc1', 'video/mp4'] }
+  };
+  function videoMime(kind) {
+    return window.MediaRecorder && VIDEO_KINDS[kind].types.find(function (t) { return MediaRecorder.isTypeSupported(t); });
+  }
+  function recordVideo(kind) {
     if (videoBusy || !cells.size) return;
-    var mime = window.MediaRecorder && VIDEO_TYPES.find(function (t) { return MediaRecorder.isTypeSupported(t); });
-    if (!mime) { console.warn('This browser cannot record video.'); return; }
+    var mime = videoMime(kind);
+    if (!mime) { toast('This browser cannot record ' + kind.toUpperCase()); return; }
+
+    var preset = currentPreset(), p = Object.assign({}, state.values[preset.id]), color = Object.assign({}, state.color), T = preset.period(p);
+    color.steps = Math.max(2, Math.round(T * 6));
+    var dur = T * (T < 3 ? 2 : 1), g = exportGeo(), vlist = E.buildList(cellArray());
 
     var vc = document.createElement('canvas');
     vc.width = state.art.w; vc.height = state.art.h;
-    var vx = vc.getContext('2d'), g = exportGeo(), secs = exportOpts.seconds, layer = null;
+    var vx = vc.getContext('2d'), layer = null;
     if (exportOpts.grid) {
       layer = document.createElement('canvas');
       layer.width = state.art.w; layer.height = state.art.h;
       E.drawIdle(layer.getContext('2d'), cols, rows, g, GRID_VIS);
     }
-    var preset = currentPreset(), vlist = E.buildList(cellArray());
-    var p = Object.assign({}, state.values[preset.id]), color = Object.assign({}, state.color), T = preset.period(p);
-    color.steps = Math.max(2, Math.round(T * 6));
 
+    var labelEl = $('#export' + VIDEO_KINDS[kind].label + ' span'), original = labelEl.textContent;
     var rec = new MediaRecorder(vc.captureStream(30), { mimeType: mime, videoBitsPerSecond: 12000000 });
     var chunks = [], t0;
     function draw(t) {
@@ -1181,13 +1191,15 @@
     rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
     rec.onstop = function () {
       videoBusy = false;
+      labelEl.textContent = original;
       setExportEnabled(cells.size > 0);
-      download('dot-mania.' + (mime.indexOf('mp4') > -1 ? 'mp4' : 'webm'), new Blob(chunks, { type: mime.split(';')[0] }), mime);
+      download('dot-mania.' + kind, new Blob(chunks, { type: mime.split(';')[0] }), mime);
     };
     function step(now) {
       var t = (now - t0) / 1000;
-      if (t >= secs) { rec.stop(); return; }
+      if (t >= dur) { rec.stop(); return; }
       draw(t);
+      labelEl.textContent = Math.round(t / dur * 100) + '%';
       requestAnimationFrame(step);
     }
     videoBusy = true;
@@ -1275,14 +1287,11 @@
     if (FLAGS.exportPng) media.push(key('exportPng', 'PNG', 'Download the frame on screen as a PNG'));
     if (FLAGS.exportSvg) media.push(key('exportSvg', 'SVG', 'Download the frame on screen as a scalable vector'));
     var mel = $('#exportMedia');
-    if (FLAGS.videoExport) {
-      mel.appendChild(sliderRow({
-        label: 'Length', min: 3, max: 30, step: 1, value: exportOpts.seconds,
-        fmt: function (v) { return v + 's'; }, onChange: function (v) { exportOpts.seconds = v; }
-      }));
-    }
     var mhtml = '<div class="pair" style="grid-template-columns:repeat(' + Math.max(1, media.length) + ',1fr)">' + media.join('') + '</div>';
-    if (FLAGS.videoExport) mhtml += '<div class="stack">' + key('exportVideo', 'Record video (.mp4)', 'Record the animation to a video (real time)') + '</div>';
+    var vids = [];
+    if (FLAGS.exportWebm) vids.push(key('exportWebm', 'WebM', 'Download a video of the full loop (1-2 cycles, dark background)').replace('data-export', 'data-export data-video="webm"'));
+    if (FLAGS.exportMp4) vids.push(key('exportMp4', 'MP4', 'Download a video of the full loop (1-2 cycles, dark background)').replace('data-export', 'data-export data-video="mp4"'));
+    if (vids.length) mhtml += '<div class="pair" style="grid-template-columns:repeat(' + vids.length + ',1fr);margin-top:6px">' + vids.join('') + '</div>';
     var wrap = document.createElement('div');
     wrap.innerHTML = mhtml;
     while (wrap.firstChild) mel.appendChild(wrap.firstChild);
@@ -1294,7 +1303,12 @@
     on('#exportLlm', function () { copyText(buildExport().llm, $('#exportLlm span'), 'Copy for LLM'); });
     on('#exportEmbed', function () { copyText(buildExport().snippet, $('#exportEmbed span'), 'Copy embed code'); });
     on('#exportJs', function () { download('dot-mania.js', buildExport().script, 'text/javascript'); });
-    on('#exportVideo', recordVideo);
+    on('#exportWebm', function () { recordVideo('webm'); });
+    on('#exportMp4', function () { recordVideo('mp4'); });
+    ['webm', 'mp4'].forEach(function (k) {
+      var b = $('#export' + VIDEO_KINDS[k].label);
+      if (b && !videoMime(k)) { b.dataset.unsupported = '1'; b.title = 'This browser cannot record ' + k.toUpperCase(); }
+    });
     setExportEnabled(cells.size > 0);
   }
 
