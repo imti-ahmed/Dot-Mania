@@ -207,7 +207,8 @@
     // While drawing, show every cell at full strength so you can see exactly what you've painted.
     var vals = state.values[preset.id];
     state.color.steps = Math.max(2, Math.round(preset.period(vals) * 6));
-    E.drawCells(ctx, list, preset.fn, vals, state.color, tl.t, tl.ph, geo(), !!drag);
+    // Paused (the default) shows the drawing as it is, at full strength. Play brings the animation in.
+    E.drawCells(ctx, list, preset.fn, vals, state.color, tl.t, tl.ph, geo(), !!drag || (tl.mode === 'auto' && !state.playing));
 
     // live preview for line / rect / ellipse
     if (drag && drag.shapeTool) {
@@ -361,6 +362,18 @@
     }
   }
 
+  // A straight line from where the stroke began to the pointer, snapped to flat, upright or 45 degrees.
+  function snapLine(a, p) {
+    var dx = p.col - a.col, dy = p.row - a.row, adx = Math.abs(dx), ady = Math.abs(dy);
+    if (adx > 2 * ady) dy = 0;
+    else if (ady > 2 * adx) dx = 0;
+    else { var m = Math.max(adx, ady); dx = Math.sign(dx) * m; dy = Math.sign(dy) * m; }
+    return {
+      col: Math.max(0, Math.min(cols - 1, a.col + dx)),
+      row: Math.max(0, Math.min(rows - 1, a.row + dy))
+    };
+  }
+
   // Shift held: lines snap to 45deg steps, rectangles / ellipses stay square.
   function constrain(d, p, shift) {
     if (!shift) return p;
@@ -376,6 +389,56 @@
       col: Math.max(0, Math.min(cols - 1, d.start.col + dx)),
       row: Math.max(0, Math.min(rows - 1, d.start.row + dy))
     };
+  }
+
+  // The pointer over the canvas: the square one is final. The others stay available with the pointerOptions flag (a picker in the Edit tab) or ?cursor=<id>.
+  function outlined(shape) {       // white line with a soft dark outline so it shows on any colour
+    return '<g fill="none" stroke="#000" stroke-opacity=".65" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">' + shape + '</g>' +
+           '<g fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + shape + '</g>';
+  }
+  var CDOT = '<circle cx="16" cy="16" r="2.4" fill="#000" fill-opacity=".65"/><circle cx="16" cy="16" r="1.6" fill="#fff"/>';
+  var CURSOR_LIST = [
+    { id: 'ring',    label: 'Ring',          hx: 16, hy: 16, svg: outlined('<circle cx="16" cy="16" r="9"/>') + CDOT },
+    { id: 'dot',     label: 'Dot',           hx: 16, hy: 16, svg: '<circle cx="16" cy="16" r="5" fill="#000" fill-opacity=".65"/><circle cx="16" cy="16" r="3.6" fill="#fff"/><circle cx="16" cy="16" r="1.4" fill="#ef282d"/>' },
+    { id: 'plus',    label: 'Plus',          hx: 16, hy: 16, svg: outlined('<path d="M16 5v7M16 20v7M5 16h7M20 16h7"/>') },
+    { id: 'fine',    label: 'Fine cross',    hx: 16, hy: 16, svg: outlined('<path d="M16 3v10M16 19v10M3 16h10M19 16h10"/>') + CDOT },
+    { id: 'target',  label: 'Target',        hx: 16, hy: 16, svg: outlined('<circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="5"/>') + CDOT },
+    { id: 'square',  label: 'Square',        hx: 16, hy: 16, svg: outlined('<rect x="8" y="8" width="16" height="16" rx="2"/>') + CDOT },
+    { id: 'frame',   label: 'Corners',       hx: 16, hy: 16, svg: outlined('<path d="M6 12V6h6M20 6h6v6M26 20v6h-6M12 26H6v-6"/>') + CDOT },
+    { id: 'diamond', label: 'Diamond',       hx: 16, hy: 16, svg: outlined('<path d="M16 5l11 11-11 11L5 16z"/>') + CDOT },
+    { id: 'pen',     label: 'Pencil',        hx: 5,  hy: 27, svg: '<path d="M5 27l1.6-5.6 14-14a2.2 2.2 0 013.1 0l1.9 1.9a2.2 2.2 0 010 3.1l-14 14z" fill="#fff" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 27l1.6-5.6 4 4z" fill="#ef282d" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/>' },
+    { id: 'crosshair', label: 'Classic',     hx: 16, hy: 16, svg: outlined('<path d="M16 4v24M4 16h24"/>'), native: true }
+  ];
+  function setCursor(id, remember) {
+    var c = CURSOR_LIST.find(function (x) { return x.id === id; }) || CURSOR_LIST[0];
+    if (c.native) cv.style.cursor = '';                                    // the browser's own crosshair
+    else {
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' + c.svg + '</svg>';
+      cv.style.cursor = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '") ' + c.hx + ' ' + c.hy + ', crosshair';
+    }
+    document.querySelectorAll('#pointerControls .key').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.cursor === c.id)); });
+    if (remember) { try { localStorage.setItem('dm-cursor', c.id); } catch (e) {} }
+    return c.id;
+  }
+  function currentCursorId() {
+    var fromUrl = new URLSearchParams(location.search).get('cursor'), saved = null;
+    try { saved = localStorage.getItem('dm-cursor'); } catch (e) {}
+    if (!FLAGS.pointerOptions) return fromUrl || 'square';      // final choice: the square pointer (?cursor= still lets you try another)
+    return fromUrl || saved || 'square';
+  }
+  setCursor(currentCursorId(), false);
+  function buildPointer() {
+    var grid = document.createElement('div');
+    grid.className = 'keygrid';
+    CURSOR_LIST.forEach(function (c) {
+      var b = document.createElement('button');
+      b.className = 'key'; b.dataset.cursor = c.id; b.title = c.label; b.setAttribute('aria-label', c.label + ' pointer');
+      b.innerHTML = '<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true">' + c.svg + '</svg>';
+      b.addEventListener('click', function () { setCursor(c.id, true); });
+      grid.appendChild(b);
+    });
+    $('#pointerControls').appendChild(grid);
+    setCursor(currentCursorId(), false);                                   // sets the pressed one
   }
 
   cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
@@ -401,6 +464,16 @@
     hover = p;
     if (!drag) return;
     if (drag.shapeTool) { drag.cur = constrain(drag, p, e.shiftKey); return; }
+    if (e.shiftKey) {
+      // Shift: the stroke so far becomes one straight line from where it began (move the pointer to aim it)
+      var end = snapLine(drag.start, p);
+      cells = new Set(drag.before);
+      lineCells(drag.start, end).forEach(function (q) { stamp(q[0], q[1], !drag.erase); });
+      dirty = true;
+      drag.last = end;
+      updateInfo();
+      return;
+    }
     lineCells(drag.last, p).forEach(function (q) { stamp(q[0], q[1], !drag.erase); });
     drag.last = p;
     updateInfo();
@@ -424,7 +497,7 @@
   };
   var TOOLS = [
     { id: 'pencil',  name: 'Pen',    key: 'p', icon: ICON('<path d="M2.5 13.5l.8-3.2 7.2-7.2 2.4 2.4-7.2 7.2z"/><path d="M9.2 4.4l2.4 2.4"/>') },
-    { id: 'eraser',  extra: true, name: 'Eraser', key: 'e', icon: ICON('<path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/>') },
+    { id: 'eraser',  group: 'edit', name: 'Eraser', key: 'e', icon: ICON('<path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/>') },
     { sep: true, extra: true },
     { id: 'line',    extra: true, name: 'Line', key: 'l', icon: ICON('<path d="M3 13L13 3"/><circle cx="3" cy="13" r="1" fill="currentColor"/><circle cx="13" cy="3" r="1" fill="currentColor"/>') },
     { id: 'rect',    name: 'Shape', key: 'r', icon: ICON('<rect x="2.8" y="4" width="10.4" height="8" rx="1"/>') },
@@ -436,6 +509,7 @@
   function buildTools() {
     var el = $('#toolstrip');
     TOOLS.forEach(function (t) {
+      if (t.group === 'edit') return;                // the eraser lives in the Clear group, not in the tool strip
       if (t.extra && !FLAGS.extraTools) return;
       if (t.sep) { var s = document.createElement('div'); s.className = 'sep'; el.appendChild(s); return; }
       var b = document.createElement('button');
@@ -1010,6 +1084,7 @@
   stage.addEventListener('pointerenter', function () { if (tl.mode === 'hover') E.tlStart(tl); });
   stage.addEventListener('pointerleave', function () { if (tl.mode === 'hover') E.tlStop(tl); });
 
+  $('#eraserBtn').addEventListener('click', function () { setTool('eraser'); });
   $('#randomBtn').addEventListener('click', randomize);
   $('#clearBtn').addEventListener('click', function () {
     var before = beginEdit(); cells.clear(); dirty = true; endEdit(before); updateInfo();
@@ -1027,7 +1102,7 @@
   });
 
   document.addEventListener('keydown', function (e) {
-    if (e.target.tagName === 'INPUT' || view !== 'canvas') return;
+    if (e.target.tagName === 'INPUT' || view !== 'canvas' || welcomeOpen) return;
     if (e.ctrlKey || e.metaKey) {
       var k = e.key.toLowerCase();
       if (k === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
@@ -1268,6 +1343,7 @@
     var d = parsed.data;
 
     resetSession();                         // nothing from the current canvas carries over
+    setPlaying(true);                       // an opened file plays, so you see it as it was made
     if (d.geo && d.geo.cell) CELL = d.geo.cell;
     state.dotShape = (d.geo && d.geo.shape) || 'dot';
     repaintShapes();
@@ -1325,7 +1401,7 @@
     imgSrc = null; imgRaster = null;
     if (imgUI.opts) setImageActive(false);
     if (FLAGS.interaction) setInteraction('auto');
-    setPlaying(true);
+    setPlaying(false);                      // a fresh session starts paused
     cells = new Set();
     setArt(1920, 1080);                     // also clears history
     repaintShapes(); repaintColor();
@@ -1373,39 +1449,59 @@
   /* ---------- Pages (top nav) ---------- */
 
   var view = 'canvas';
-  var VIEWS = ['canvas', 'library', 'about', 'updates', 'guide'];
-  var SLUGS = { canvas: '', library: 'library', about: 'about', updates: 'whats-new', guide: 'guide' };
-  // Where the app lives (works at the site root or in a sub-folder, and from the /about etc. entry pages).
+  var VIEWS = ['home', 'canvas', 'about', 'library', 'updates', 'guide'];
+  var VIEW_FLAG = { home: 'homePage', about: 'aboutPage', library: 'libraryPage', updates: 'whatsNewPage', guide: 'guidePage' };      // pages that can be switched off
+  function viewOn(id) { return !VIEW_FLAG[id] || FLAGS[VIEW_FLAG[id]]; }
+  // With the welcome page off (the default) the tool is the front door at /, and /canvas still works too.
+  var HOME_ON = !!FLAGS.homePage, DEFAULT_VIEW = HOME_ON ? 'home' : 'canvas';
+  // The page entry folders live together in /pages, so the addresses are /pages/about, /pages/library and so on.
+  var SLUGS = { home: HOME_ON ? '' : 'pages/home', canvas: HOME_ON ? 'pages/canvas' : '', about: 'pages/about', library: 'pages/library', updates: 'pages/whats-new', guide: 'pages/guide' };
+  // Where the app lives (works at the site root or in a sub-folder, and from the /pages/about etc. entry pages).
   var ROOT = new URL('.', document.baseURI).pathname;
   function viewFromPath() {
     var slug = location.pathname.slice(ROOT.length).replace(/index\.html$/, '').replace(/\/+$/, '');
-    return VIEWS.find(function (v) { return SLUGS[v] === slug; }) || 'canvas';
+    var v = VIEWS.find(function (x) { return SLUGS[x] === slug; }) || (slug === 'pages/canvas' ? 'canvas' : null);
+    if (v && !viewOn(v)) { try { history.replaceState(null, '', ROOT); } catch (e) {} return DEFAULT_VIEW; }   // a disabled page: back to the front door
+    return v || DEFAULT_VIEW;
   }
   function goTo(id) {
+    if (!viewOn(id)) id = DEFAULT_VIEW;
     var url = ROOT + SLUGS[id];
     if (location.pathname !== url) { try { history.pushState(null, '', url); } catch (e) {} }
     showView(id);
   }
+  // The live animation at the end of the About page (loaded the first time the page is opened).
+  var aboutPreviewLoaded = false;
+  function loadAboutPreview() {
+    var box = $('#aboutPreview'), url = ROOT + 'assets/home-preview.html';
+    fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function (text) { libPreview(box, text, url, 'Preview', welcomeItems, 1280); })
+      .catch(function () { libIframe(box, url, 'Preview'); });
+  }
+
   function showView(id) {
-    if (VIEWS.indexOf(id) < 0) id = 'canvas';
+    if (VIEWS.indexOf(id) < 0 || !viewOn(id)) id = DEFAULT_VIEW;
     view = id;
+    document.body.dataset.view = id;           // the tool is full width, every other page sits in the narrower site container
     document.querySelectorAll('[data-page]').forEach(function (el) { el.hidden = el.dataset.page !== id; });
     document.querySelectorAll('#tabs .navbtn').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === id)); });
     if (id === 'canvas') fitStage();
-    if (id === 'library') libStart();
+    if (id === 'about' && !aboutPreviewLoaded) { aboutPreviewLoaded = true; loadAboutPreview(); }
+    if (id === 'library' || id === 'home' || id === 'about') libStart();
   }
   // Library: a grid of templates. Previews are drawn here, small and from one shared loop that only
   // animates cards on screen (eight full-size components at once was far too heavy). If a template can't be
   // fetched (page opened as a file) the card falls back to showing the template itself in an iframe.
   var PREVIEW_W = 640;
   var libItems = [], libRaf = 0, libLast = 0;
+  var welcomeItems = [], welcomeOpen = false;      // the welcome popup's preview uses the same loop
 
   function libFrame(now) {
     libRaf = 0;
-    if (view !== 'library') return;
+    if (view !== 'library' && view !== 'home' && view !== 'about' && !welcomeOpen) return;
     var dt = Math.min((now - libLast) / 1000, 0.1);
     libLast = now;
-    libItems.forEach(function (it) {
+    libItems.concat(welcomeItems).forEach(function (it) {
       if (!it.visible) return;
       E.tlAdvance(it.tl, dt, it.T);
       var c = it.ctx;
@@ -1413,47 +1509,49 @@
       c.fillStyle = '#0b0b0a';
       c.fillRect(0, 0, it.cv.width, it.cv.height);
       c.drawImage(it.idle, 0, 0);
-      c.setTransform(it.s, 0, 0, it.s, 0, 0);
+      c.setTransform(it.s, 0, 0, it.s, it.ox || 0, it.oy || 0);
       E.drawCells(c, it.list, it.fn, it.vals, it.color, it.tl.t, it.tl.ph, it.geo, false);
     });
     libRaf = requestAnimationFrame(libFrame);
   }
   function libStart() {
-    if (libRaf || !libItems.length) return;
+    if (libRaf || !(libItems.length || welcomeItems.length)) return;
     libLast = performance.now();
     libRaf = requestAnimationFrame(libFrame);
   }
 
-  function libPreview(box, text, url, name) {
+  function libPreview(box, text, url, name, list, width, zoom) {
     var parsed = parseExport(text);
     if (!parsed || !parsed.preset) { libIframe(box, url, name); return; }
     var d = parsed.data, cells = [];
     d.runs.forEach(function (row) {
       row[1].forEach(function (run) { for (var n = 0; n < run[1]; n++) cells.push([run[0] + n, row[0]]); });
     });
-    var s = PREVIEW_W / d.w, cv = document.createElement('canvas');
-    cv.width = PREVIEW_W; cv.height = Math.round(d.h * s);
+    // zoom > 1 shows the middle of the animation bigger (the dots grow), instead of the whole canvas shrunk
+    var pw = width || PREVIEW_W, base = pw / d.w, s = base * (zoom || 1), cv = document.createElement('canvas');
+    cv.width = pw; cv.height = Math.round(d.h * base);
+    var ox = (cv.width - d.w * s) / 2, oy = (cv.height - d.h * s) / 2;
     cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', name + ' preview');
     var idle = document.createElement('canvas');
     idle.width = cv.width; idle.height = cv.height;
     var ic = idle.getContext('2d');
-    ic.scale(s, s);
+    ic.setTransform(s, 0, 0, s, ox, oy);
     E.drawIdle(ic, d.gridCols, d.gridRows, d.geo, d.gridVis === undefined ? GRID_VIS : d.gridVis);
     var it = {
-      cv: cv, ctx: cv.getContext('2d'), idle: idle, s: s, geo: d.geo, list: E.buildList(cells),
+      cv: cv, ctx: cv.getContext('2d'), idle: idle, s: s, ox: ox, oy: oy, geo: d.geo, list: E.buildList(cells),
       fn: parsed.preset.fn, vals: d.p, color: d.color, T: d.period, tl: E.makeTimeline('auto'), visible: false
     };
     it.tl.t = d.still || 0;                 // start on a pleasant frame, so a card is never blank
     box.innerHTML = '';
     box.appendChild(cv);
-    libItems.push(it);
+    (list || libItems).push(it);
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         it.visible = entries[entries.length - 1].isIntersecting;
         if (it.visible) libStart();
       }).observe(cv);
     } else { it.visible = true; }
-    if (view === 'library') libStart();
+    if (view === 'library' || view === 'home' || view === 'about' || welcomeOpen) libStart();
   }
 
   function libIframe(box, url, name) {
@@ -1468,7 +1566,7 @@
     grid.innerHTML = '';
     libItems = [];
     (window.LIBRARY || []).forEach(function (t) {
-      var url = ROOT + 'library/' + t.file, card = document.createElement('article');
+      var url = ROOT + 'templates/' + t.file, card = document.createElement('article');
       card.className = 'lib-card';
       card.innerHTML =
         '<div class="lib-preview"></div>' +
@@ -1505,9 +1603,11 @@
   }
   function buildPages() {
     setupPanelTabs();
-    buildLibrary();
+    $('#aboutStart').addEventListener('click', function () { goTo('canvas'); });
+    if (FLAGS.libraryPage) buildLibrary();
     var U = window.WHATS_NEW || [], site = window.SITE || {};
-    $('#aboutVersion').textContent = site.version ? 'Version ' + site.version : '';
+    $('#aboutVersion').textContent = (site.version ? 'v' + site.version + ' \u00b7 ' : '') + 'Closed beta';
+    $('#aboutCount').textContent = MAIN.length;
     $('#updatesTable').innerHTML = '<tr><th>Version</th><th>Date</th><th>Changes</th></tr>' + U.map(function (u) {
       var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
       return '<tr><td>' + esc(u.v) + '</td><td>' + esc(u.date) + '</td><td><ul>' + u.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul></td></tr>';
@@ -1703,7 +1803,7 @@
     var x = c.getContext('2d');
     if (exportOpts.bg === 'dark') { x.fillStyle = '#0b0b0a'; x.fillRect(0, 0, c.width, c.height); }
     if (exportOpts.grid) E.drawIdle(x, cols, rows, g, GRID_VIS);
-    E.drawCells(x, E.buildList(cellArray()), f.preset.fn, f.vals, f.color, tl.t, tl.ph, g, false);
+    E.drawCells(x, E.buildList(cellArray()), f.preset.fn, f.vals, f.color, tl.t, tl.ph, g, !state.playing);
     c.toBlob(function (blob) { if (blob) download(funkyName('png'), blob, 'image/png'); else notify('PNG export failed'); }, 'image/png');
   }
 
@@ -1728,7 +1828,7 @@
       out.push('<rect x="' + g.ox + '" y="' + g.oy + '" width="' + cols * g.cell + '" height="' + rows * g.cell + '" fill="url(#grid)"/>');
     }
     E.buildList(cellArray()).forEach(function (c) {
-      var v = f.preset.fn(c, tl.t, p);
+      var v = state.playing ? f.preset.fn(c, tl.t, p) : 1;
       v = v < 0 ? 0 : v > 1 ? 1 : v;
       var x = g.ox + (c.col + 0.5) * g.cell, y = g.oy + (c.row + 0.5) * g.cell, sz = g.cell * p.size * (0.4 + 0.6 * v);
       var fill = E.colorFor(f.color, c, v, tl.ph);
@@ -1798,10 +1898,103 @@
     setExportEnabled(cells.size > 0);
   }
 
+  /* ---------- Welcome popup (closed beta) ---------- */
+
+  // Shown on the first visit, then again after 5 hours (the welcomeOnce flag; off = every visit). The preview is assets/welcome-preview.html drawn with the same light renderer as the
+  // Library previews. "How to use" pops a second card in beside the welcome (press it again, or Esc, to close it).
+  var WELCOME_TTL = 5 * 60 * 60 * 1000;           // how long before the welcome popup comes back (5 hours)
+  function setupWelcome() {
+    if (!FLAGS.welcomePopup) return;
+    var el = $('#welcome'), drawer = $('#howDrawer'), box = $('#welcomePreview'), loaded = false;
+    var site = window.SITE || {};
+    if (site.repo) $('#welcomeFeedback').href = 'https://github.com/' + site.repo + '/issues/new';
+
+    function setDrawer(on) {
+      drawer.classList.toggle('open', on);
+      drawer.setAttribute('aria-hidden', String(!on));
+      $('#welcomeHow').setAttribute('aria-expanded', String(on));
+    }
+    function open() {
+      el.hidden = false; welcomeOpen = true;
+      if (!loaded) {
+        loaded = true;
+        var url = ROOT + 'assets/welcome-preview.html';
+        fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+          .then(function (text) { libPreview(box, text, url, 'Welcome', welcomeItems, 960, 2); })
+          .catch(function () { libIframe(box, url, 'Welcome'); });
+      }
+      libStart();
+      $('#welcomeGo').focus();
+    }
+    function close() {
+      setDrawer(false);
+      el.hidden = true; welcomeOpen = false;
+      try { localStorage.setItem('dm-welcome-at', String(Date.now())); } catch (e) {}      // the session starts now: no popup for 5 hours
+    }
+    $('#welcomeGo').addEventListener('click', close);
+    $('#welcomeHow').addEventListener('click', function () { setDrawer(!drawer.classList.contains('open')); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || el.hidden) return;
+      if (drawer.classList.contains('open')) setDrawer(false); else close();
+    });
+
+    // First visit: show it. After that it stays away until 5 hours have passed since it was dismissed, then it shows again.
+    // (?welcome=1 forces it, ?welcome=0 skips it, and the welcomeOnce flag off makes it show on every visit.)
+    var seen = false;
+    if (FLAGS.welcomeOnce) {
+      try { var at = +localStorage.getItem('dm-welcome-at'); seen = !!at && Date.now() - at < WELCOME_TTL; } catch (e) {}
+    }
+    if (/[?&]welcome=1/.test(location.search) || (!seen && !/[?&]welcome=0/.test(location.search))) open();
+  }
+
+  /* ---------- Welcome page (the entry at /) ---------- */
+
+  function setupHome() {
+    if (!HOME_ON) return;                      // the welcome page is switched off
+    var site = window.SITE || {}, box = $('#homePreview'), url = ROOT + 'assets/home-preview.html';
+    var modal = $('#howModal');
+    if (site.repo) $('#homeFeedback').href = 'https://github.com/' + site.repo + '/issues/new';
+    fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function (text) { libPreview(box, text, url, 'Welcome', welcomeItems, 1280); })
+      .catch(function () { libIframe(box, url, 'Welcome'); });
+    $('#homeYear').textContent = new Date().getFullYear();
+
+    // Let's Go: the logo shimmers on a plain screen for a moment, then the studio opens
+    var entering = false;
+    $('#homeGo').addEventListener('click', function () {
+      if (entering) return;
+      entering = true;
+      var el = $('#loader');
+      el.hidden = false;
+      void el.offsetWidth;                    // let the fade-in start from transparent
+      el.classList.remove('out'); el.classList.add('in');
+      setTimeout(function () {
+        goTo('canvas');
+        el.classList.remove('in'); el.classList.add('out');
+        setTimeout(function () { el.hidden = true; el.classList.remove('out'); entering = false; }, 450);
+      }, 1100);
+    });
+
+    // How to use: a card over the page. Esc, a click outside it, or the button again closes it.
+    function setHow(on) { modal.hidden = !on; }
+    $('#homeHow').addEventListener('click', function () { setHow(modal.hidden); });
+    modal.addEventListener('pointerdown', function (e) { if (e.target === modal) setHow(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) setHow(false); });
+
+    // the logo and name take you back to the welcome page
+    [$('.logo'), $('.wordmark')].forEach(function (el) { el.addEventListener('click', function () { goTo('home'); }); });
+  }
+
   /* ---------- Boot ---------- */
 
   // Show or hide everything a flag controls (flags.js), then build only what is switched on.
   document.querySelectorAll('[data-flag]').forEach(function (el) { el.hidden = !FLAGS[el.dataset.flag]; });
+  // Pages that are switched off stay in the nav, greyed out and unclickable.
+  document.querySelectorAll('[data-enable]').forEach(function (el) {
+    var on = !!FLAGS[el.dataset.enable];
+    el.disabled = !on;
+    if (!on) el.title = 'Coming soon';
+  });
 
   buildTools();
   buildPresets();
@@ -1814,15 +2007,18 @@
   if (FLAGS.drawOptions) buildDraw();
   if (FLAGS.gridPanel) buildGrid();
   buildExportUI();
+  buildPointer();
   buildStatus();
   setupFiles();
   buildPages();
   selectPreset(state.preset);
   setTool(state.tool);
   setInteraction(FLAGS.interaction ? state.interaction : 'auto');
-  setPlaying(true);
+  setPlaying(false);                        // opens paused: what you draw shows as drawn until you press Play
   new ResizeObserver(fitStage).observe(area);
   layout();
+  setupHome();
   showView(viewFromPath());
+  setupWelcome();
   requestAnimationFrame(frame);
 })();

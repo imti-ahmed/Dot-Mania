@@ -6,93 +6,129 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
-  { v: '0.0.57', date: '2026-11-07', items: [
+  { v: '0.22.9', date: '2026-11-07', items: [
+    'About now has a card for each feature, with a preview on top, and a live animation card at the end.'
+  ] },
+  { v: '0.22.8', date: '2026-11-07', items: [
+    'A new square pointer over the canvas, in place of the plain crosshair.'
+  ] },
+  { v: '0.22.7', date: '2026-11-07', items: [
+    'The About page now shows small, non-interactive copies of the tools, animations, colors and export options.'
+  ] },
+  { v: '0.22.3', date: '2026-11-07', items: [
+    'The eraser is back, next to Invert and Clear.'
+  ] },
+  { v: '0.22.0', date: '2026-11-07', items: [
+    'The studio opens paused: what you draw shows exactly as drawn until you press Play.'
+  ] },
+  { v: '0.21.1', date: '2026-11-07', items: [
+    'The About page has been rebuilt: three cards, red icon boxes, and a row of buttons underneath.'
+  ] },
+  { v: '0.21.0', date: '2026-11-07', items: [
+    'A new pointer over the canvas: a small ring with a dot, in place of the plain crosshair.'
+  ] },
+  { v: '0.20.6', date: '2026-11-07', items: [
+    'Closed beta: the studio opens straight away, with a welcome popup that has a live preview and a How to use card.'
+  ] },
+  { v: '0.19.3', date: '2026-11-07', items: [
+    'The About page has a new layout: an introduction up top, then cards for what Dot Mania does.'
+  ] },
+  { v: '0.19.0', date: '2026-11-07', items: [
+    'Hold Shift while drawing with the pen to get a straight line.'
+  ] },
+  { v: '0.18.0', date: '2026-11-07', items: [
+    'Closed beta welcome: a live preview, a short intro, and a How to use panel.'
+  ] },
+  { v: '0.17.6', date: '2026-11-07', items: [
+    'The About page has been rewritten.'
+  ] },
+  { v: '0.17.5', date: '2026-11-07', items: [
     'New Candy color: a soft pink, lilac, sky and mint gradient.'
   ] },
-  { v: '0.0.52', date: '2026-11-07', items: [
+  { v: '0.17.0', date: '2026-11-07', items: [
     'The custom color picker now matches the rest of the app.'
   ] },
-  { v: '0.0.48', date: '2026-11-07', items: [
+  { v: '0.15.1', date: '2026-11-07', items: [
     'Color has its own Randomize button, and the White preset has been retired.'
   ] },
-  { v: '0.0.47', date: '2026-11-07', items: [
+  { v: '0.15.0', date: '2026-11-07', items: [
     'The status bar now shows a real view count.'
   ] },
-  { v: '0.0.45', date: '2026-11-07', items: [
+  { v: '0.14.0', date: '2026-11-07', items: [
     'Quality is now its own option in Export, and it also sets video quality.'
   ] },
-  { v: '0.0.42', date: '2026-11-07', items: [
+  { v: '0.13.7', date: '2026-11-07', items: [
     'GIF exports are bigger and sharper, and a new Quality option (Low, Medium, High) in Export sets GIF size and video quality. Medium is the default.',
     'The Code File button is now called Download Html File.'
   ] },
-  { v: '0.0.40', date: '2026-11-07', items: [
+  { v: '0.13.5', date: '2026-11-07', items: [
     'Randomize can also switch the canvas size between wide and square.'
   ] },
-  { v: '0.0.38', date: '2026-11-07', items: [
+  { v: '0.13.3', date: '2026-11-07', items: [
     'Randomize now draws designed patterns: nested rings, tiled shapes, stripes, sunbursts, checkerboards and mirrored emblems.'
   ] },
-  { v: '0.0.37', date: '2026-11-07', items: [
+  { v: '0.13.2', date: '2026-11-07', items: [
     'Sliders have a new round knob with a glowing centre.',
     'The Look section is now called Tuning.'
   ] },
-  { v: '0.0.36', date: '2026-11-07', items: [
+  { v: '0.13.1', date: '2026-11-07', items: [
     'Randomize now makes a whole new piece: a full canvas, a ready-made shape or random art, with a new mark shape, animation and color, and plays it. You can undo it.'
   ] },
-  { v: '0.0.35', date: '2026-11-07', items: [
+  { v: '0.13.0', date: '2026-11-07', items: [
     'New Randomize button in the left bar: a fresh animation, sliders and color in one click.'
   ] },
-  { v: '0.0.30', date: '2026-11-07', items: [
+  { v: '0.12.0', date: '2026-11-07', items: [
     'New Stacking switch: turn it on to run up to 3 animations together. The first one you click is the base, and each next one shapes it.'
   ] },
-  { v: '0.0.29', date: '2026-11-07', items: [
+  { v: '0.11.2', date: '2026-11-07', items: [
     'New animation: Dissolve, dots fade in and out in random order.'
   ] },
-  { v: '0.0.28', date: '2026-11-07', items: [
+  { v: '0.11.1', date: '2026-11-07', items: [
     'New animation: Bars, columns that rise and fall like an audio meter.'
   ] },
-  { v: '0.0.26', date: '2026-11-07', items: [
+  { v: '0.10.3', date: '2026-11-07', items: [
     'The Twinkle animation has been retired.'
   ] },
-  { v: '0.0.24', date: '2026-11-07', items: [
+  { v: '0.10.1', date: '2026-11-07', items: [
     'Sweep now runs left to right by default.'
   ] },
-  { v: '0.0.23', date: '2026-11-07', items: [
+  { v: '0.10.0', date: '2026-11-07', items: [
     'Five new animations: Breathe, Sweep, Flicker, Zigzag and Reveal. The Heartbeat animation is now called Beats.',
     'Animations show in three rows. Tap More to see the rest.'
   ] },
-  { v: '0.0.22', date: '2026-11-07', items: [
+  { v: '0.9.0', date: '2026-11-07', items: [
     'Every page has its own address: /library, /about, /whats-new and /guide.',
     'What\'s New is now written in plain language, separate from the developer log.'
   ] },
-  { v: '0.0.20', date: '2026-11-07', items: [
+  { v: '0.8.4', date: '2026-11-07', items: [
     'Exported files get random, funky names, like grumpy-waffle-42.gif.',
     'Library cards are roomier, with a divider above the buttons.',
     'The status bar spreads out version, views and GitHub stars.'
   ] },
-  { v: '0.0.15', date: '2026-11-07', items: [
+  { v: '0.7.0', date: '2026-11-07', items: [
     'The top bar now tells you what is happening: opening, loading, rendering and saving files.'
   ] },
-  { v: '0.0.14', date: '2026-11-07', items: [
+  { v: '0.6.0', date: '2026-11-07', items: [
     'Export videos as WebM or MP4. They cover one or two full loops, so they repeat cleanly.'
   ] },
-  { v: '0.0.12', date: '2026-11-07', items: [
+  { v: '0.5.0', date: '2026-11-07', items: [
     'The Export tab is split into Background, Code and Media.',
     'New PNG export of the frame you see on screen.'
   ] },
-  { v: '0.0.10', date: '2026-11-07', items: [
+  { v: '0.4.0', date: '2026-11-07', items: [
     'The right panel has Edit and Export tabs.'
   ] },
-  { v: '0.0.7', date: '2026-11-07', items: [
+  { v: '0.3.3', date: '2026-11-07', items: [
     'Library previews run much smoother.'
   ] },
-  { v: '0.0.4', date: '2026-11-07', items: [
+  { v: '0.3.0', date: '2026-11-07', items: [
     'New Library of ready-made templates. Load one into the editor or download the HTML.'
   ] },
-  { v: '0.0.3', date: '2026-11-07', items: [
+  { v: '0.2.0', date: '2026-11-07', items: [
     'New top navigation: Canvas, Library, About, What\'s New and Guide.',
     'Open an exported HTML file to keep editing it.'
   ] },
-  { v: '0.0.1', date: '2026-11-07', items: [
+  { v: '0.1.0', date: '2026-11-07', items: [
     'First version: draw on the dot grid, pick from 10 animations, upload an image, and export a GIF or a web component.'
   ] }
 ];

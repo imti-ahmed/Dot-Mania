@@ -15,6 +15,9 @@
 
     /* ---- ON: what ships today (switch off to hide it) ---- */
 
+    pointerOptions: false,      // Edit tab: a Pointer group to try the other canvas pointers (the Square one is the final choice)
+    welcomeOnce: true,          // Welcome popup: first visit only, then again after 5 hours (off = it shows on every visit, for testing)
+    welcomePopup: true,         // Closed beta: a welcome popup (preview, intro, Let's Go / How to use / Feedback) over the tool
     dotShapes: true,            // Shapes group: Dot / Square / Diamond / Triangle marks
     imageUpload: true,          // Image group: upload a picture (or drop one on the canvas) and animate it
     exportCodeFile: true,       // Export: "Code File" (ready-to-open .html with the component)
@@ -29,9 +32,14 @@
     exportSvg: false,           // Export > Media: "SVG" (the frame on screen as scalable vector)
     colorRandom: false,         // Color group: a Randomize button in the colour grid (the left bar Randomize still picks a colour)
     forestColor: false,         // Color group: the "Forest" green gradient
+    homePage: false,            // A welcome page at / in front of the tool (off: the tool opens straight away at /)
+    aboutPage: false,           // Top nav: the About page (/about)
+    guidePage: false,           // Top nav: the Guide page (/guide)
+    libraryPage: false,         // Top nav: the Library page of ready-made templates (/library)
+    whatsNewPage: false,        // Top nav: the What's New page (/whats-new)
     holoColor: false,           // Color group: the "Holo" multi-colour gradient
     whiteColor: false,          // Color group: the "White" preset
-    extraTools: false,          // Left bar: Eraser and Line tools (right-click on the canvas still erases)
+    extraTools: false,          // Left bar: the Line tool (the Eraser is always in the Clear group)
     imageAdvanced: false,       // Image group: "Level" slider and "Fit / Fill" (default is 50% level, fit)
     interaction: false,         // Interaction group: Auto / Hover / Click playback (exported component too)
     extraPresets: false,        // 24 more animations: Diamond, Burst, Blink, Twinkle, Blob, Tunnel, Plasma, Stripes, Blinds, Cross, Fireworks, Tide, Glint, Helix, Carousel, Streaks, Chess, Swing, Bounce, Strobe, Glitch, Checker, Orbit, Radar

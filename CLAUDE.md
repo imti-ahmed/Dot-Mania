@@ -3,28 +3,28 @@
 Animated dot-grid editor. Drawings, shapes or uploaded images become dots that run animation presets. Exports as a dependency-free web component or a looping GIF.
 
 ## Stack
-- Static app: `index.html`, `css/style.css`, plain `<script>` tags in `js/` (no modules, no build step, no dependencies).
-- Script load order matters: `flags` → `presets` → `shapes` → `engine` → `image` → `export` → `gif` → `app`.
-- Pages live at /library, /about, /whats-new, /guide (served from folders of the same names), so use a server for those. Run: open `index.html`, or `python -m http.server 8000` and visit http://localhost:8000. Add `?flags=all` to enable hidden features.
+- Static app: `index.html`, plain `<script>` tags (no modules, no build step, no dependencies).
+- Script load order matters (see the tags in `index.html`): core, then export, then data, then `app.js`.
+- The tool is the front door: `/` opens the editor with the closed beta welcome popup (`welcomePopup` flag; `welcomeOnce`: first visit only, back after 5 hours). A separate welcome page exists behind the `homePage` flag (the only view in the site-style narrow layout like theladybug.app: max-width 1440px, side gutter clamp(16px, 4.4vw, 64px)); with it on, the tool moves to `/pages/canvas`. Every other view, including About, is full width. Other pages live at /pages/about, /pages/library, /pages/whats-new, /pages/guide (small entry folders inside pages/), so use a server for those. Page addresses need a server.
 
 ## Structure
-| File | Role |
-|---|---|
-| `js/app.js` | Editor UI, tools, state |
-| `js/engine.js` | Dot-grid rendering and animation |
-| `js/presets.js` | Animation presets |
-| `js/shapes.js` | Starter shapes and mark shapes |
-| `js/image.js` | Image to B&W dot conversion |
-| `js/export.js` | Web component export |
-| `js/gif.js` | GIF encoder |
-| `js/flags.js` | Feature flags (cut features stay here, off by default) |
-| `library/*.html` | Library templates, each one a Dot Mania Code File export |
-| `js/library.js` | Library manifest (add a row per template file) |
-| `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `icon-512.png` | The logo from the top left of the app as the favicon and app icons |
-| `js/site.js` | Status bar settings: version, GitHub repo for stars, Abacus views counter |
-| `.github/workflows/views-backup.yml` | Saves the Abacus view count to `views.json` on the `stats` branch every 6 hours (backup for switching services) |
-| `js/whatsnew.js` | What's New page content: plain language for users, NOT a copy of the build log |
-| `library/index.html`, `about/`, `whats-new/`, `guide/` | Entry pages so each page has its own address (/library, /about, /whats-new, /guide); each loads the one real app |
+```
+index.html                     the app (entry)
+pages/                         one small entry folder per page address (about, canvas, guide, library, whats-new): /pages/about etc., each loads the one real app
+src/
+  css/style.css
+  js/
+    app.js                     editor UI, tools, state
+    core/                      engine.js (rendering), presets.js (animations), shapes.js, image.js, flags.js (feature flags)
+    export/                    export.js (HTML component), gif.js (GIF encoder)
+    data/                      site.js (version, repo, views), library.js (template list), whatsnew.js (What's New content)
+templates/                     Library templates, each one a Dot Mania HTML export
+assets/                        logo icons (favicon.svg, favicon.ico, icon-180.png, icon-512.png) and welcome-preview.html (the animation in the welcome popup), home-preview.html (the animation on the switched-off welcome page)
+Buildlog.md                    the build log
+.github/workflows/             views-backup.yml (saves the view count to a `stats` branch every 6 hours)
+```
+- `js/data/whatsnew.js` is plain language for users, NOT a copy of the build log.
+- Disabled pages (About, Library, What's New, Guide) stay in the nav greyed out; the `aboutPage`, `libraryPage`, `whatsNewPage` and `guidePage` flags turn them on.
 
 ## Rules
 
@@ -38,12 +38,12 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 
 ### Build log
 - Right after each commit, add an entry to `Buildlog.md`, then commit that too.
-- Versioning: stay on `0.0.x` (bump patch per entry). Move to `1.0.0` only when the user declares the public release.
+- Versioning is `0.minor.patch` until the public release: a new feature, a new page or flow, or a notable redesign bumps the middle number (and resets the last to 0); a fix, tweak, copy change, rename or flag change bumps the last. Move to `1.0.0` only when the user declares the public release. Pick the bump from the kind of change, not just +1 on the last number.
 - Keep entries short: one table row with version, date, commit hash and a one-line summary. Newest on top.
-- Bump `version` in `js/site.js` with every entry (status bar and About show it).
+- Bump `version` in `src/js/data/site.js` with every entry (status bar and About show it).
 - Set the same version as `?v=<version>` on every css/js link in `index.html` (cache-busting: browsers keep old files otherwise, which shows up as new features missing or looking broken).
-- `js/whatsnew.js` is separate: add an entry only for changes users can see, in plain language. Do not mirror the build log.
+- `src/js/data/whatsnew.js` is separate: add an entry only for changes users can see, in plain language. Do not mirror the build log.
 
 ### Flags
-- Do not delete cut features. Put them behind `js/flags.js`.
-- New animations go in `window.TRIAL_PRESETS` (js/presets.js): they show in the "Trying Out" group. When the user approves one, move its block into `window.PRESETS`.
+- Do not delete cut features. Put them behind `src/js/core/flags.js`.
+- New animations go in `window.TRIAL_PRESETS` (src/js/core/presets.js): they show in the "Trying Out" group. When the user approves one, move its block into `window.PRESETS`.

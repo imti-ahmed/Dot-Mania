@@ -909,3 +909,416 @@ a.stat:hover { color: var(--text); }
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+
+.page-text a { color: var(--text); text-decoration: underline; text-decoration-color: #3a3a3a; text-underline-offset: 3px; }
+.page-text a:hover { text-decoration-color: var(--accent); }
+
+/* ---------- Welcome (closed beta) ---------- */
+
+.key.primary {
+  background: linear-gradient(#f5343a, #d61d23);
+  color: #fff;
+  box-shadow: 0 2px 0 #5e0a0d, 0 3px 7px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+.key.primary:hover { color: #fff; filter: brightness(1.08); }
+
+.welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(5, 5, 5, .78);
+  overflow: hidden;
+}
+.welcome-stage {
+  display: flex;
+  align-items: stretch;      /* the two cards are always the same height */
+  justify-content: center;
+  max-height: 100%;
+}
+.welcome-card {
+  flex: none;
+  width: min(520px, calc(100vw - 32px));
+  overflow-y: auto;
+  border-radius: 18px;
+  background: linear-gradient(#1c1c1c, #171717);
+  box-shadow: 0 0 0 1px #090909, 0 30px 80px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.welcome-media { position: relative; margin: 12px 12px 0; }
+.welcome-preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0b0b0a;
+  box-shadow: inset 0 0 0 1px #000;
+}
+.welcome-preview canvas, .welcome-preview iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  pointer-events: none;
+}
+.welcome-body { padding: 20px 24px 22px; }
+.beta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.welcome-title {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'ROND' 0;
+  font-size: 26px;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+.welcome-text { margin-top: 10px; font-size: 14px; line-height: 1.65; color: var(--muted); }
+/* same carved groove as the panels */
+.welcome-actions {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 8px;
+  padding: 16px 24px 20px;
+  border-top: 2px solid #070707;
+  box-shadow: inset 0 1px 0 #3a3a3a;
+}
+.welcome-actions .key { height: 40px; padding: 0 8px; text-decoration: none; }
+
+/* How to use: slides in from the right, over the welcome */
+
+/* How to use: a second card, the same size as the welcome. It pops in instantly beside it (no sliding), and the
+   welcome card, kept centred with it, moves over to make room. The content spreads to fill the card. */
+.how-card {
+  display: none;
+  flex: none;
+  flex-direction: column;
+  width: min(520px, calc(100vw - 32px));
+  margin-left: 16px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: linear-gradient(#1c1c1c, #171717);
+  box-shadow: 0 0 0 1px #090909, 0 30px 80px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.how-card.open { display: flex; }
+.how-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'ROND' 0;
+  font-size: 22px;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  /* carved divider under the title, full width of the card */
+  padding: 28px 28px 20px;
+  border-bottom: 2px solid #070707;
+  box-shadow: 0 1px 0 #3a3a3a;
+}
+.how-steps {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 24px 28px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  counter-reset: step;
+}
+.how-steps li { position: relative; display: grid; gap: 4px; padding-left: 40px; counter-increment: step; }
+.how-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.how-steps b { font-size: 16px; font-weight: 500; color: var(--text); }
+.how-steps span { font-size: 14px; line-height: 1.55; color: var(--muted); }
+.how-tip {
+  padding: 18px 28px 24px;
+  border-top: 2px solid #070707;
+  box-shadow: inset 0 1px 0 #3a3a3a;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.how-tip b {
+  margin-right: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Too narrow for two cards side by side: the how-to card opens over the welcome instead */
+@media (max-width: 1099px) {
+  .how-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: 0;
+    transform: translate(-50%, -50%);
+  }
+}
+@media (max-width: 560px) {
+  .welcome-actions { grid-template-columns: 1fr; }
+}
+
+/* ---------- About: a slim intro, one card per feature (preview, divider, text), a live preview card, then buttons ---------- */
+
+.page.about { padding: 0; overflow-y: auto; }
+/* .page > * caps children at 760px (for the text pages); these must span the whole width */
+.page.about > .bento, .page.about > .about-actions { max-width: none; width: 100%; }
+.bento { display: flex; flex-direction: column; gap: 16px; }
+
+/* intro: slim, so there is no empty space at the top */
+.b-hero { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px 40px; padding: 18px clamp(24px, 3vw, 40px); }
+.about-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
+.about-title {
+  margin-top: 2px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'ROND' 0;
+  font-size: clamp(32px, 3.6vw, 54px);
+  line-height: 1;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.about-lead { flex: 1 1 380px; max-width: 760px; font-size: 15px; line-height: 1.6; color: var(--muted); }
+
+/* a card per feature: the preview on top, a carved divider, then the text */
+.feat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.feat-card { display: flex; flex-direction: column; overflow: hidden; }
+.feat-preview { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 16px; pointer-events: none; user-select: none; }
+.feat-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px 22px;
+  border-top: 2px solid #070707;
+  box-shadow: inset 0 1px 0 #3a3a3a;
+}
+.feat-body b { display: block; font-size: 16px; font-weight: 500; color: var(--text); }
+.feat-body span:not(.bento-icon) { display: block; margin-top: 2px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.mini .group { gap: 8px; }
+.mini .presets, .mini .keygrid { padding-bottom: 0; }
+.mini-tools { display: flex; gap: 6px; }
+.mini-tools .key { width: 36px; padding: 0; border-radius: 9px; }
+.mini-canvas { display: block; width: 100%; height: auto; border-radius: 8px; background: #0b0b0a; box-shadow: inset 0 0 0 1px #000; }
+
+/* the live preview card at the end: a wide animation, a divider, then three short notes */
+.about-live { display: flex; flex-direction: column; overflow: hidden; }
+.about-screen { position: relative; height: clamp(150px, 24vh, 280px); margin: 12px 12px 0; border-radius: 10px; overflow: hidden; background: #0b0b0a; box-shadow: inset 0 0 0 1px #000; }
+.about-screen canvas, .about-screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; object-fit: cover; pointer-events: none; }
+.about-notes { display: flex; margin-top: 14px; border-top: 2px solid #070707; box-shadow: inset 0 1px 0 #3a3a3a; }
+.about-notes > div { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 24px 28px 26px; }
+.about-notes > div + div { border-left: 2px solid #070707; box-shadow: inset 1px 0 0 #3a3a3a; }
+.about-notes h2 { font-size: 17px; font-weight: 500; color: var(--text); }
+.about-notes p { font-size: 14px; line-height: 1.6; color: var(--muted); }
+
+/* icons sit in a red box, like our logo */
+.bento-icon {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  overflow: hidden;
+  color: #fff;
+  background: radial-gradient(circle at 50% 46%, #f5343a, #ef282d 50%, #d61d23);
+  box-shadow: 0 2.4px 0 #5e0a0d, 0 3.6px 9px rgba(0, 0, 0, .6);
+}
+.bento-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(rgba(255, 255, 255, .13), rgba(255, 255, 255, 0) 40%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .26), inset 0 -2.5px 3px rgba(70, 0, 4, .38);
+  pointer-events: none;
+}
+.bento-icon svg { position: relative; z-index: 1; }
+
+/* the buttons live outside the cards: the version on the left, a mix of secondary and primary on the right */
+.about-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 24px; padding-bottom: 8px; }
+.about-version { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.about-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+.about-buttons .key { height: 40px; padding: 0 20px; text-decoration: none; }
+.about-buttons .key svg { flex: none; }
+
+@media (max-width: 1200px) { .feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  .about-notes { flex-direction: column; }
+  .about-notes > div + div { border-left: 0; border-top: 2px solid #070707; box-shadow: inset 0 1px 0 #3a3a3a; }
+}
+@media (max-width: 640px) { .feat-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Site layout: the welcome page (switched off) sits in a centred, narrower container ----------
+   Same idea as theladybug.app: max-width 1440px, side gutter clamp(16px, 4.4vw, 64px), and the navbar inside that same
+   container. The tool (/canvas) is the one view that takes the full width. */
+
+.app { width: 100%; }
+body[data-view="home"] .app {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4.4vw, 64px);
+}
+.logo, .wordmark { cursor: pointer; }
+.page.home, .page.about { padding-inline: 0; }
+.page.home > .home-wrap { max-width: none; }
+
+/* ---------- Welcome page: headline, intro, buttons, feature cards, preview card with the copyright ---------- */
+
+.page.home { padding: 0; overflow-x: hidden; overflow-y: auto; }
+.page.home > .home-wrap {
+  max-width: none;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 3.4vh, 36px);
+}
+.home-text { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: clamp(8px, 2vh, 24px); }
+.home-title {
+  margin-top: clamp(12px, 2.2vh, 22px);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'ROND' 0;
+  font-size: clamp(38px, min(8vw, 12vh), 112px);
+  line-height: 1;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.home-sub { margin-top: clamp(14px, 2.6vh, 26px); max-width: 620px; font-size: clamp(15px, 2.3vh, 20px); line-height: 1.55; color: var(--muted); }
+.home-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: clamp(20px, 4vh, 38px); }
+.key.big { height: 48px; padding: 0 28px; font-size: 12px; text-decoration: none; }
+
+
+/* the preview card: a wide animation strip, then a divider, some space, and the copyright in the middle */
+.home-stage { flex: none; display: flex; flex-direction: column; margin-bottom: 4px; }
+.home-screen { position: relative; height: clamp(170px, 32vh, 360px); margin: 12px 12px 0; border-radius: 10px; overflow: hidden; background: #0b0b0a; box-shadow: inset 0 0 0 1px #000; }
+.home-screen canvas, .home-screen iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  object-fit: cover;
+  pointer-events: none;
+}
+.home-foot {
+  margin-top: clamp(14px, 2.4vh, 22px);
+  padding: clamp(14px, 2.4vh, 20px) 16px;
+  border-top: 2px solid #070707;
+  box-shadow: inset 0 1px 0 #3a3a3a;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Loader: just the logo with a shimmer ---------- */
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.loader.in { opacity: 1; }
+.loader.out { opacity: 0; transition: opacity .4s; }
+.loader-logo {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 46%, #f5343a, #ef282d 50%, #d61d23);
+  box-shadow: 0 5px 0 #5e0a0d, 0 10px 24px rgba(0, 0, 0, .6);
+}
+.loader-logo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* the shimmer: a soft bright band sweeping across the logo, over and over */
+.loader-logo::after {
+  content: '';
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: -70%;
+  width: 55%;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .6), rgba(255, 255, 255, 0));
+  transform: skewX(-18deg);
+  animation: logo-shimmer 1.05s ease-in-out infinite;
+}
+@keyframes logo-shimmer { to { left: 125%; } }
+@media (prefers-reduced-motion: reduce) { .loader-logo::after { animation: none; } }
+
+/* How to use card, centred over the welcome page */
+.howmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(5, 5, 5, .78);
+}
+.howmodal .how-card { margin: 0; max-height: 100%; overflow-y: auto; }
+
+/* credit: the words stay plain, only the name (the link to the portfolio) is bold. Same line as the text, no underline. */
+.welcome-credit { color: inherit; font-weight: 400; }
+.welcome-credit a, .home-foot a, .about-notes h2 a { color: var(--text); font-weight: 700; text-decoration: none; transition: color .15s; }
+.welcome-credit a:hover, .home-foot a:hover, .about-notes h2 a:hover { color: var(--accent); }
+
+/* the Closed Beta pill, sitting on the bottom left of the preview */
+.beta-pill {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(10, 10, 10, .72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14), 0 4px 14px rgba(0, 0, 0, .5);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text);
+}

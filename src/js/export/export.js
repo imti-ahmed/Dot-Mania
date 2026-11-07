@@ -3,7 +3,7 @@
  *
  *   DotExport.build(snapshot, opts) -> { tag, script, snippet, html, llm }
  *
- * The output has no dependencies. It reuses the editor's own engine functions (js/engine.js)
+ * The output has no dependencies. It reuses the editor's own engine functions (src/js/core/engine.js)
  * and the chosen preset's function, so the exported animation matches the editor.
  */
 (function () {

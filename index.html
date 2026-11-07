@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dot Mania</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="favicon.ico" sizes="48x48">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
-  <link rel="stylesheet" href="css/style.css?v=0.0.57">
+  <link rel="stylesheet" href="src/css/style.css?v=0.22.19">
 </head>
 <body>
   <div class="app">
@@ -29,10 +29,10 @@
         <span class="wordmark">DOT MANIA</span>
         <nav class="tabs" id="tabs" aria-label="Sections">
           <button class="navbtn" data-view="canvas" aria-pressed="true">Canvas</button>
-          <button class="navbtn" data-view="library" aria-pressed="false">Library</button>
-          <button class="navbtn" data-view="about" aria-pressed="false">About</button>
-          <button class="navbtn" data-view="updates" aria-pressed="false">What's New</button>
-          <button class="navbtn" data-view="guide" aria-pressed="false">Guide</button>
+          <button class="navbtn" data-view="about" data-enable="aboutPage" aria-pressed="false">About</button>
+          <button class="navbtn" data-view="library" data-enable="libraryPage" aria-pressed="false">Library</button>
+          <button class="navbtn" data-view="updates" data-enable="whatsNewPage" aria-pressed="false">What's New</button>
+          <button class="navbtn" data-view="guide" data-enable="guidePage" aria-pressed="false">Guide</button>
         </nav>
         <span class="spacer"></span>
         <span class="divider statusdiv"></span>
@@ -53,6 +53,9 @@
       <aside class="card sidebar" aria-label="Tools">
         <div class="toolstrip" id="toolstrip" role="toolbar" aria-label="Drawing tools"></div>
         <div class="editstrip" role="group" aria-label="Canvas actions">
+          <button class="key" id="eraserBtn" data-tool="eraser" title="Eraser (E)" aria-label="Eraser" aria-pressed="false">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/></svg>
+          </button>
           <button class="key" id="invertBtn" title="Invert selection" aria-label="Invert selection">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5a5.5 5.5 0 010 11z" fill="currentColor"/></svg>
           </button>
@@ -125,6 +128,8 @@
           <div class="group" id="drawControls" data-flag="drawOptions"></div>
           <div class="group-label" data-flag="gridPanel">Grid</div>
           <div class="group" id="gridControls" data-flag="gridPanel"></div>
+          <div class="group-label" data-flag="pointerOptions">Pointer</div>
+          <div class="group" id="pointerControls" data-flag="pointerOptions"></div>
         </div>
         <div class="panel-body" data-ptab-body="export" hidden>
           <div class="group-label first">Background</div>
@@ -150,18 +155,93 @@
 
     </main>
 
-    <!-- Other pages (filled in by js/app.js) -->
+    <!-- Welcome page: the entry. Headline, short intro, buttons, feature cards, then a preview card that ends with the copyright. -->
+    <section class="page home" data-page="home" hidden aria-label="Welcome">
+      <div class="home-wrap">
+        <div class="home-text">
+          <span class="beta-tag"><i class="led"></i>Closed Beta</span>
+          <h1 class="home-title">Make dots move.</h1>
+          <p class="home-sub">Draw on a grid of dots, or turn any picture into dots, then bring them to life with animation. Export a GIF, a video, or a small snippet for your own site.</p>
+          <div class="home-actions">
+            <button class="key primary big" id="homeGo" type="button">Let's Go</button>
+            <button class="key big" id="homeHow" type="button">How to use</button>
+            <a class="key big" id="homeFeedback" href="https://github.com/imti-ahmed/Dot-Mania/issues/new" target="_blank" rel="noopener">Feedback</a>
+          </div>
+        </div>
+
+        <div class="card home-stage">
+          <div class="home-screen" id="homePreview"></div>
+          <p class="home-foot">&copy; <span id="homeYear">2026</span> Dot Mania &middot; Closed beta &middot; Designed &amp; Built by <a href="https://www.imtiyazhamed.com" target="_blank" rel="noopener">Imtiyaz Ahmed</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to use: a card over the welcome page (Esc or a click outside closes it) -->
+    <div class="howmodal" id="howModal" role="dialog" aria-modal="true" aria-labelledby="howModalTitle" hidden>
+      <div class="how-card open">
+        <h3 class="how-title" id="howModalTitle">How to use</h3>
+        <ol class="how-steps">
+          <li><b>Draw something</b><span>Pick the Pen on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
+          <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Turn on Stacking to run up to three together. Press Play to watch it move.</span></li>
+          <li><b>Shape the look</b><span>Under Tuning, change the speed, size and glow. Then choose a color, a gradient, or your own.</span></li>
+          <li><b>Not sure? Randomize</b><span>The dice on the left makes a whole new piece. Press Ctrl+Z if you want yours back.</span></li>
+          <li><b>Save it</b><span>In the Export tab, pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
+        </ol>
+        <p class="how-tip"><b>Tips</b> Hold Shift with the pen for a straight line. Press Space to play or pause.</p>
+      </div>
+    </div>
+
+    <!-- Other pages (filled in by src/js/app.js) -->
     <section class="card page" data-page="library" hidden aria-label="Library">
       <h1 class="page-title">Library</h1>
       <p class="page-lead">Ready-made templates. Load one into the editor or download the HTML.</p>
       <div class="lib-grid" id="libGrid"></div>
     </section>
 
-    <section class="card page" data-page="about" hidden aria-label="About">
-      <h1 class="page-title">About</h1>
-      <p class="page-lead">Dot Mania turns drawings, shapes and pictures into animated dot grids.</p>
-      <p class="page-text">Draw on a 16px grid, pick an animation, then export a looping GIF or a dependency-free web component you can drop into any site.</p>
-      <p class="page-text meta" id="aboutVersion"></p>
+    <section class="page about" data-page="about" hidden aria-label="About">
+     <div class="bento">
+      <article class="card b-hero">
+        <div class="hero-main"><span class="about-eyebrow">About</span><h1 class="about-title">Dot Mania</h1></div>
+        <p class="about-lead">Make animated dot art in your browser. Draw on a grid or drop in a picture, pick how the dots move, then export it as a GIF, a video, or a snippet you can paste into any site.</p>
+      </article>
+
+      <div class="feat-grid">
+       <article class="card feat-card">
+        <div class="feat-preview"><div class="mini" aria-hidden="true"><div class="group"><div class="mini-tools"><span class="key" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 13.5l.8-3.2 7.2-7.2 2.4 2.4-7.2 7.2z"/><path d="M9.2 4.4l2.4 2.4"/></svg></span><span class="key" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="4" width="10.4" height="8" rx="1"/></svg></span><span class="key" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="8" cy="8" rx="5.5" ry="4"/></svg></span><span class="key" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="scale(.6667)" stroke-width="2.25"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></g></svg></span></div><svg class="mini-canvas" viewBox="0 0 271 76" aria-hidden="true"><circle cx="8" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="23" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="38" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="53" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="68" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="83" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="98" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="113" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="128" cy="8" r="4.4" fill="#ef282d"/><circle cx="143" cy="8" r="4.4" fill="#ef282d"/><circle cx="158" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="173" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="188" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="203" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="218" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="233" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="248" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="263" cy="8" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="8" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="23" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="38" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="53" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="68" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="83" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="98" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="113" cy="23" r="4.4" fill="#ef282d"/><circle cx="128" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="143" cy="23" r="4.4" fill="#ef282d"/><circle cx="158" cy="23" r="4.4" fill="#ef282d"/><circle cx="173" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="188" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="203" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="218" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="233" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="248" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="263" cy="23" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="8" cy="38" r="4.4" fill="#ef282d"/><circle cx="23" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="38" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="53" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="68" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="83" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="98" cy="38" r="4.4" fill="#ef282d"/><circle cx="113" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="128" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="143" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="158" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="173" cy="38" r="4.4" fill="#ef282d"/><circle cx="188" cy="38" r="4.4" fill="#ef282d"/><circle cx="203" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="218" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="233" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="248" cy="38" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="263" cy="38" r="4.4" fill="#ef282d"/><circle cx="8" cy="53" r="4.4" fill="#ef282d"/><circle cx="23" cy="53" r="4.4" fill="#ef282d"/><circle cx="38" cy="53" r="4.4" fill="#ef282d"/><circle cx="53" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="68" cy="53" r="4.4" fill="#ef282d"/><circle cx="83" cy="53" r="4.4" fill="#ef282d"/><circle cx="98" cy="53" r="4.4" fill="#ef282d"/><circle cx="113" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="128" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="143" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="158" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="173" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="188" cy="53" r="4.4" fill="#ef282d"/><circle cx="203" cy="53" r="4.4" fill="#ef282d"/><circle cx="218" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="233" cy="53" r="4.4" fill="#ef282d"/><circle cx="248" cy="53" r="4.4" fill="#ef282d"/><circle cx="263" cy="53" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="8" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="23" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="38" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="53" cy="68" r="4.4" fill="#ef282d"/><circle cx="68" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="83" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="98" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="113" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="128" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="143" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="158" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="173" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="188" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="203" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="218" cy="68" r="4.4" fill="#ef282d"/><circle cx="233" cy="68" r="4.4" fill="#ef282d"/><circle cx="248" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/><circle cx="263" cy="68" r="1.5" fill="#f6efe3" fill-opacity=".16"/></svg></div></div></div>
+        <div class="feat-body"><span class="bento-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 13.5l.8-3.2 7.2-7.2 2.4 2.4-7.2 7.2z"/><path d="M9.2 4.4l2.4 2.4"/></svg></span><div><b>Draw</b><span>Pen, shapes and fill, or turn a picture into dots.</span></div></div>
+       </article>
+       <article class="card feat-card">
+        <div class="feat-preview"><div class="mini" aria-hidden="true"><div class="group"><div class="presets"><span class="key" aria-pressed="false">Shimmer</span><span class="key" aria-pressed="false">Pulse</span><span class="key" aria-pressed="true">Ripple</span><span class="key" aria-pressed="false">Wave</span><span class="key" aria-pressed="false">Spiral</span><span class="key" aria-pressed="false">Scan</span><span class="key" aria-pressed="false">Rain</span><span class="key" aria-pressed="false">Beats</span></div><div class="row nolabel"><div class="seg wide"><span class="key" aria-pressed="false">Off</span><span class="key" aria-pressed="true">On</span></div></div></div></div></div>
+        <div class="feat-body"><span class="bento-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8c1.2-3 2.6-3 3.8 0s2.6 3 3.8 0 2.6-3 4.4 0"/><circle cx="8" cy="13" r=".8" fill="currentColor" stroke="none"/></svg></span><div><b>Animate</b><span><span id="aboutCount">15</span> animations, and you can stack up to three.</span></div></div>
+       </article>
+       <article class="card feat-card">
+        <div class="feat-preview"><div class="mini" aria-hidden="true"><div class="group"><div class="keygrid"><span class="key" aria-pressed="false">Rainbow</span><span class="key" aria-pressed="false">Glitter</span><span class="key" aria-pressed="false">Fire</span><span class="key" aria-pressed="false">Ocean</span><span class="key" aria-pressed="false">Sunset</span><span class="key" aria-pressed="true">Neon</span><span class="key" aria-pressed="false">Aurora</span><span class="key" aria-pressed="false">Candy</span></div><div class="row color-row"><span class="lbl">Color</span><div class="swatches wide"><span class="swatch" style="--c:#ef282d" aria-pressed="false"></span><span class="swatch" style="--c:#ff8a1f" aria-pressed="true"></span><span class="swatch" style="--c:#ffd23f" aria-pressed="false"></span><span class="swatch" style="--c:#5cf08a" aria-pressed="false"></span><span class="swatch" style="--c:#2de2e6" aria-pressed="false"></span><span class="swatch" style="--c:#8f7bff" aria-pressed="false"></span><span class="swatch" style="--c:#ff5fa2" aria-pressed="false"></span><span class="swatch custom"></span></div></div></div></div></div>
+        <div class="feat-body"><span class="bento-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2c2.6 3 4 5 4 7a4 4 0 01-8 0c0-2 1.4-4 4-7z"/></svg></span><div><b>Color</b><span>Gradients, solid colors, or your own.</span></div></div>
+       </article>
+       <article class="card feat-card">
+        <div class="feat-preview"><div class="mini" aria-hidden="true"><div class="group"><div class="row nolabel three"><div class="seg wide"><span class="key" aria-pressed="false">Low</span><span class="key" aria-pressed="true">Medium</span><span class="key" aria-pressed="false">High</span></div></div><div class="pair"><span class="key" aria-pressed="false">GIF</span><span class="key" aria-pressed="false">PNG</span></div><div class="pair"><span class="key" aria-pressed="false">WebM</span><span class="key" aria-pressed="false">MP4</span></div><div class="stack"><span class="key" aria-pressed="false">Download Html File</span></div></div></div></div>
+        <div class="feat-body"><span class="bento-icon"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5v8M4.8 7.6L8 10.8l3.2-3.2"/><path d="M3 13.5h10"/></svg></span><div><b>Export</b><span>GIF, PNG, WebM, MP4 or a tiny HTML file.</span></div></div>
+       </article>
+      </div>
+
+      <article class="card about-live">
+        <div class="about-screen" id="aboutPreview"></div>
+        <div class="about-notes">
+          <div><h2>Stays on your computer</h2><p>It all runs in your browser. Your drawings and pictures are never uploaded anywhere.</p></div>
+          <div><h2>A closed beta</h2><p>You are one of the first to use it. Things may change or break, so tell us what you think.</p></div>
+          <div><h2>Designed &amp; Built by <a href="https://www.imtiyazhamed.com" target="_blank" rel="noopener">Imtiyaz Ahmed</a></h2><p>A small, dependency-free web experiment: no accounts, no setup, just dots.</p></div>
+        </div>
+      </article>
+     </div>
+     <div class="about-actions">
+      <span class="about-version" id="aboutVersion"></span>
+      <div class="about-buttons">
+        <a class="key" href="https://www.imtiyazhamed.com" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M2.5 4.5h11A1.5 1.5 0 0 1 15 6v6.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5V6a1.5 1.5 0 0 1 1.5-1.5zM5.5 4.5V3.5A1.5 1.5 0 0 1 7 2h2a1.5 1.5 0 0 1 1.5 1.5v1H9v-.75a.25.25 0 0 0-.25-.25h-1.5a.25.25 0 0 0-.25.25V4.5H5.5z"/></svg><span>Portfolio</span></a>
+        <a class="key" href="https://github.com/imti-ahmed/Dot-Mania" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+        <a class="key" href="https://github.com/imti-ahmed/Dot-Mania/issues/new" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3.5 1.5h9A2.5 2.5 0 0 1 15 4v5a2.5 2.5 0 0 1-2.5 2.5H8.2L5 14.6a.6.6 0 0 1-1-.45V11.5h-.5A2.5 2.5 0 0 1 1 9V4a2.5 2.5 0 0 1 2.5-2.5z"/></svg><span>Send feedback</span></a>
+        <button class="key primary" id="aboutStart" type="button">Start drawing</button>
+      </div>
+     </div>
     </section>
 
     <section class="card page" data-page="updates" hidden aria-label="What's New">
@@ -180,31 +260,69 @@
       </ol>
       <h2 class="page-sub">Shortcuts</h2>
       <table class="page-table">
-        <tr><td><kbd>P</kbd> <kbd>R</kbd> <kbd>O</kbd> <kbd>F</kbd></td><td>Pen, shape, circle, fill</td></tr>
+        <tr><td><kbd>P</kbd> <kbd>R</kbd> <kbd>O</kbd> <kbd>F</kbd> <kbd>E</kbd></td><td>Pen, shape, circle, fill, eraser</td></tr>
         <tr><td><kbd>1</kbd>&ndash;<kbd>9</kbd></td><td>Pick an animation</td></tr>
         <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>Z</kbd></td><td>Undo</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Z</kbd></td><td>Redo</td></tr>
-        <tr><td><kbd>Shift</kbd> + drag</td><td>Snap lines to 45&deg;, keep rectangles and ellipses square</td></tr>
+        <tr><td><kbd>Shift</kbd> + drag</td><td>Pen: draw a straight line (flat, upright or 45&deg;). Shapes stay square.</td></tr>
         <tr><td>Right-click drag</td><td>Erase</td></tr>
       </table>
     </section>
   </div>
 
 
+  <!-- Loader between the welcome page and the studio: just the logo with a shimmer, no backdrop pattern -->
+  <div class="loader" id="loader" aria-hidden="true" hidden>
+    <div class="loader-logo"><svg viewBox="0 0 42 42" fill="#fff" aria-hidden="true"><circle cx="14" cy="14" r="2.4"/><circle cx="21" cy="14" r="2.4" opacity=".55"/><circle cx="28" cy="14" r="2.4"/><circle cx="14" cy="21" r="2.4" opacity=".55"/><circle cx="21" cy="21" r="3.4"/><circle cx="28" cy="21" r="2.4" opacity=".55"/><circle cx="14" cy="28" r="2.4"/><circle cx="21" cy="28" r="2.4" opacity=".55"/><circle cx="28" cy="28" r="2.4"/></svg></div>
+  </div>
+
+  <!-- Closed beta welcome (first visit, then again after 5 hours; see the welcomeOnce flag) -->
+  <div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
+   <div class="welcome-stage">
+    <div class="welcome-card">
+      <div class="welcome-media">
+        <div class="welcome-preview" id="welcomePreview"></div>
+        <span class="beta-pill"><i class="led"></i>Closed Beta</span>
+      </div>
+      <div class="welcome-body">
+        <h2 class="welcome-title" id="welcomeTitle">Welcome to Dot Mania</h2>
+        <p class="welcome-text">Thanks for being an early tester. Dot Mania turns drawings and pictures into animated dot grids you can export as a GIF, video, or snippet. It is an early build, so things may break. <span class="welcome-credit">Designed &amp; Built by <a href="https://www.imtiyazhamed.com" target="_blank" rel="noopener">Imtiyaz Ahmed</a></span></p>
+      </div>
+      <div class="welcome-actions">
+        <button class="key primary" id="welcomeGo" type="button">Let's Go</button>
+        <button class="key" id="welcomeHow" type="button" aria-expanded="false" aria-controls="howDrawer">How to use</button>
+        <a class="key" id="welcomeFeedback" href="https://github.com/imti-ahmed/Dot-Mania/issues/new" target="_blank" rel="noopener">Feedback</a>
+      </div>
+    </div>
+
+    <aside class="how-card" id="howDrawer" aria-label="How to use" aria-hidden="true">
+      <h3 class="how-title">How to use</h3>
+      <ol class="how-steps">
+        <li><b>Draw something</b><span>Pick the Pen on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
+        <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Turn on Stacking to run up to three together. Press Play to watch it move.</span></li>
+        <li><b>Shape the look</b><span>Under Tuning, change the speed, size and glow. Then choose a color, a gradient, or your own.</span></li>
+        <li><b>Not sure? Randomize</b><span>The dice on the left makes a whole new piece. Press Ctrl+Z if you want yours back.</span></li>
+        <li><b>Save it</b><span>In the Export tab, pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
+      </ol>
+      <p class="how-tip"><b>Tips</b> Hold Shift with the pen for a straight line. Press Space to play or pause.</p>
+    </aside>
+   </div>
+  </div>
+
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
-  <script src="js/flags.js?v=0.0.57"></script>
-  <script src="js/presets.js?v=0.0.57"></script>
-  <script src="js/shapes.js?v=0.0.57"></script>
-  <script src="js/engine.js?v=0.0.57"></script>
-  <script src="js/image.js?v=0.0.57"></script>
-  <script src="js/export.js?v=0.0.57"></script>
-  <script src="js/gif.js?v=0.0.57"></script>
-  <script src="js/library.js?v=0.0.57"></script>
-  <script src="js/site.js?v=0.0.57"></script>
-  <script src="js/whatsnew.js?v=0.0.57"></script>
-  <script src="js/app.js?v=0.0.57"></script>
+  <script src="src/js/core/flags.js?v=0.22.19"></script>
+  <script src="src/js/core/presets.js?v=0.22.19"></script>
+  <script src="src/js/core/shapes.js?v=0.22.19"></script>
+  <script src="src/js/core/engine.js?v=0.22.19"></script>
+  <script src="src/js/core/image.js?v=0.22.19"></script>
+  <script src="src/js/export/export.js?v=0.22.19"></script>
+  <script src="src/js/export/gif.js?v=0.22.19"></script>
+  <script src="src/js/data/library.js?v=0.22.19"></script>
+  <script src="src/js/data/site.js?v=0.22.19"></script>
+  <script src="src/js/data/whatsnew.js?v=0.22.19"></script>
+  <script src="src/js/app.js?v=0.22.19"></script>
 </body>
 </html>

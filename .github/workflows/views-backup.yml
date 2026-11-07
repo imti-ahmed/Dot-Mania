@@ -4,8 +4,8 @@
 # views.json on a separate `stats` branch, so main stays free of bot commits. The count only ever goes up:
 # if Abacus returns less (it was reset, or the key vanished) the saved number is kept.
 #
-# The app also reads this file (see js/app.js), so the number shown survives an Abacus outage.
-# To switch services: take "value" from views.json, seed the new counter with it, and point js/site.js at it.
+# The app also reads this file (see src/js/app.js), so the number shown survives an Abacus outage.
+# To switch services: take "value" from views.json, seed the new counter with it, and point src/js/data/site.js at it.
 name: Back up view count
 
 on:
@@ -25,9 +25,9 @@ jobs:
       - name: Save the current count
         run: |
           set -euo pipefail
-          # the counter name comes from js/site.js, so there is one place to change it
-          ns=$(sed -n "s/.*namespace: '\([^']*\)'.*/\1/p" js/site.js)
-          key=$(sed -n "s/.*key: '\([^']*\)'.*/\1/p" js/site.js)
+          # the counter name comes from src/js/data/site.js, so there is one place to change it
+          ns=$(sed -n "s/.*namespace: '\([^']*\)'.*/\1/p" src/js/data/site.js)
+          key=$(sed -n "s/.*key: '\([^']*\)'.*/\1/p" src/js/data/site.js)
           echo "counter: $ns / $key"
 
           new=$(curl -fsS "https://abacus.jasoncameron.dev/get/$ns/$key" | jq -r '.value // empty' || true)
