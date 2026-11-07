@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.26 | 2026-11-07 | `f51eebe` | Twinkle removed from the list (kept behind extraPresets flag) |
 | 0.0.25 | 2026-11-07 | `91236a1` | Blink removed from the list (kept behind extraPresets flag) |
 | 0.0.24 | 2026-11-07 | `90b8a33` | Heartbeat renamed Beats; Sweep defaults to horizontal (0 deg); Burst removed from the list (kept behind extraPresets flag) |
 | 0.0.23 | 2026-11-07 | `7bda2ec` | 7 new animations (Breathe, Sweep, Burst, Blink, Flicker, Zigzag, Reveal); presets show three rows with a secondary More / Less button |
