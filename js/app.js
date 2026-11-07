@@ -1136,15 +1136,24 @@
       var counted = false;
       try { counted = !!sessionStorage.getItem('dm-counted'); } catch (e) {}
       var hit = live && !counted;
-      fetch('https://abacus.jasoncameron.dev/' + (hit ? 'hit' : 'get') + path).then(function (r) {
-        if (r.status === 404) return { value: 0 };           // no visits recorded yet
+      // Abacus is the live counter. A copy of the count is saved to the repo's `stats` branch by a scheduled
+      // GitHub Action (.github/workflows/views-backup.yml), so if Abacus is down or resets we still show a real number.
+      var live_count = fetch('https://abacus.jasoncameron.dev/' + (hit ? 'hit' : 'get') + path).then(function (r) {
+        if (r.status === 404) return 0;                      // no visits recorded yet
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      }).then(function (d) {
-        if (typeof d.value !== 'number') throw new Error('no number in response');
-        if (hit) { try { sessionStorage.setItem('dm-counted', '1'); } catch (e) {} }
-        put('#statViews', d.value.toLocaleString(), d.value);
-      }).catch(function (err) { console.warn('[status] could not load views:', err.message); });
+        return r.json().then(function (d) {
+          if (typeof d.value !== 'number') throw new Error('no number in response');
+          if (hit) { try { sessionStorage.setItem('dm-counted', '1'); } catch (e) {} }
+          return d.value;
+        });
+      }).catch(function (err) { console.warn('[status] live view count unavailable:', err.message); return null; });
+      var backup = !site.repo ? Promise.resolve(null)
+        : fetch('https://raw.githubusercontent.com/' + site.repo + '/stats/views.json').then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) { return d && typeof d.value === 'number' ? d.value : null; }).catch(function () { return null; });
+      Promise.all([live_count, backup]).then(function (v) {
+        var n = Math.max(v[0] === null ? -1 : v[0], v[1] === null ? -1 : v[1]);   // never show less than the backup
+        if (n >= 0) put('#statViews', n.toLocaleString(), n);
+      });
     }
   }
 

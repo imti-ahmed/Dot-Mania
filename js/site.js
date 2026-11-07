@@ -8,9 +8,12 @@
  *             specific to this site. Leave namespace '' to turn views off.
  *             A visit is counted once per browser session, and only on the live site: on localhost or when
  *             opened as a file it just reads the number.
+ *             A GitHub Action (.github/workflows/views-backup.yml) saves the count to views.json on the `stats`
+ *             branch every 6 hours, and the app shows the larger of the two numbers. To switch services, seed the
+ *             new counter with the value from views.json and change `views` here.
  */
 window.SITE = {
-  version: '0.0.48',
+  version: '0.0.49',
   repo: 'imti-ahmed/Dot-Mania',
   views: { namespace: 'dot-mania-imti-ahmed', key: 'views' }
 };

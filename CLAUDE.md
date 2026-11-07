@@ -21,6 +21,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 | `library/*.html` | Library templates, each one a Dot Mania Code File export |
 | `js/library.js` | Library manifest (add a row per template file) |
 | `js/site.js` | Status bar settings: version, GitHub repo for stars, Abacus views counter |
+| `.github/workflows/views-backup.yml` | Saves the Abacus view count to `views.json` on the `stats` branch every 6 hours (backup for switching services) |
 | `js/whatsnew.js` | What's New page content: plain language for users, NOT a copy of the build log |
 | `library/index.html`, `about/`, `whats-new/`, `guide/` | Entry pages so each page has its own address (/library, /about, /whats-new, /guide); each loads the one real app |
 

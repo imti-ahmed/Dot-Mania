@@ -1,0 +1,52 @@
+# Backs up the view count so the number is never lost if the counter service (Abacus) goes away.
+#
+# Every 6 hours (or by hand: Actions > Back up view count > Run workflow) it reads the count and saves it to
+# views.json on a separate `stats` branch, so main stays free of bot commits. The count only ever goes up:
+# if Abacus returns less (it was reset, or the key vanished) the saved number is kept.
+#
+# The app also reads this file (see js/app.js), so the number shown survives an Abacus outage.
+# To switch services: take "value" from views.json, seed the new counter with it, and point js/site.js at it.
+name: Back up view count
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Save the current count
+        run: |
+          set -euo pipefail
+          # the counter name comes from js/site.js, so there is one place to change it
+          ns=$(sed -n "s/.*namespace: '\([^']*\)'.*/\1/p" js/site.js)
+          key=$(sed -n "s/.*key: '\([^']*\)'.*/\1/p" js/site.js)
+          echo "counter: $ns / $key"
+
+          new=$(curl -fsS "https://abacus.jasoncameron.dev/get/$ns/$key" | jq -r '.value // empty' || true)
+          if [ -z "$new" ]; then echo "No count returned, nothing to back up."; exit 0; fi
+
+          if git ls-remote --exit-code --heads origin stats >/dev/null 2>&1; then
+            git fetch origin stats
+            git checkout -B stats origin/stats
+          else
+            git checkout --orphan stats
+            git rm -rf . >/dev/null
+          fi
+
+          old=$(jq -r '.value // 0' views.json 2>/dev/null || echo 0)
+          if [ "$new" -le "$old" ]; then echo "Count $new is not above the backup ($old), keeping the backup."; exit 0; fi
+
+          printf '{\n  "value": %s,\n  "updated": "%s"\n}\n' "$new" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > views.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add views.json
+          git commit -m "Back up view count: $new"
+          git push origin stats
