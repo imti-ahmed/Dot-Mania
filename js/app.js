@@ -931,24 +931,96 @@
     document.querySelectorAll('#tabs .navbtn').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === id)); });
     $('#canvasReadouts').hidden = id !== 'canvas';
     if (id === 'canvas') fitStage();
+    if (id === 'library') libStart();
   }
-  // Library: a grid of templates. Preview is the template file itself in an iframe; Load fetches it into the editor.
+  // Library: a grid of templates. Previews are drawn here, small and from one shared loop that only
+  // animates cards on screen (eight full-size components at once was far too heavy). If a template can't be
+  // fetched (page opened as a file) the card falls back to showing the template itself in an iframe.
+  var PREVIEW_W = 640;
+  var libItems = [], libRaf = 0, libLast = 0;
+
+  function libFrame(now) {
+    libRaf = 0;
+    if (view !== 'library') return;
+    var dt = Math.min((now - libLast) / 1000, 0.1);
+    libLast = now;
+    libItems.forEach(function (it) {
+      if (!it.visible) return;
+      E.tlAdvance(it.tl, dt, it.T);
+      var c = it.ctx;
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.fillStyle = '#0b0b0a';
+      c.fillRect(0, 0, it.cv.width, it.cv.height);
+      c.drawImage(it.idle, 0, 0);
+      c.setTransform(it.s, 0, 0, it.s, 0, 0);
+      E.drawCells(c, it.list, it.fn, it.vals, it.color, it.tl.t, it.tl.ph, it.geo, false);
+    });
+    libRaf = requestAnimationFrame(libFrame);
+  }
+  function libStart() {
+    if (libRaf || !libItems.length) return;
+    libLast = performance.now();
+    libRaf = requestAnimationFrame(libFrame);
+  }
+
+  function libPreview(box, text, url, name) {
+    var parsed = parseExport(text);
+    if (!parsed || !parsed.preset) { libIframe(box, url, name); return; }
+    var d = parsed.data, cells = [];
+    d.runs.forEach(function (row) {
+      row[1].forEach(function (run) { for (var n = 0; n < run[1]; n++) cells.push([run[0] + n, row[0]]); });
+    });
+    var s = PREVIEW_W / d.w, cv = document.createElement('canvas');
+    cv.width = PREVIEW_W; cv.height = Math.round(d.h * s);
+    cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', name + ' preview');
+    var idle = document.createElement('canvas');
+    idle.width = cv.width; idle.height = cv.height;
+    var ic = idle.getContext('2d');
+    ic.scale(s, s);
+    E.drawIdle(ic, d.gridCols, d.gridRows, d.geo, d.gridVis === undefined ? GRID_VIS : d.gridVis);
+    var it = {
+      cv: cv, ctx: cv.getContext('2d'), idle: idle, s: s, geo: d.geo, list: E.buildList(cells),
+      fn: parsed.preset.fn, vals: d.p, color: d.color, T: d.period, tl: E.makeTimeline('auto'), visible: false
+    };
+    it.tl.t = d.still || 0;                 // start on a pleasant frame, so a card is never blank
+    box.innerHTML = '';
+    box.appendChild(cv);
+    libItems.push(it);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        it.visible = entries[entries.length - 1].isIntersecting;
+        if (it.visible) libStart();
+      }).observe(cv);
+    } else { it.visible = true; }
+    if (view === 'library') libStart();
+  }
+
+  function libIframe(box, url, name) {
+    box.innerHTML = '<iframe loading="lazy" tabindex="-1" sandbox="allow-scripts"></iframe>';
+    var f = box.querySelector('iframe');
+    f.title = name + ' preview';
+    f.src = url;
+  }
+
   function buildLibrary() {
     var grid = $('#libGrid');
     (window.LIBRARY || []).forEach(function (t) {
       var url = 'library/' + t.file, card = document.createElement('article');
       card.className = 'lib-card';
       card.innerHTML =
-        '<div class="lib-preview"><iframe loading="lazy" tabindex="-1" sandbox="allow-scripts" title="' + t.name + ' preview"></iframe></div>' +
+        '<div class="lib-preview"></div>' +
         '<div class="lib-name"></div>' +
         '<div class="lib-actions">' +
           '<button class="key" data-act="load">Load File</button>' +
           '<a class="key" data-act="download" download>Download</a>' +
         '</div>';
-      card.querySelector('iframe').src = url;
       card.querySelector('.lib-name').textContent = t.name;
       var dl = card.querySelector('[data-act="download"]');
       dl.href = url; dl.download = t.file;
+      var box = card.querySelector('.lib-preview');
+      fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(function (text) { libPreview(box, text, url, t.name); })
+        .catch(function () { libIframe(box, url, t.name); });
       card.querySelector('[data-act="load"]').addEventListener('click', function () {
         fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (text) {
           showView('canvas');
