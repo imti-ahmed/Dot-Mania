@@ -809,33 +809,25 @@
     $('#statusIdle').hidden = false;
   }
 
-  // Views and GitHub stars (each hidden if it is not configured or cannot be fetched).
+  // Version, views and GitHub stars. A value that is not available (no counter set up, repo private,
+  // offline) shows a dash.
   function buildStatus() {
     var site = window.SITE || {}, U = window.UPDATES || [];
-    $('#statVersion').textContent = U.length ? 'v' + U[0].v : '';
-    function show(id, n) {
-      var el = $(id);
-      el.querySelector('b').textContent = Number(n).toLocaleString();
-      el.hidden = false;
-      $('#statVersion').hidden = true;
-    }
+    function put(id, text) { $(id).querySelector('b').textContent = text; }
+    put('#statVersion', U.length ? 'v' + U[0].v : '-');
+    if (site.repo) $('#statStars').href = 'https://github.com/' + site.repo;
     function cached(key) { try { return JSON.parse(sessionStorage.getItem(key)); } catch (e) { return null; } }
     function remember(key, n) { try { sessionStorage.setItem(key, JSON.stringify(n)); } catch (e) {} }
-    if (site.repo) {
-      var k = 'dm-stars', c = cached(k);
-      if (typeof c === 'number') show('#statStars', c);
-      else fetch('https://api.github.com/repos/' + site.repo).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-        if (d && typeof d.stargazers_count === 'number') { remember(k, d.stargazers_count); show('#statStars', d.stargazers_count); }
+    function load(id, key, url, pick) {
+      var c = cached(key);
+      if (typeof c === 'number') { put(id, c.toLocaleString()); return; }
+      fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        var n = d && pick(d);
+        if (typeof n === 'number') { remember(key, n); put(id, n.toLocaleString()); }
       }).catch(function () {});
     }
-    if (site.viewsUrl) {
-      var vk = 'dm-views', vc = cached(vk);
-      if (typeof vc === 'number') show('#statViews', vc);
-      else fetch(site.viewsUrl).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-        var n = d && (d.count !== undefined ? d.count : d.value);
-        if (typeof n === 'number') { remember(vk, n); show('#statViews', n); }
-      }).catch(function () {});
-    }
+    if (site.repo) load('#statStars', 'dm-stars', 'https://api.github.com/repos/' + site.repo, function (d) { return d.stargazers_count; });
+    if (site.viewsUrl) load('#statViews', 'dm-views', site.viewsUrl, function (d) { return d.count !== undefined ? d.count : d.value; });
   }
 
   // The exported file holds `var DATA={...};` (drawing, values, colour) and `var presetFn=...;` (the animation).
