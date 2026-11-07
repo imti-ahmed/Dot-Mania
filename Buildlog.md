@@ -1,0 +1,8 @@
+# Dot Mania — Build Log
+
+Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public release is declared.
+
+| Version | Date | Commit | Changes |
+|---|---|---|---|
+| 0.0.1 | 2026-11-07 | `b80587e` | Editor, 10 animation presets, drawing tools, image upload, web component + GIF export, feature flags |
+| 0.0.0 | 2026-11-06 | `e6dc8a6` | Repo created |
