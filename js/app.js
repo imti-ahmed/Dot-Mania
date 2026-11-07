@@ -1435,10 +1435,10 @@
 
   /* ---------- Export (lives in the right panel) ---------- */
 
-  var exportOpts = { bg: 'dark', grid: true };
+  var exportOpts = { bg: 'dark', grid: true, gifSize: 960 };   // gifSize: longest side of the GIF in px
   // GIF tuning: 30 fps, small tolerance (a bigger one makes fades step instead of glide), and a palette sized
   // to the content: single-colour looks need few colours, multi-colour modes need more.
-  var GIF_MAX_SECONDS = 8, GIF_MAX_SIDE = 480, GIF_FPS = 30, GIF_TOLERANCE = 12, GIF_COLORS_SIMPLE = 31, GIF_COLORS_RICH = 63;
+  var GIF_MAX_SECONDS = 8, GIF_FPS = 30, GIF_TOLERANCE = 12, GIF_COLORS_SIMPLE = 31, GIF_COLORS_RICH = 63;
   var gifBusy = false, videoBusy = false;
 
   function buildExport() {
@@ -1499,7 +1499,7 @@
       E: E, list: E.buildList(cellArray()), preset: preset, vals: vals, color: color, T: T, secs: Math.min(T, GIF_MAX_SECONDS),
       art: state.art, geo: exportGeo(), cols: cols, rows: rows, gridVis: GRID_VIS, grid: exportOpts.grid,
       transparent: exportOpts.bg === 'transparent', bg: '#0b0b0a',
-      maxSide: GIF_MAX_SIDE, fps: GIF_FPS, tolerance: GIF_TOLERANCE,
+      maxSide: exportOpts.gifSize, fps: GIF_FPS, tolerance: GIF_TOLERANCE,
       colors: color.mode === 'solid' || color.mode === 'white' ? GIF_COLORS_SIMPLE : GIF_COLORS_RICH
     }).then(function (blob) {
       download(funkyName('gif'), blob, 'image/gif');
@@ -1640,7 +1640,7 @@
 
     // Code: an HTML file, or text to paste into an AI assistant
     var code = [];
-    if (FLAGS.exportCodeFile) code.push(key('exportCode', 'Code File (.html)', 'Download a ready-to-open HTML file with the component'));
+    if (FLAGS.exportCodeFile) code.push(key('exportCode', 'Download Html File', 'Download a ready-to-open HTML file with the component'));
     if (FLAGS.exportCopyForLlm) code.push(key('exportLlm', 'Copy for LLM', 'Copy instructions plus the code, ready to paste into an AI assistant'));
     if (FLAGS.exportCopyEmbed) code.push(key('exportEmbed', 'Copy embed code', 'Copy just the component snippet'));
     if (FLAGS.exportDownloadJs) code.push(key('exportJs', 'Download .js', 'Download the component script on its own'));
@@ -1652,6 +1652,13 @@
     if (FLAGS.exportPng) media.push(key('exportPng', 'PNG', 'Download the frame on screen as a PNG'));
     if (FLAGS.exportSvg) media.push(key('exportSvg', 'SVG', 'Download the frame on screen as a scalable vector'));
     var mel = $('#exportMedia');
+    if (FLAGS.exportGif) {
+      var sizeRow = segRow('GIF size', [{ v: 480, label: 'Small' }, { v: 960, label: 'Medium' }, { v: 1440, label: 'Large' }],
+        function () { return exportOpts.gifSize; }, function (v) { exportOpts.gifSize = +v; });
+      sizeRow.classList.add('three');
+      sizeRow.title = 'Small 480 px, Medium 960 px, Large 1440 px on the longest side. Bigger is sharper but makes a heavier file and takes longer.';
+      mel.appendChild(sizeRow);
+    }
     var mhtml = '<div class="pair" style="grid-template-columns:repeat(' + Math.max(1, media.length) + ',1fr)">' + media.join('') + '</div>';
     var vids = [];
     if (FLAGS.exportWebm) vids.push(key('exportWebm', 'WebM', 'Download a video of the full loop (1-2 cycles, dark background)').replace('data-export', 'data-export data-video="webm"'));

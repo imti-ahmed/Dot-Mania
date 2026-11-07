@@ -844,3 +844,5 @@ a.stat:hover { color: var(--text); }
 }
 /* The animation keys cast a shadow below them, so the top divider needs a little more room to look as spaced as the bottom one */
 .panel-divider.top { margin-top: 12px; }
+
+.row.three .seg { grid-template-columns: repeat(3, 1fr); }
