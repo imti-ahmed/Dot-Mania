@@ -19,12 +19,12 @@
     imageUpload: true,          // Image group: upload a picture (or drop one on the canvas) and animate it
     exportCodeFile: true,       // Export: "Code File" (ready-to-open .html with the component)
     exportPng: true,            // Export > Media: "PNG" (the frame on screen, at full size)
-    exportSvg: true,            // Export > Media: "SVG" (the frame on screen as scalable vector)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
 
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */
 
+    exportSvg: false,           // Export > Media: "SVG" (the frame on screen as scalable vector)
     extraTools: false,          // Left bar: Eraser and Line tools (right-click on the canvas still erases)
     imageAdvanced: false,       // Image group: "Level" slider and "Fit / Fill" (default is 50% level, fit)
     interaction: false,         // Interaction group: Auto / Hover / Click playback (exported component too)
