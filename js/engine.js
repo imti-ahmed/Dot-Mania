@@ -17,7 +17,8 @@
     neon:   [[45, 226, 230], [143, 123, 255], [255, 47, 214]],
     aurora: [[30, 200, 120], [45, 226, 230], [143, 123, 255]],
     candy:  [[255, 105, 180], [186, 140, 255], [120, 220, 255], [140, 255, 200]],
-    forest: [[8, 92, 52], [34, 197, 94], [190, 242, 60]]
+    forest: [[8, 92, 52], [34, 197, 94], [190, 242, 60]],
+    holo:   [[0, 255, 200], [0, 170, 255], [130, 90, 255], [255, 80, 200], [255, 190, 120]]
   };
 
   function hash(a, b) {
@@ -51,6 +52,7 @@
       case 'aurora': return gradient(STOPS.aurora, 0.5 + 0.5 * Math.sin(c.ux * 2.2 + c.uy * 0.8 - ph * TAU));
       case 'candy': return gradient(STOPS.candy, 0.5 + 0.5 * Math.sin((c.ux - c.uy) * Math.PI * 0.6 - ph * TAU));
       case 'forest': return gradient(STOPS.forest, 0.5 + 0.5 * Math.sin((c.uy + c.ux * 0.4) * Math.PI - ph * TAU));
+      case 'holo': return gradient(STOPS.holo, 0.5 + 0.25 * Math.sin((c.ux * 1.6 + c.uy * 0.8) * Math.PI - ph * TAU) + 0.25 * Math.sin((c.uy * 2.2 - c.ux * 0.6) * Math.PI + ph * TAU * 2));
     }
     return '#fff';
   }

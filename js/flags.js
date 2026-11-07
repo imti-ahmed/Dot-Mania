@@ -28,6 +28,7 @@
 
     exportSvg: false,           // Export > Media: "SVG" (the frame on screen as scalable vector)
     colorRandom: false,         // Color group: a Randomize button in the colour grid (the left bar Randomize still picks a colour)
+    forestColor: false,         // Color group: the "Forest" green gradient
     candyColor: false,          // Color group: the "Candy" pastel gradient
     whiteColor: false,          // Color group: the "White" preset
     extraTools: false,          // Left bar: Eraser and Line tools (right-click on the canvas still erases)
