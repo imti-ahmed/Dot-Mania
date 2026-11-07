@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.19 | 2026-11-07 | `9670b4a` | Removed the /idiot admin page and add-to-Library dialog; templates are added to /library by hand |
 | 0.0.18 | 2026-11-07 | `2a5a692` | Admin add now saves the current canvas as the Library template (no file picking); dialog centred |
 | 0.0.17 | 2026-11-07 | `f772da5` | Status bar: version (tag), views (eye) and GitHub stars (logo, links to the repo) always shown with icons, dash when unavailable; text centred; divider made visible |
 | 0.0.16 | 2026-11-07 | `abbb958` | Admin page at /idiot adds a left-bar button to add a file to the Library (name + upload); Library trimmed to Heartbeats, Snowflake Loader, Cyberpunk |
