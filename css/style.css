@@ -739,3 +739,23 @@ kbd {
   box-shadow: 0 1px 0 #3a3a3a;
 }
 .panel-tabs .key { height: 34px; }
+
+/* ---------- Left bar: groups separated by carved dividers (same groove as the right panel) ---------- */
+
+.sidebar { padding: 0; gap: 0; }
+.toolstrip, .editstrip, .sizes {
+  align-items: center;
+  width: 100%;
+  padding: 14px 12px;
+  border-radius: 0;
+}
+.sidebar > * + * {
+  border-top: 2px solid #070707;
+  box-shadow: inset 0 1px 0 #3a3a3a;
+}
+.sizes { margin-top: auto; }
+
+@media (max-width: 900px) {
+  .sidebar > * + * { border-top: 0; border-left: 2px solid #070707; box-shadow: inset 1px 0 0 #3a3a3a; }
+  .sizes { margin-top: 0; }
+}
