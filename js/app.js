@@ -43,12 +43,15 @@
 
   /* ---------- Artboard + grid ---------- */
 
-  function w() { return state.art.w; }
-  function h() { return state.art.h; }
+  // The editor stage is always 1920x1080. The artboard (state.art) is the part of it that holds dots:
+  // all of it, or a 1080x1080 square (67x67 cells) centred in the stage.
+  var STAGE = { w: 1920, h: 1080 };
+  function w() { return STAGE.w; }
+  function h() { return STAGE.h; }
 
   function computeGrid() {
-    cols = Math.max(1, Math.floor(w() / CELL));
-    rows = Math.max(1, Math.floor(h() / CELL));
+    cols = Math.max(1, Math.floor(state.art.w / CELL));
+    rows = Math.max(1, Math.floor(state.art.h / CELL));
     ox = (w() - cols * CELL) / 2;
     oy = (h() - rows * CELL) / 2;
   }
@@ -101,6 +104,10 @@
   /* ---------- Selection data, colour and rendering (engine.js, shared with the export) ---------- */
 
   function geo() { return { ox: ox, oy: oy, cell: CELL, shape: state.dotShape }; }
+  // Same grid, positioned inside the artboard (what exports use), not the stage.
+  function exportGeo() {
+    return { ox: (state.art.w - cols * CELL) / 2, oy: (state.art.h - rows * CELL) / 2, cell: CELL, shape: state.dotShape };
+  }
   function cellArray() {
     var a = [];
     cells.forEach(function (k) { var p = k.split(','); a.push([+p[0], +p[1]]); });
@@ -355,7 +362,7 @@
     { id: 'rect',    name: 'Shape', key: 'r', icon: ICON('<rect x="2.8" y="4" width="10.4" height="8" rx="1"/>') },
     { id: 'ellipse', name: 'Circle',   key: 'o', icon: ICON('<ellipse cx="8" cy="8" rx="5.5" ry="4"/>') },
     { sep: true, extra: true },
-    { id: 'fill',    name: 'Fill',      key: 'f', icon: ICON('<path d="M3.2 8.6L7.6 4.2l4.6 4.6-4.2 4.2a1.3 1.3 0 01-1.9 0z"/><path d="M13.2 11.2c.9 1.1 1.3 1.8 1.3 2.3a1.3 1.3 0 01-2.6 0c0-.5.4-1.2 1.3-2.3z"/>') }
+    { id: 'fill',    name: 'Fill',      key: 'f', icon: ICON('<g transform="scale(.6667)" stroke-width="2.25"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></g>') }
   ];
 
   function buildTools() {
@@ -770,7 +777,8 @@
       function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
       function () { return imgOpts.fit; }, function (v) { imgOpts.fit = v; imgRaster = null; applyImage(); });
-    [styleRow, levelRow, onRow, fitRow].forEach(function (r) { opts.appendChild(r); });
+    var rowsToShow = FLAGS.imageAdvanced ? [styleRow, levelRow, onRow, fitRow] : [styleRow, onRow];
+    rowsToShow.forEach(function (r) { opts.appendChild(r); });
     el.appendChild(opts);
 
     imgUI = { opts: opts, onRow: onRow, remove: pair.querySelector('#imgRemove') };
@@ -1000,7 +1008,7 @@
   function buildExport() {
     var preset = currentPreset(), vals = state.values[preset.id], T = preset.period(vals);
     return window.DotExport.build({
-      cells: cellArray(), art: state.art, cols: cols, rows: rows, geo: geo(),
+      cells: cellArray(), art: state.art, cols: cols, rows: rows, geo: exportGeo(),
       preset: preset, values: vals,
       color: Object.assign({}, state.color, { steps: Math.max(2, Math.round(T * 6)) }),
       interaction: state.interaction, period: T, gridVis: GRID_VIS
@@ -1043,7 +1051,7 @@
     setExportEnabled(true);
     window.DotGif.encodeAnimation({
       E: E, list: E.buildList(cellArray()), preset: preset, vals: vals, color: color, T: T, secs: Math.min(T, GIF_MAX_SECONDS),
-      art: state.art, geo: geo(), cols: cols, rows: rows, gridVis: GRID_VIS, grid: exportOpts.grid,
+      art: state.art, geo: exportGeo(), cols: cols, rows: rows, gridVis: GRID_VIS, grid: exportOpts.grid,
       transparent: exportOpts.bg === 'transparent', bg: '#0b0b0a',
       maxSide: GIF_MAX_SIDE, fps: GIF_FPS, tolerance: GIF_TOLERANCE,
       colors: color.mode === 'solid' || color.mode === 'white' ? GIF_COLORS_SIMPLE : GIF_COLORS_RICH
@@ -1065,11 +1073,11 @@
     if (!mime) { console.warn('This browser cannot record video.'); return; }
 
     var vc = document.createElement('canvas');
-    vc.width = w(); vc.height = h();
-    var vx = vc.getContext('2d'), g = geo(), secs = exportOpts.seconds, layer = null;
+    vc.width = state.art.w; vc.height = state.art.h;
+    var vx = vc.getContext('2d'), g = exportGeo(), secs = exportOpts.seconds, layer = null;
     if (exportOpts.grid) {
       layer = document.createElement('canvas');
-      layer.width = w(); layer.height = h();
+      layer.width = state.art.w; layer.height = state.art.h;
       E.drawIdle(layer.getContext('2d'), cols, rows, g, GRID_VIS);
     }
     var preset = currentPreset(), vlist = E.buildList(cellArray());
@@ -1080,7 +1088,7 @@
     var chunks = [], t0;
     function draw(t) {
       vx.fillStyle = '#0b0b0a';
-      vx.fillRect(0, 0, w(), h());
+      vx.fillRect(0, 0, state.art.w, state.art.h);
       if (layer) vx.drawImage(layer, 0, 0);
       E.drawCells(vx, vlist, preset.fn, p, color, t, t / T, g, false);
     }
@@ -1106,7 +1114,7 @@
 
   function buildExportUI() {
     var el = $('#exportControls');
-    el.appendChild(segRow('Background', [{ v: 'dark', label: 'Dark' }, { v: 'transparent', label: 'Clear' }],
+    el.appendChild(segRow('Background', [{ v: 'dark', label: 'Black' }, { v: 'transparent', label: 'Transparent' }],
       function () { return exportOpts.bg; }, function (v) { exportOpts.bg = v; }));
     if (FLAGS.exportGridOption) {
       el.appendChild(segRow('Grid', [{ v: 'show', label: 'Visible' }, { v: 'hide', label: 'Hidden' }],

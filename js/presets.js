@@ -125,18 +125,6 @@
       }
     },
     {
-      id: 'diamond', name: 'Diamond', defaults: base(0.7, 0.5),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [{ key: 'rings', label: 'Rings', min: 1, max: 6, step: 1, def: 2, fmt: num }],
-      // Like Ripple, but the rings are diamonds.
-      fn: function (c, t, p) {
-        var m = (Math.abs(c.ux) + Math.abs(c.uy)) / 1.4;
-        var v = 0.5 + 0.5 * Math.cos((m * p.rings - t * p.speed * 0.5) * TAU);
-        return v * v;
-      }
-    },
-    {
       id: 'heartbeat', name: 'Heartbeat', defaults: base(0.7, 0.6),
       // seconds for one seamless loop
       period: function (p) { return 1 / (p.speed * 0.6); },
@@ -152,6 +140,18 @@
 
   // Behind FLAGS.extraPresets (see flags.js). Same shape as the presets above; each loops seamlessly at period().
   window.EXTRA_PRESETS = [
+    {
+      id: 'diamond', name: 'Diamond', defaults: base(0.7, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'rings', label: 'Rings', min: 1, max: 6, step: 1, def: 2, fmt: num }],
+      // Like Ripple, but the rings are diamonds.
+      fn: function (c, t, p) {
+        var m = (Math.abs(c.ux) + Math.abs(c.uy)) / 1.4;
+        var v = 0.5 + 0.5 * Math.cos((m * p.rings - t * p.speed * 0.5) * TAU);
+        return v * v;
+      }
+    },
     {
       id: 'radar', name: 'Radar', defaults: base(0.7, 0.6),
       // seconds for one seamless loop
