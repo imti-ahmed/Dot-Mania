@@ -3,6 +3,7 @@
  * `commit` is a short hash, or '' for the entry that is still being written.
  */
 window.UPDATES = [
+  { v: '0.0.7', date: '2026-11-07', commit: '230eed8', note: 'Faster Library previews: drawn small from one shared loop, only visible cards animate (iframe fallback when opened as a file)' },
   { v: '0.0.6', date: '2026-11-07', commit: '0d4c2f8', note: 'Invert/Clear grouped with tools at top; Diamond preset, image Level and Fit moved behind flags; Background labels Black / Transparent; paint bucket Fill icon; square size keeps full stage with a centred 67x67 grid' },
   { v: '0.0.5', date: '2026-11-07', commit: '25f2f21', note: 'Left bar: Pen, Shape, Circle, Fill grouped; Eraser and Line behind a flag; Undo/Redo shortcut-only; icon Clear and Invert; icon-only sizes. Open HTML / Close File beside Play' },
   { v: '0.0.4', date: '2026-11-07', commit: '82ca58a', note: 'Library: 8 premade templates in /library, card grid with preview, Load File and Download (HTML)' },
