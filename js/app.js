@@ -130,7 +130,8 @@
     { id: 'sunset', name: 'Sunset' },
     { id: 'neon', name: 'Neon' },
     { id: 'aurora', name: 'Aurora' },
-    { id: 'candy', name: 'Candy' }
+    { id: 'candy', name: 'Candy', flag: 'candyColor' },
+    { id: 'forest', name: 'Forest' }
   ].filter(function (c) { return !c.flag || FLAGS[c.flag]; });
 
   // A random pick from the colour options we offer: every colour preset and every solid swatch, equally likely
@@ -607,7 +608,7 @@
     el.appendChild(row);
 
     // Cycle (flag): how many times the colours loop per animation loop. Whole numbers, so exports still loop seamlessly.
-    var cycleRow = null, CYCLING = ['rainbow', 'glitter', 'ocean', 'sunset', 'neon', 'aurora', 'candy'];
+    var cycleRow = null, CYCLING = ['rainbow', 'glitter', 'ocean', 'sunset', 'neon', 'aurora', 'candy', 'forest'];
     if (FLAGS.colorCycle) {
       cycleRow = sliderRow({
         label: 'Cycle', min: 0, max: 4, step: 1, value: m.cycle,

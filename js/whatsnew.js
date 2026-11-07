@@ -6,8 +6,10 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.54', date: '2026-11-07', items: [
+    'New Forest color: a deep green to lime gradient.'
+  ] },
   { v: '0.0.52', date: '2026-11-07', items: [
-    'New Candy color: a soft pink, lilac, sky and mint gradient.',
     'The custom color picker now matches the rest of the app.'
   ] },
   { v: '0.0.48', date: '2026-11-07', items: [
