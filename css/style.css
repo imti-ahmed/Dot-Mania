@@ -512,7 +512,9 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .fullrow { padding: 0 4px; }
 
 /* Swatches */
-.swatches { display: flex; align-items: center; gap: 5px; padding-left: 3px; }
+/* spread evenly, the last one ending flush with the right edge of the colour buttons above */
+.swatches { display: flex; align-items: center; justify-content: space-between; padding-left: 3px; }
+.row.color-row { padding-right: 0; }
 .swatch {
   position: relative;
   flex: none;
