@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.28 | 2026-11-07 | `32bf166` | Equalizer approved and renamed Bars (slider now Width); Blob, Tunnel, Plasma moved behind extraPresets flag; new Trying Out set: Stripes, Dissolve, Blinds, Cross |
 | 0.0.27 | 2026-11-07 | `3997886` | New Trying Out group in the panel with 4 trial animations (Blob, Tunnel, Equalizer, Plasma); approved ones move into the main list |
 | 0.0.26 | 2026-11-07 | `f51eebe` | Twinkle removed from the list (kept behind extraPresets flag) |
 | 0.0.25 | 2026-11-07 | `91236a1` | Blink removed from the list (kept behind extraPresets flag) |
