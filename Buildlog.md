@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.43 | 2026-11-07 | `e12c5aa` | Fireworks, Tide, Glint, Helix moved behind extraPresets flag; new Trying Out set: Carousel, Streaks, Chess, Swing |
 | 0.0.42 | 2026-11-07 | `4fe7bda` | Code File button renamed Download Html File; GIF size option (Small 480 / Medium 960 / Large 1440 px), default raised from a fixed 480 px |
 | 0.0.41 | 2026-11-07 | `1752b58` | Four new trial animations in the Trying Out group: Fireworks, Tide, Glint, Helix |
 | 0.0.40 | 2026-11-07 | `686b6af` | Randomize also randomizes the canvas size (wide or square) before drawing the art |
