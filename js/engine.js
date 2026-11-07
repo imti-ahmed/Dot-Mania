@@ -15,7 +15,8 @@
     ocean:  [[10, 58, 138], [45, 226, 230], [123, 255, 217]],
     sunset: [[143, 43, 255], [255, 95, 162], [255, 138, 31], [255, 210, 63]],
     neon:   [[45, 226, 230], [143, 123, 255], [255, 47, 214]],
-    aurora: [[30, 200, 120], [45, 226, 230], [143, 123, 255]]
+    aurora: [[30, 200, 120], [45, 226, 230], [143, 123, 255]],
+    candy:  [[255, 105, 180], [186, 140, 255], [120, 220, 255], [140, 255, 200]]
   };
 
   function hash(a, b) {
@@ -47,6 +48,7 @@
       case 'sunset': return gradient(STOPS.sunset, 0.5 + c.uy * 0.5 + 0.15 * Math.sin(ph * TAU + c.ux * 2));
       case 'neon': return gradient(STOPS.neon, 0.5 + 0.5 * Math.sin(c.d * TAU * 0.8 - ph * TAU));
       case 'aurora': return gradient(STOPS.aurora, 0.5 + 0.5 * Math.sin(c.ux * 2.2 + c.uy * 0.8 - ph * TAU));
+      case 'candy': return gradient(STOPS.candy, 0.5 + 0.5 * Math.sin((c.ux - c.uy) * Math.PI * 0.6 - ph * TAU));
     }
     return '#fff';
   }

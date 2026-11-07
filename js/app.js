@@ -129,7 +129,8 @@
     { id: 'ocean', name: 'Ocean' },
     { id: 'sunset', name: 'Sunset' },
     { id: 'neon', name: 'Neon' },
-    { id: 'aurora', name: 'Aurora' }
+    { id: 'aurora', name: 'Aurora' },
+    { id: 'candy', name: 'Candy' }
   ].filter(function (c) { return !c.flag || FLAGS[c.flag]; });
 
   // A random pick from the colour options we offer: every colour preset and every solid swatch, equally likely
@@ -495,6 +496,76 @@
     return row;
   }
 
+  /* ---------- Colour picker (our own, instead of the browser's native popup) ---------- */
+
+  var picker = (function () {
+    var el = null, sv, svKnob, hueBar, hueKnob, chip, hexIn, anchor = null, onPick = null, h = 0, s = 1, v = 1;
+    function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+    function toHex() {
+      var c = v * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), mm = v - c, r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; } else if (h < 120) { r = x; g = c; } else if (h < 180) { g = c; b = x; }
+      else if (h < 240) { g = x; b = c; } else if (h < 300) { r = x; b = c; } else { r = c; b = x; }
+      return '#' + [r + mm, g + mm, b + mm].map(function (n) { return Math.round(n * 255).toString(16).padStart(2, '0'); }).join('');
+    }
+    function fromHex(hex) {
+      var n = parseInt(hex.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+      var max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+      if (d > 0) h = 60 * (max === r ? ((g - b) / d + 6) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4);   // grey keeps the old hue
+      s = max ? d / max : 0; v = max;
+    }
+    function show(editingHex) {
+      var hex = toHex();
+      sv.style.setProperty('--h', h);
+      svKnob.style.left = s * 100 + '%'; svKnob.style.top = (1 - v) * 100 + '%';
+      hueKnob.style.left = h / 360 * 100 + '%';
+      chip.style.background = hex;
+      if (!editingHex) hexIn.value = hex;
+    }
+    function emit() { show(false); if (onPick) onPick(toHex()); }
+    function drag(node, move) {
+      node.addEventListener('pointerdown', function (e) {
+        node.setPointerCapture(e.pointerId); move(e);
+        var go = function (ev) { move(ev); }, stop = function () { node.removeEventListener('pointermove', go); node.removeEventListener('pointerup', stop); };
+        node.addEventListener('pointermove', go); node.addEventListener('pointerup', stop);
+      });
+    }
+    function build() {
+      el = document.createElement('div');
+      el.className = 'cpicker'; el.hidden = true;
+      el.innerHTML = '<div class="cp-sv"><i class="cp-knob"></i></div><div class="cp-hue"><i class="cp-knob"></i></div>' +
+        '<div class="cp-row"><span class="cp-chip"></span><input class="cp-hex" maxlength="7" spellcheck="false" aria-label="Hex color"></div>';
+      document.body.appendChild(el);
+      sv = el.querySelector('.cp-sv'); svKnob = sv.querySelector('i');
+      hueBar = el.querySelector('.cp-hue'); hueKnob = hueBar.querySelector('i');
+      chip = el.querySelector('.cp-chip'); hexIn = el.querySelector('.cp-hex');
+      drag(sv, function (e) { var r = sv.getBoundingClientRect(); s = clamp((e.clientX - r.left) / r.width); v = 1 - clamp((e.clientY - r.top) / r.height); emit(); });
+      drag(hueBar, function (e) { var r = hueBar.getBoundingClientRect(); h = clamp((e.clientX - r.left) / r.width) * 359.999; emit(); });
+      hexIn.addEventListener('input', function () {
+        var t = hexIn.value.trim(); if (t[0] !== '#') t = '#' + t;
+        if (/^#[0-9a-f]{6}$/i.test(t)) { fromHex(t.toLowerCase()); show(true); if (onPick) onPick(toHex()); }
+      });
+      hexIn.addEventListener('blur', function () { show(false); });
+      document.addEventListener('pointerdown', function (e) { if (!el.hidden && !el.contains(e.target) && !(anchor && anchor.contains(e.target))) close(); }, true);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !el.hidden) close(); });
+      window.addEventListener('resize', close);
+      document.addEventListener('scroll', close, true);
+    }
+    function close() { if (el) el.hidden = true; anchor = null; }
+    function toggle(node, hex, cb) {
+      if (!el) build();
+      if (!el.hidden && anchor === node) { close(); return; }
+      anchor = node; onPick = cb;
+      fromHex(hex);
+      el.hidden = false;
+      show(false);
+      var r = node.getBoundingClientRect(), w = el.offsetWidth, ht = el.offsetHeight;
+      var left = Math.max(8, Math.min(window.innerWidth - w - 8, r.right - w));
+      var top = r.bottom + 10 + ht > window.innerHeight - 8 ? r.top - ht - 10 : r.bottom + 10;
+      el.style.left = left + 'px'; el.style.top = Math.max(8, top) + 'px';
+    }
+    return { toggle: toggle };
+  })();
+
   function buildColor() {
     var el = $('#colorControls'), m = state.color;
     var grid = document.createElement('div');
@@ -505,11 +576,13 @@
       b.addEventListener('click', function () { m.mode = c.id; paint(); });
       grid.appendChild(b);
     });
-    var rb = document.createElement('button');
-    rb.className = 'key'; rb.title = 'Randomize color'; rb.setAttribute('aria-label', 'Randomize color');
-    rb.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.5h8A2.5 2.5 0 0 1 14.5 4v8a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5zM5 4a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2zM8 7a1 1 0 100 2 1 1 0 000-2zm-3 3a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z"/></svg>';
-    rb.addEventListener('click', randomColor);
-    grid.appendChild(rb);
+    if (FLAGS.colorRandom) {
+      var rb = document.createElement('button');
+      rb.className = 'key'; rb.title = 'Randomize color'; rb.setAttribute('aria-label', 'Randomize color');
+      rb.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.5h8A2.5 2.5 0 0 1 14.5 4v8a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5zM5 4a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2zM8 7a1 1 0 100 2 1 1 0 000-2zm-3 3a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z"/></svg>';
+      rb.addEventListener('click', randomColor);
+      grid.appendChild(rb);
+    }
     el.appendChild(grid);
 
     var row = document.createElement('div');
@@ -523,18 +596,18 @@
       b.addEventListener('click', function () { m.mode = 'solid'; m.hex = c; paint(); });
       box.appendChild(b);
     });
-    var custom = document.createElement('label');
+    var custom = document.createElement('button');
     custom.className = 'swatch custom';
     custom.setAttribute('aria-label', 'Custom color');
-    custom.innerHTML = '<input type="color">';
-    var inp = custom.querySelector('input');
-    inp.value = m.hex;
-    inp.addEventListener('input', function (e) { m.mode = 'solid'; m.hex = e.target.value; paint(); });
+    custom.title = 'Pick any color';
+    custom.addEventListener('click', function () {
+      picker.toggle(custom, state.color.hex, function (hex) { m.mode = 'solid'; m.hex = hex; paint(); });
+    });
     box.appendChild(custom);
     el.appendChild(row);
 
     // Cycle (flag): how many times the colours loop per animation loop. Whole numbers, so exports still loop seamlessly.
-    var cycleRow = null, CYCLING = ['rainbow', 'glitter', 'ocean', 'sunset', 'neon', 'aurora'];
+    var cycleRow = null, CYCLING = ['rainbow', 'glitter', 'ocean', 'sunset', 'neon', 'aurora', 'candy'];
     if (FLAGS.colorCycle) {
       cycleRow = sliderRow({
         label: 'Cycle', min: 0, max: 4, step: 1, value: m.cycle,

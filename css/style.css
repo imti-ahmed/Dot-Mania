@@ -532,14 +532,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   background: conic-gradient(#ef282d, #ffd23f, #5cf08a, #2de2e6, #8f7bff, #ff5fa2, #ef282d);
 }
 .swatch.custom.set { background: var(--c); }
-.swatch.custom input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-}
+
 
 .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .seg .key { height: 32px; padding: 0 6px; border-radius: 9px; }
@@ -846,3 +839,71 @@ a.stat:hover { color: var(--text); }
 .panel-divider.top { margin-top: 12px; }
 
 .row.three .seg { grid-template-columns: repeat(3, 1fr); }
+
+/* ---------- Colour picker popup ---------- */
+
+.cpicker {
+  position: fixed;
+  z-index: 30;
+  width: 220px;
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+  border-radius: 14px;
+  background: linear-gradient(#1c1c1c, #171717);
+  box-shadow: 0 0 0 1px #090909, 0 18px 40px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.cp-sv {
+  position: relative;
+  height: 132px;
+  border-radius: 8px;
+  background:
+    linear-gradient(to top, #000, rgba(0, 0, 0, 0)),
+    linear-gradient(to right, #fff, hsl(var(--h, 0), 100%, 50%));
+  box-shadow: inset 0 0 0 1px #000;
+  cursor: crosshair;
+  touch-action: none;
+}
+.cp-hue {
+  position: relative;
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  box-shadow: inset 0 0 0 1px #000, 0 1px 0 rgba(255, 255, 255, .05);
+  cursor: pointer;
+  touch-action: none;
+}
+.cp-knob {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .55), 0 2px 5px rgba(0, 0, 0, .5);
+  pointer-events: none;
+}
+.cp-hue .cp-knob { top: 50%; }
+.cp-row { display: flex; align-items: center; gap: 10px; }
+.cp-chip {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  box-shadow: 0 2px 0 #080808, 0 3px 6px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.cp-hex {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--well);
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
