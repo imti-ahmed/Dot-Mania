@@ -652,7 +652,6 @@
     state.stacking = on;
     if (!on) { state.stack = [state.stack[0]]; state.preset = state.stack[0]; }
     if (stackRow) stackRow.repaint();
-    $('#stackHint').hidden = !on;
     refreshPresets();
     buildControls();
   }
@@ -1039,7 +1038,7 @@
       state.stack = parsed.stack.map(function (l) { return l.id; });
       state.preset = state.stack[0];
       state.stacking = state.stack.length > 1;
-      stackRow.repaint(); $('#stackHint').hidden = !state.stacking;
+      stackRow.repaint();
       refreshPresets(); buildControls();
     } else if (parsed.preset) {
       Object.assign(state.values[parsed.preset.id], d.p);
