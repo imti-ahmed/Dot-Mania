@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.16 | 2026-11-07 | `abbb958` | Admin page at /idiot adds a left-bar button to add a file to the Library (name + upload); Library trimmed to Heartbeats, Snowflake Loader, Cyberpunk |
 | 0.0.15 | 2026-11-07 | `0461b53` | Top bar: grid/cell readouts removed; divider moved to line up with the canvas/panel gap; status area shows GitHub stars (views when configured) and doubles as the notification bar (opening, loading, rendering, saving) |
 | 0.0.14 | 2026-11-07 | `740fc58` | WebM and MP4 export: records 1-2 whole cycles (not a fixed 10 s) so the clip loops; progress shown on the button |
 | 0.0.13 | 2026-11-07 | `9d75cc7` | SVG export removed from the Export tab (kept behind the exportSvg flag) |
