@@ -598,7 +598,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   padding: 5px;
   border-radius: 12px;
 }
-.editstrip .key, .adminstrip .key { width: 36px; padding: 0; border-radius: 9px; }
+.editstrip .key { width: 36px; padding: 0; border-radius: 9px; }
 
 /* ---------- Pages (Library, About, What's New, Guide) ---------- */
 
@@ -761,7 +761,7 @@ a.stat:hover { color: var(--text); }
 /* ---------- Left bar: groups separated by carved dividers (same groove as the right panel) ---------- */
 
 .sidebar { padding: 0; gap: 0; }
-.toolstrip, .editstrip, .adminstrip, .sizes {
+.toolstrip, .editstrip, .sizes {
   align-items: center;
   width: 100%;
   padding: 14px 12px;
@@ -780,50 +780,3 @@ a.stat:hover { color: var(--text); }
 
 .row.nolabel { grid-template-columns: 1fr; padding: 0; }
 .row.nolabel .wide { grid-column: 1; }
-
-/* The admin group is a column of keys like the others */
-.adminstrip { display: flex; flex-direction: column; gap: 6px; }
-
-/* ---------- Dialog ---------- */
-
-.dialog {
-  margin: auto;                 /* the global reset removes the default centring */
-  width: min(420px, calc(100vw - 32px));
-  padding: 22px;
-  border: 0;
-  border-radius: 16px;
-  color: var(--text);
-  background: linear-gradient(#1c1c1c, #171717);
-  box-shadow: 0 0 0 1px #090909, 0 30px 80px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .06);
-}
-.dialog::backdrop { background: rgba(0, 0, 0, .6); }
-.dialog-title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-variation-settings: 'ROND' 0;
-  font-size: 20px;
-  letter-spacing: .8px;
-  text-transform: uppercase;
-}
-.dialog-field { display: grid; gap: 8px; margin-top: 18px; }
-.dialog-field > span {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 1.1px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.dialog-field input[type="text"] {
-  height: 40px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--well);
-  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05);
-  color: var(--text);
-  font: inherit;
-}
-.dialog-note { margin-top: 14px; font-size: 13px; color: var(--muted); }
-.dialog-msg { min-height: 18px; margin-top: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; color: var(--accent); }
-.dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; padding-top: 16px; border-top: 2px solid #070707; box-shadow: inset 0 1px 0 #3a3a3a; }
-.dialog-actions .key:disabled { opacity: .4; cursor: default; }
