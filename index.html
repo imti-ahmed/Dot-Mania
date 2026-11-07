@@ -87,7 +87,11 @@
             <span class="status" id="status">Looping</span>
           </div>
         </div>
-        <div class="panel-body">
+        <div class="panel-tabs" id="panelTabs" role="tablist" aria-label="Panel sections">
+          <button class="key" role="tab" data-ptab="edit" aria-pressed="true">Edit</button>
+          <button class="key" role="tab" data-ptab="export" aria-pressed="false">Export</button>
+        </div>
+        <div class="panel-body" data-ptab-body="edit">
           <div class="group-label first">Animations</div>
           <div class="presets" id="presets" role="group" aria-label="Animation presets"></div>
           <div class="group-label">Look</div>
@@ -106,7 +110,8 @@
           <div class="group" id="drawControls" data-flag="drawOptions"></div>
           <div class="group-label" data-flag="gridPanel">Grid</div>
           <div class="group" id="gridControls" data-flag="gridPanel"></div>
-          <div class="group-label">Export</div>
+        </div>
+        <div class="panel-body" data-ptab-body="export" hidden>
           <div class="group" id="exportControls"></div>
         </div>
         <div class="panel-foot">

@@ -725,3 +725,17 @@ kbd {
 }
 .lib-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .lib-actions .key { text-decoration: none; padding: 0 8px; }
+
+/* ---------- Right panel tabs (Edit / Export) ---------- */
+
+.panel-tabs {
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 14px 14px 14px;
+  /* same carved groove as above Play, so the sections read as cut into the panel */
+  border-bottom: 2px solid #070707;
+  box-shadow: 0 1px 0 #3a3a3a;
+}
+.panel-tabs .key { height: 34px; }

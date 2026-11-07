@@ -1033,7 +1033,17 @@
       grid.appendChild(card);
     });
   }
+  // Right panel tabs: Edit (look, color, image...) and Export (room for more export options).
+  function setupPanelTabs() {
+    var tabs = document.querySelectorAll('#panelTabs .key');
+    function show(id) {
+      tabs.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.ptab === id)); });
+      document.querySelectorAll('[data-ptab-body]').forEach(function (el) { el.hidden = el.dataset.ptabBody !== id; });
+    }
+    tabs.forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.ptab); }); });
+  }
   function buildPages() {
+    setupPanelTabs();
     buildLibrary();
     var U = window.UPDATES || [];
     $('#aboutVersion').textContent = U.length ? 'Version ' + U[0].v : '';
