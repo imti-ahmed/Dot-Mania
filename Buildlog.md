@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.6 | 2026-11-07 | `0d4c2f8` | Invert/Clear grouped with tools at top; Diamond preset, image Level and Fit moved behind flags; Background labels Black / Transparent; paint bucket Fill icon; square size keeps full stage with a centred 67x67 grid |
 | 0.0.5 | 2026-11-07 | `25f2f21` | Left bar: Pen, Shape, Circle, Fill grouped; Eraser and Line behind a flag; Undo/Redo shortcut-only; icon Clear and Invert; icon-only sizes. Open HTML / Close File beside Play |
 | 0.0.4 | 2026-11-07 | `82ca58a` | Library: 8 premade templates in /library, card grid with preview, Load File and Download (HTML) |
 | 0.0.3 | 2026-11-07 | `3c3a667` | Top nav (Canvas, Library, About, What's New, Guide); edit buttons moved to left bar; open exported HTML files |
