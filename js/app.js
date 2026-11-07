@@ -35,6 +35,7 @@
   var cells = new Set();      // selected cells as "col,row"
   var list = [];              // precomputed per-cell data for the animation
   var dirty = true;
+  var repaintColor = function () {}, repaintShapes = function () {};   // set once those panels are built
   var cols = 0, rows = 0, ox = 0, oy = 0;
   var hover = null, drag = null;
   var undoStack = [], redoStack = [];
@@ -482,6 +483,7 @@
       if (cycleRow) cycleRow.hidden = CYCLING.indexOf(m.mode) === -1;
     }
     paint();
+    repaintColor = paint;
   }
 
   function buildControls() {
@@ -545,6 +547,7 @@
       grid.appendChild(b);
     });
     paint();
+    repaintShapes = paint;
     $('#shapeControls').appendChild(grid);
   }
 
@@ -668,7 +671,7 @@
   });
 
   document.addEventListener('keydown', function (e) {
-    if (e.target.tagName === 'INPUT') return;
+    if (e.target.tagName === 'INPUT' || view !== 'canvas') return;
     if (e.ctrlKey || e.metaKey) {
       var k = e.key.toLowerCase();
       if (k === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
@@ -735,7 +738,7 @@
   }
 
   function loadImageFile(file) {
-    if (!file || !/^image\//.test(file.type)) return;
+    if (!file || !FLAGS.imageUpload || !/^image\//.test(file.type)) return;
     var url = URL.createObjectURL(file), el = new Image();
     el.onload = function () {
       URL.revokeObjectURL(url);
@@ -783,8 +786,90 @@
     $('#imgUpload').addEventListener('click', function () { input.click(); });
     input.addEventListener('change', function () { loadImageFile(input.files[0]); input.value = ''; });
     imgUI.remove.addEventListener('click', function () { imgSrc = null; imgRaster = null; setImageActive(false); });
+  }
 
-    // drop a picture straight onto the canvas
+  /* ---------- Open an exported HTML file ---------- */
+
+  var toastTimer = 0;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 3200);
+  }
+
+  // The exported file holds `var DATA={...};` (drawing, values, colour) and `var presetFn=...;` (the animation).
+  function parseExport(text) {
+    var at = text.indexOf('var DATA=');
+    if (at < 0) return null;
+    var i = text.indexOf('{', at), depth = 0, inStr = false, j;
+    for (j = i; j < text.length; j++) {
+      var ch = text[j];
+      if (inStr) { if (ch === '\\') j++; else if (ch === '"') inStr = false; continue; }
+      if (ch === '"') inStr = true;
+      else if (ch === '{') depth++;
+      else if (ch === '}' && --depth === 0) break;
+    }
+    var data;
+    try { data = JSON.parse(text.slice(i, j + 1)); } catch (err) { return null; }
+    if (!data || !data.runs || !data.w || !data.h) return null;
+
+    var squash = function (str) { return str.replace(/\s+/g, ''); };
+    var fa = text.indexOf('var presetFn='), fb = text.indexOf(';\nvar DATA=', fa), preset = null;
+    if (fa > -1 && fb > fa) {
+      var fn = squash(text.slice(fa + 13, fb));
+      preset = PRESETS.find(function (p) { return squash(p.fn.toString()) === fn; }) || null;
+    }
+    return { data: data, preset: preset };
+  }
+
+  function importHtml(text) {
+    var parsed = parseExport(text);
+    if (!parsed) { toast('Not a Dot Mania file'); return; }
+    var d = parsed.data;
+
+    imgSrc = null; imgRaster = null;
+    if (imgUI.opts) setImageActive(false);
+    if (d.geo && d.geo.cell) CELL = d.geo.cell;
+    state.dotShape = (d.geo && d.geo.shape) || 'dot';
+    repaintShapes();
+    setArt(d.w, d.h);                       // also clears the canvas and history
+
+    d.runs.forEach(function (row) {
+      row[1].forEach(function (run) {
+        for (var n = 0; n < run[1]; n++) setCell(run[0] + n, row[0], true);
+      });
+    });
+
+    if (d.color) {
+      Object.assign(state.color, { mode: d.color.mode, hex: d.color.hex });
+      if (d.color.cycle !== undefined) state.color.cycle = d.color.cycle;
+      repaintColor();
+    }
+    if (parsed.preset) {
+      Object.assign(state.values[parsed.preset.id], d.p);
+      selectPreset(parsed.preset.id);
+    }
+    if (FLAGS.interaction && d.mode) setInteraction(d.mode);
+    drawIdle();
+    dirty = true;
+    updateInfo();
+    toast(parsed.preset ? 'Opened ' + parsed.preset.name : 'Opened drawing (animation not recognised)');
+  }
+
+  function loadHtmlFile(file) {
+    var reader = new FileReader();
+    reader.onload = function () { importHtml(String(reader.result)); };
+    reader.onerror = function () { toast('Could not read that file'); };
+    reader.readAsText(file);
+  }
+
+  function setupFiles() {
+    var input = $('#htmlFile');
+    $('#importBtn').addEventListener('click', function () { input.click(); });
+    input.addEventListener('change', function () { if (input.files[0]) loadHtmlFile(input.files[0]); input.value = ''; });
+
+    // drop a picture or an exported HTML file straight onto the canvas
     stage.addEventListener('dragover', function (e) {
       if (e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types, 'Files') > -1) {
         e.preventDefault(); stage.classList.add('drop-target');
@@ -793,7 +878,32 @@
     stage.addEventListener('dragleave', function () { stage.classList.remove('drop-target'); });
     stage.addEventListener('drop', function (e) {
       e.preventDefault(); stage.classList.remove('drop-target');
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) loadImageFile(e.dataTransfer.files[0]);
+      var f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (!f) return;
+      if (/\.html?$/i.test(f.name) || f.type === 'text/html') loadHtmlFile(f); else loadImageFile(f);
+    });
+  }
+
+  /* ---------- Pages (top nav) ---------- */
+
+  var view = 'canvas';
+  var VIEWS = ['canvas', 'library', 'about', 'updates', 'guide'];
+  function showView(id) {
+    if (VIEWS.indexOf(id) < 0) id = 'canvas';
+    view = id;
+    document.querySelectorAll('[data-page]').forEach(function (el) { el.hidden = el.dataset.page !== id; });
+    document.querySelectorAll('#tabs .navbtn').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === id)); });
+    $('#canvasReadouts').hidden = id !== 'canvas';
+    if (id === 'canvas') fitStage();
+  }
+  function buildPages() {
+    var U = window.UPDATES || [];
+    $('#aboutVersion').textContent = U.length ? 'Version ' + U[0].v : '';
+    $('#updatesTable').innerHTML = '<tr><th>Version</th><th>Date</th><th>Changes</th></tr>' + U.map(function (u) {
+      return '<tr><td>' + u.v + '</td><td>' + u.date + '</td><td>' + u.note.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</td></tr>';
+    }).join('');
+    document.querySelectorAll('#tabs .navbtn').forEach(function (b) {
+      b.addEventListener('click', function () { showView(b.dataset.view); });
     });
   }
 
@@ -994,11 +1104,14 @@
   if (FLAGS.drawOptions) buildDraw();
   if (FLAGS.gridPanel) buildGrid();
   buildExportUI();
+  setupFiles();
+  buildPages();
   selectPreset(state.preset);
   setTool(state.tool);
   setInteraction(FLAGS.interaction ? state.interaction : 'auto');
   setPlaying(true);
   new ResizeObserver(fitStage).observe(area);
   layout();
+  showView(location.hash.slice(1));
   requestAnimationFrame(frame);
 })();

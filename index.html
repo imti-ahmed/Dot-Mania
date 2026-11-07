@@ -25,25 +25,38 @@
       <div class="well bar">
         <span class="wordmark">DOT MANIA</span>
         <span class="divider"></span>
-        <nav class="tools" aria-label="Edit">
-          <button class="navbtn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>Undo</button>
-          <button class="navbtn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
-          <button class="navbtn" id="invertBtn" title="Invert selection">Invert</button>
-          <button class="navbtn" id="clearBtn" title="Clear everything">Clear</button>
+        <nav class="tabs" id="tabs" aria-label="Sections">
+          <button class="navbtn" data-view="canvas" aria-pressed="true">Canvas</button>
+          <button class="navbtn" data-view="library" aria-pressed="false">Library</button>
+          <button class="navbtn" data-view="about" aria-pressed="false">About</button>
+          <button class="navbtn" data-view="updates" aria-pressed="false">What's New</button>
+          <button class="navbtn" data-view="guide" aria-pressed="false">Guide</button>
         </nav>
         <span class="spacer"></span>
-        <span class="divider"></span>
-        <span class="readout" id="gridInfo">Grid</span>
-        <span class="divider"></span>
-        <span class="readout" id="cellCount">0 cells</span>
+        <span class="readouts" id="canvasReadouts">
+          <span class="divider"></span>
+          <span class="readout" id="gridInfo">Grid</span>
+          <span class="divider"></span>
+          <span class="readout" id="cellCount">0 cells</span>
+        </span>
       </div>
     </header>
 
-    <main class="main">
+    <main class="main" data-page="canvas">
 
       <!-- Left: tool bar (tools + canvas size) -->
       <aside class="card sidebar" aria-label="Tools">
         <div class="toolstrip well" id="toolstrip" role="toolbar" aria-label="Drawing tools"></div>
+        <div class="sizeblock">
+          <span class="side-label">Edit</span>
+          <div class="well editstrip" role="group" aria-label="Edit">
+            <button class="key" id="undoBtn" title="Undo (Ctrl+Z)" disabled>Undo</button>
+            <button class="key" id="redoBtn" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
+            <button class="key" id="invertBtn" title="Invert selection">Invert</button>
+            <button class="key" id="clearBtn" title="Clear everything">Clear</button>
+            <button class="key" id="importBtn" title="Open an HTML file exported from Dot Mania (or drop it on the canvas)">Open<br>HTML</button>
+          </div>
+        </div>
         <div class="sizeblock">
           <span class="side-label">Size</span>
           <div class="well sizes" role="group" aria-label="Canvas size">
@@ -112,9 +125,52 @@
       </aside>
 
     </main>
+
+    <!-- Other pages (filled in by js/app.js) -->
+    <section class="card page" data-page="library" hidden aria-label="Library">
+      <h1 class="page-title">Library</h1>
+      <p class="page-lead">Your saved work will live here.</p>
+      <div class="empty">Coming soon</div>
+    </section>
+
+    <section class="card page" data-page="about" hidden aria-label="About">
+      <h1 class="page-title">About</h1>
+      <p class="page-lead">Dot Mania turns drawings, shapes and pictures into animated dot grids.</p>
+      <p class="page-text">Draw on a 16px grid, pick an animation, then export a looping GIF or a dependency-free web component you can drop into any site.</p>
+      <p class="page-text meta" id="aboutVersion"></p>
+    </section>
+
+    <section class="card page" data-page="updates" hidden aria-label="What's New">
+      <h1 class="page-title">What's New</h1>
+      <p class="page-lead">Every update, newest first.</p>
+      <table class="page-table" id="updatesTable"></table>
+    </section>
+
+    <section class="card page" data-page="guide" hidden aria-label="Guide">
+      <h1 class="page-title">Guide</h1>
+      <ol class="page-steps">
+        <li><b>Draw.</b> Pick a tool on the left and paint cells on the canvas, or upload an image in the right panel.</li>
+        <li><b>Animate.</b> Choose an animation, then tune the sliders and colors.</li>
+        <li><b>Export.</b> Download a GIF or a Code File, or copy the code for an LLM.</li>
+        <li><b>Come back later.</b> Use Open HTML to load a Code File you exported before and keep editing it.</li>
+      </ol>
+      <h2 class="page-sub">Shortcuts</h2>
+      <table class="page-table">
+        <tr><td><kbd>P</kbd> <kbd>E</kbd> <kbd>L</kbd> <kbd>R</kbd> <kbd>O</kbd> <kbd>F</kbd></td><td>Pencil, eraser, line, rectangle, ellipse, fill</td></tr>
+        <tr><td><kbd>1</kbd>&ndash;<kbd>9</kbd></td><td>Pick an animation</td></tr>
+        <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
+        <tr><td><kbd>Ctrl</kbd> <kbd>Z</kbd></td><td>Undo</td></tr>
+        <tr><td><kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Z</kbd></td><td>Redo</td></tr>
+        <tr><td><kbd>Shift</kbd> + drag</td><td>Snap lines to 45&deg;, keep rectangles and ellipses square</td></tr>
+        <tr><td>Right-click drag</td><td>Erase</td></tr>
+      </table>
+    </section>
   </div>
 
+  <div class="toast" id="toast" role="status" hidden></div>
+
   <input type="file" id="imageFile" accept="image/*" hidden>
+  <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
   <script src="js/flags.js"></script>
   <script src="js/presets.js"></script>
@@ -123,6 +179,7 @@
   <script src="js/image.js"></script>
   <script src="js/export.js"></script>
   <script src="js/gif.js"></script>
+  <script src="js/updates.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

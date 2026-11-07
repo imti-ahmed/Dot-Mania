@@ -18,6 +18,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 | `js/export.js` | Web component export |
 | `js/gif.js` | GIF encoder |
 | `js/flags.js` | Feature flags (cut features stay here, off by default) |
+| `js/updates.js` | Data for the What's New page (mirrors `Buildlog.md`) |
 
 ## Rules
 
@@ -33,6 +34,7 @@ Animated dot-grid editor. Drawings, shapes or uploaded images become dots that r
 - Right after each commit, add an entry to `Buildlog.md`, then commit that too.
 - Versioning: stay on `0.0.x` (bump patch per entry). Move to `1.0.0` only when the user declares the public release.
 - Keep entries short: one table row with version, date, commit hash and a one-line summary. Newest on top.
+- Mirror every new entry in `js/updates.js` (feeds the What's New page).
 
 ### Flags
 - Do not delete cut features. Put them behind `js/flags.js`.
