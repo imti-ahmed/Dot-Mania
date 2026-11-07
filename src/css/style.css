@@ -1324,8 +1324,9 @@ body[data-view="home"] .app {
   color: var(--text);
 }
 
-/* Credit in the left panel: vertical text that sits just above the size options */
-.sidebar > .crafted { margin: auto 0 0; padding: 12px 0; border: 0; box-shadow: none; flex: none; writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: var(--muted); }
+/* Credit in the left panel: vertical text centred in the space between the randomizer and the size options, with a divider above it */
+.sidebar > .crafted { margin: 0; padding: 12px 0; flex: 1 0 auto; display: flex; align-items: center; justify-content: center; width: 100%; }
+.crafted span { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: var(--muted); }
 .sidebar > .sizes { margin-top: 0; }
 .crafted a { color: var(--text); font-weight: 700; text-decoration: none; transition: color .15s; }
 .crafted a:hover { color: var(--accent); }
