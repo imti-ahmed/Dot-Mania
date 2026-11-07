@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.32 | 2026-11-07 | `9d1365f` | Stacking: dividers are now separate lines with space between them and the switch, not a border around it |
 | 0.0.31 | 2026-11-07 | `d1cdc93` | Stacking: hint text removed; carved dividers above and below the switch |
 | 0.0.30 | 2026-11-07 | `a05a19f` | Stacking switch (On/Off): stack up to 3 animations in click order (first is the base, later ones shape it); shared Speed/Size/Glow, per-animation sliders, order badges, exports and Open HTML support stacks |
 | 0.0.29 | 2026-11-07 | `8be1fdc` | Dissolve approved and added to the main animations; Stripes, Blinds, Cross moved behind extraPresets flag; Trying Out group empty (hidden) |
