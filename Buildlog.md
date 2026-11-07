@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.47 | 2026-11-07 | `358c210` | Views wired to a free Abacus counter: one count per browser session on the live site only, read-only on localhost/file; shows 0 until the first visit |
 | 0.0.46 | 2026-11-07 | `0675630` | Export tab order: Background, Quality, Code, Media |
 | 0.0.45 | 2026-11-07 | `c915fc2` | GIF size moved out of Media into its own Quality option (Low / Medium / High), also sets video bitrate |
 | 0.0.44 | 2026-11-07 | `1a9a5eb` | Carousel, Streaks, Chess, Swing moved behind extraPresets flag; Trying Out group empty (hidden) |
