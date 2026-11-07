@@ -418,6 +418,69 @@
   // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
   // To drop one: move it into EXTRA_PRESETS (behind the extraPresets flag) or delete it.
   window.TRIAL_PRESETS = [
+    {
+      id: 'fireworks', name: 'Fireworks', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'width', label: 'Thickness', min: 0.05, max: 0.3, step: 0.01, def: 0.1, fmt: pct }],
+      // Three bursts go off one after another from different spots, each ring expanding and fading.
+      fn: function (c, t, p) {
+        var best = 0, cx = [-0.5, 0.45, 0.1], cy = [-0.3, -0.4, 0.45];
+        for (var k = 0; k < 3; k++) {
+          var ph = frac(t * p.speed * 0.5 + k / 3);
+          var dx = c.ux - cx[k], dy = c.uy - cy[k];
+          var e = (Math.sqrt(dx * dx + dy * dy) - ph * 0.9) / p.width;
+          var v = Math.exp(-e * e) * Math.pow(1 - ph, 1.3);
+          if (v > best) best = v;
+        }
+        return best < 0.04 ? 0.04 : best;
+      }
+    },
+    {
+      id: 'tide', name: 'Tide', defaults: base(0.75, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'chop', label: 'Chop', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }],
+      // A water level rises and falls across the whole shape, with a rippling surface.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5;
+        var surface = 0.5 + 0.38 * Math.sin(f * TAU) + p.chop * 0.08 * Math.sin((c.ux * 4 - 2 * f) * TAU);
+        var v = (surface - (1 - c.vy)) * 10;
+        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
+      }
+    },
+    {
+      id: 'glint', name: 'Glint', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.35); },
+      params: [
+        { key: 'angle', label: 'Angle', min: 0, max: 180, step: 5, def: 30, fmt: deg },
+        { key: 'width', label: 'Thickness', min: 0.05, max: 0.35, step: 0.01, def: 0.14, fmt: pct }
+      ],
+      // A quick shine slides across a softly lit shape, then rests, like light catching a logo.
+      fn: function (c, t, p) {
+        var a = p.angle * Math.PI / 180;
+        var proj = c.ux * Math.cos(a) + c.uy * Math.sin(a);
+        var x = (proj - (frac(t * p.speed * 0.35) * 3.2 - 1.6)) / p.width;
+        return 0.28 + 0.72 * Math.exp(-x * x);
+      }
+    },
+    {
+      id: 'helix', name: 'Helix', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'waves', label: 'Waves', min: 0.5, max: 3, step: 0.1, def: 1.5, fmt: dec1 },
+        { key: 'width', label: 'Thickness', min: 0.05, max: 0.3, step: 0.01, def: 0.14, fmt: pct }
+      ],
+      // Two strands twist around each other like DNA, brighter where they come towards you.
+      fn: function (c, t, p) {
+        var ph = (c.ux * p.waves * 0.5 - t * p.speed * 0.5) * TAU, y = 0.6 * Math.sin(ph);
+        var a = (c.uy - y) / p.width, b = (c.uy + y) / p.width;
+        var v = Math.max(Math.exp(-a * a) * (0.55 + 0.45 * Math.cos(ph)), Math.exp(-b * b) * (0.55 - 0.45 * Math.cos(ph)));
+        return v < 0.05 ? 0.05 : v;
+      }
+    }
   ];
 
   // Slider ranges for the controls every preset shares.

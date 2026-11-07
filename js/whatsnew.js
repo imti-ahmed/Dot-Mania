@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.41', date: '2026-11-07', items: [
+    'Trying Out is back with four new animations to test: Fireworks, Tide, Glint and Helix.'
+  ] },
   { v: '0.0.40', date: '2026-11-07', items: [
     'Randomize can also switch the canvas size between wide and square.'
   ] },
