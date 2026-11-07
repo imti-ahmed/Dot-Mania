@@ -6,6 +6,10 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.23', date: '2026-11-07', items: [
+    'Seven new animations: Breathe, Sweep, Burst, Blink, Flicker, Zigzag and Reveal.',
+    'Animations show in three rows. Tap More to see the rest.'
+  ] },
   { v: '0.0.22', date: '2026-11-07', items: [
     'Every page has its own address: /library, /about, /whats-new and /guide.',
     'What\'s New is now written in plain language, separate from the developer log.'
