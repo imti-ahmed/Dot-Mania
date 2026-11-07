@@ -105,7 +105,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   flex: none;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;                  /* same as the gap between the panels below */
   height: 68px;
   padding: 0 16px;
 }
