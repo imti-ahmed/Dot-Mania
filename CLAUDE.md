@@ -37,7 +37,7 @@ Buildlog.md                    the build log
 - Commit messages end with the `Co-Authored-By` line from the session attribution.
 
 ### Build log
-- Right after each commit, add an entry to `Buildlog.md`, then commit that too.
+- One commit per update, and that same commit includes its row in `Buildlog.md` (no separate "Log" commit: there are too many commits otherwise). The row's Commit column shows the release tag `v<version>`; create that git tag right after committing.
 - Versioning is `0.minor.patch` until the public release: a new feature, a new page or flow, or a notable redesign bumps the middle number (and resets the last to 0); a fix, tweak, copy change, rename or flag change bumps the last. Move to `1.0.0` only when the user declares the public release. Pick the bump from the kind of change, not just +1 on the last number.
 - Keep entries short: one table row with version, date, commit hash and a one-line summary. Newest on top.
 - Bump `version` in `src/js/data/site.js` with every entry (status bar and About show it).

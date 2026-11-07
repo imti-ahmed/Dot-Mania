@@ -2,10 +2,13 @@
 
 Pre-release versions are `0.minor.patch`. A new feature, a new page or flow, or a notable redesign bumps the middle number (and resets the last to 0); a fix, tweak, copy change, rename or flag change bumps the last. `1.0.0` only when the public release is declared.
 
+From 0.23.0 on, each release is one commit that includes its own row here, and the Commit column shows the git tag (`v0.23.0`) because a commit cannot contain its own hash.
+
 Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ... (squashed)"), so they show `squashed` instead of a hash.
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.23.0 | 2026-11-07 | `v0.23.0` | Social share preview: a 1200x630 image (assets/social-preview.png: one frame of the welcome popup's Rain animation in Glitter colors, drawn with the app's own engine across the whole canvas width, every column of the rain) plus Open Graph and Twitter card tags, so links to the app show a rich preview |
 | 0.22.19 | 2026-11-07 | `squashed` | Versions renumbered as 0.minor.patch by kind of change (new feature or notable redesign bumps the middle number, a fix or tweak bumps the last), and the 73 unpushed commits (36 entries, 0.17.6 to 0.22.18) squashed into one; Buildlog.md back at the repo root (docs/ folder removed); the page entry folders gathered into pages/ (addresses are now /pages/about, /pages/library and so on) |
 | 0.22.18 | 2026-11-07 | `squashed` | Welcome popup shows on the first visit only and returns 5 hours after it was dismissed (timestamp kept in the browser); ?welcome=1 forces it, ?welcome=0 skips it; welcomeOnce flag turned on |
 | 0.22.17 | 2026-11-07 | `squashed` | Closed Beta pill moved from the bottom centre to the bottom left of the popup preview |
