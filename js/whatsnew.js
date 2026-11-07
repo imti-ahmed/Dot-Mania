@@ -6,8 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
-  { v: '0.0.27', date: '2026-11-07', items: [
-    'New Trying Out group with four animations to test: Blob, Tunnel, Equalizer and Plasma.'
+  { v: '0.0.28', date: '2026-11-07', items: [
+    'New animation: Bars, columns that rise and fall like an audio meter.',
+    'New Trying Out group with four animations to test: Stripes, Dissolve, Blinds and Cross.'
   ] },
   { v: '0.0.26', date: '2026-11-07', items: [
     'The Twinkle animation has been retired.'
