@@ -3,6 +3,7 @@
  * `commit` is a short hash, or '' for the entry that is still being written.
  */
 window.UPDATES = [
+  { v: '0.0.15', date: '2026-11-07', commit: '0461b53', note: 'Top bar: grid/cell readouts removed; divider moved to line up with the canvas/panel gap; status area shows GitHub stars (views when configured) and doubles as the notification bar (opening, loading, rendering, saving)' },
   { v: '0.0.14', date: '2026-11-07', commit: '740fc58', note: 'WebM and MP4 export: records 1-2 whole cycles (not a fixed 10 s) so the clip loops; progress shown on the button' },
   { v: '0.0.13', date: '2026-11-07', commit: '9d75cc7', note: 'SVG export removed from the Export tab (kept behind the exportSvg flag)' },
   { v: '0.0.12', date: '2026-11-07', commit: '65459e9', note: 'Export tab split into Background, Code (HTML file, Copy for LLM) and Media (GIF, new PNG, new SVG)' },
