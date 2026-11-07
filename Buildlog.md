@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.24 | 2026-11-07 | `90b8a33` | Heartbeat renamed Beats; Sweep defaults to horizontal (0 deg); Burst removed from the list (kept behind extraPresets flag) |
 | 0.0.23 | 2026-11-07 | `7bda2ec` | 7 new animations (Breathe, Sweep, Burst, Blink, Flicker, Zigzag, Reveal); presets show three rows with a secondary More / Less button |
 | 0.0.22 | 2026-11-07 | `d951e3a` | What's New moved to its own user-facing file (js/whatsnew.js), no longer a copy of the build log; version now set in js/site.js; Library, About, What's New and Guide each get their own address (/library, /about, /whats-new, /guide) |
 | 0.0.21 | 2026-11-07 | `c907870` | Stars/views cached for 30 min (avoids GitHub rate limit), stale value kept on failure, console logs the reason a fetch fails |
