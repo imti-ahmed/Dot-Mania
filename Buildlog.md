@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.14 | 2026-11-07 | `740fc58` | WebM and MP4 export: records 1-2 whole cycles (not a fixed 10 s) so the clip loops; progress shown on the button |
 | 0.0.13 | 2026-11-07 | `9d75cc7` | SVG export removed from the Export tab (kept behind the exportSvg flag) |
 | 0.0.12 | 2026-11-07 | `65459e9` | Export tab split into Background, Code (HTML file, Copy for LLM) and Media (GIF, new PNG, new SVG) |
 | 0.0.11 | 2026-11-07 | `d4b7a14` | Left bar groups (tools, Invert/Clear, size) separated by the same carved dividers as the right panel |
