@@ -6,8 +6,8 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
-  { v: '0.0.55', date: '2026-11-07', items: [
-    'New Holo color: a shifting mint, blue, violet, pink and peach gradient.'
+  { v: '0.0.57', date: '2026-11-07', items: [
+    'New Candy color: a soft pink, lilac, sky and mint gradient.'
   ] },
   { v: '0.0.52', date: '2026-11-07', items: [
     'The custom color picker now matches the rest of the app.'

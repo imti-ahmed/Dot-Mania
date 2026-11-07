@@ -130,9 +130,9 @@
     { id: 'sunset', name: 'Sunset' },
     { id: 'neon', name: 'Neon' },
     { id: 'aurora', name: 'Aurora' },
-    { id: 'candy', name: 'Candy', flag: 'candyColor' },
+    { id: 'candy', name: 'Candy' },
     { id: 'forest', name: 'Forest', flag: 'forestColor' },
-    { id: 'holo', name: 'Holo' }
+    { id: 'holo', name: 'Holo', flag: 'holoColor' }
   ].filter(function (c) { return !c.flag || FLAGS[c.flag]; });
 
   // A random pick from the colour options we offer: every colour preset and every solid swatch, equally likely
