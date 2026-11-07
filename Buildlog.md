@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.41 | 2026-11-07 | `1752b58` | Four new trial animations in the Trying Out group: Fireworks, Tide, Glint, Helix |
 | 0.0.40 | 2026-11-07 | `686b6af` | Randomize also randomizes the canvas size (wide or square) before drawing the art |
 | 0.0.39 | 2026-11-07 | `1d9533e` | Top bar: gap between the logo and the bar is now 16px, matching the gap between the panels below |
 | 0.0.38 | 2026-11-07 | `92385c2` | Randomize art is now designed patterns (nested rings/squares/diamonds, tiled motifs, stripes, sunburst, checkerboard, mirrored emblems), optionally cut to a shape |
