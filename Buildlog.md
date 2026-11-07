@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.46 | 2026-11-07 | `0675630` | Export tab order: Background, Quality, Code, Media |
 | 0.0.45 | 2026-11-07 | `c915fc2` | GIF size moved out of Media into its own Quality option (Low / Medium / High), also sets video bitrate |
 | 0.0.44 | 2026-11-07 | `1a9a5eb` | Carousel, Streaks, Chess, Swing moved behind extraPresets flag; Trying Out group empty (hidden) |
 | 0.0.43 | 2026-11-07 | `e12c5aa` | Fireworks, Tide, Glint, Helix moved behind extraPresets flag; new Trying Out set: Carousel, Streaks, Chess, Swing |
