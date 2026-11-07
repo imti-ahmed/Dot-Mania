@@ -829,8 +829,7 @@
     if (!parsed) { toast('Not a Dot Mania file'); return; }
     var d = parsed.data;
 
-    imgSrc = null; imgRaster = null;
-    if (imgUI.opts) setImageActive(false);
+    resetSession();                         // nothing from the current canvas carries over
     if (d.geo && d.geo.cell) CELL = d.geo.cell;
     state.dotShape = (d.geo && d.geo.shape) || 'dot';
     repaintShapes();
@@ -869,7 +868,7 @@
   }
 
   // Back to a blank first-launch session: empty canvas, default animation, look and size.
-  function closeFile() {
+  function resetSession() {
     PRESETS.forEach(function (p) {
       var v = Object.assign({}, p.defaults);
       p.params.forEach(function (q) { v[q.key] = q.def; });
@@ -881,6 +880,7 @@
     imgSrc = null; imgRaster = null;
     if (imgUI.opts) setImageActive(false);
     if (FLAGS.interaction) setInteraction('auto');
+    setPlaying(true);
     cells = new Set();
     setArt(1920, 1080);                     // also clears history
     repaintShapes(); repaintColor();
@@ -888,6 +888,9 @@
     drawIdle();
     dirty = true;
     updateInfo();
+  }
+  function closeFile() {
+    resetSession();
     setFileLoaded(false);
     toast('Fresh session');
   }
