@@ -896,7 +896,34 @@
     $('#canvasReadouts').hidden = id !== 'canvas';
     if (id === 'canvas') fitStage();
   }
+  // Library: a grid of templates. Preview is the template file itself in an iframe; Load fetches it into the editor.
+  function buildLibrary() {
+    var grid = $('#libGrid');
+    (window.LIBRARY || []).forEach(function (t) {
+      var url = 'library/' + t.file, card = document.createElement('article');
+      card.className = 'lib-card';
+      card.innerHTML =
+        '<div class="lib-preview"><iframe loading="lazy" tabindex="-1" sandbox="allow-scripts" title="' + t.name + ' preview"></iframe></div>' +
+        '<div class="lib-name"></div>' +
+        '<div class="lib-actions">' +
+          '<button class="key" data-act="load">Load File</button>' +
+          '<a class="key" data-act="download" download>Download</a>' +
+        '</div>';
+      card.querySelector('iframe').src = url;
+      card.querySelector('.lib-name').textContent = t.name;
+      var dl = card.querySelector('[data-act="download"]');
+      dl.href = url; dl.download = t.file;
+      card.querySelector('[data-act="load"]').addEventListener('click', function () {
+        fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (text) {
+          showView('canvas');
+          importHtml(text);
+        }).catch(function () { toast('Could not load. Open the app from a local server'); });
+      });
+      grid.appendChild(card);
+    });
+  }
   function buildPages() {
+    buildLibrary();
     var U = window.UPDATES || [];
     $('#aboutVersion').textContent = U.length ? 'Version ' + U[0].v : '';
     $('#updatesTable').innerHTML = '<tr><th>Version</th><th>Date</th><th>Changes</th></tr>' + U.map(function (u) {
