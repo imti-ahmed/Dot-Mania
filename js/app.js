@@ -511,6 +511,18 @@
     common('glow');
   }
 
+  // Three rows of four. When there are more presets than fit, the last slot is a quiet "More" button
+  // that reveals the rest (and turns into "Less").
+  var PRESET_SLOTS = 12, presetsOpen = false, presetMore = null;
+  function renderPresets() {
+    var keys = $('#presets').querySelectorAll('.key[data-id]'), fits = PRESETS.length <= PRESET_SLOTS;
+    keys.forEach(function (b, i) { b.hidden = !fits && !presetsOpen && i >= PRESET_SLOTS - 1; });
+    if (presetMore) {
+      presetMore.hidden = fits;
+      presetMore.textContent = presetsOpen ? 'Less' : 'More';
+      presetMore.setAttribute('aria-expanded', String(presetsOpen));
+    }
+  }
   function buildPresets() {
     var el = $('#presets');
     PRESETS.forEach(function (p, i) {
@@ -520,10 +532,19 @@
       b.addEventListener('click', function () { selectPreset(p.id); });
       el.appendChild(b);
     });
+    presetMore = document.createElement('button');
+    presetMore.className = 'key secondary';
+    presetMore.title = 'Show or hide the other animations';
+    presetMore.addEventListener('click', function () { presetsOpen = !presetsOpen; renderPresets(); });
+    el.appendChild(presetMore);
+    renderPresets();
   }
 
   function selectPreset(id) {
     state.preset = id;
+    if (PRESETS.length > PRESET_SLOTS && PRESETS.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1 && !presetsOpen) {
+      presetsOpen = true; renderPresets();      // never leave the chosen animation hidden
+    }
     $('#presets').querySelectorAll('.key').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.id === id));
     });

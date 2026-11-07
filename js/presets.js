@@ -135,6 +135,94 @@
         var a = (ph - 0.12) / 0.06, b = (ph - 0.32) / 0.07;
         return Math.min(1, Math.exp(-a * a) + 0.7 * Math.exp(-b * b));
       }
+    },
+    {
+      id: 'breathe', name: 'Breathe', defaults: base(0.75, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.35); },
+      params: [{ key: 'lag', label: 'Lag', min: 0, max: 1, step: 0.01, def: 0.4, fmt: pct }],
+      // The whole shape swells and settles, the edge a beat behind the centre.
+      fn: function (c, t, p) {
+        var s = 0.5 + 0.5 * Math.sin((t * p.speed * 0.35 - c.d * p.lag * 0.5) * TAU);
+        return 0.1 + 0.9 * s * s;
+      }
+    },
+    {
+      id: 'sweep', name: 'Sweep', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.4); },
+      params: [
+        { key: 'angle', label: 'Angle', min: 0, max: 360, step: 5, def: 45, fmt: deg },
+        { key: 'trail', label: 'Trail', min: 0.05, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // A bright front crosses the shape in one direction and leaves a fading trail.
+      fn: function (c, t, p) {
+        var a = p.angle * Math.PI / 180;
+        var proj = c.ux * Math.cos(a) + c.uy * Math.sin(a);
+        var ph = frac(proj * 0.5 - t * p.speed * 0.4);
+        return Math.pow(1 - ph, 1 + (1 - p.trail) * 12);
+      }
+    },
+    {
+      id: 'burst', name: 'Burst', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'rings', label: 'Rings', min: 1, max: 4, step: 1, def: 1, fmt: num },
+        { key: 'width', label: 'Thickness', min: 0.05, max: 0.5, step: 0.01, def: 0.14, fmt: pct }
+      ],
+      // Thin rings shoot out from the centre.
+      fn: function (c, t, p) {
+        var x = frac(c.d * p.rings - t * p.speed * 0.5), e = Math.min(x, 1 - x) / p.width;
+        return Math.exp(-e * e);
+      }
+    },
+    {
+      id: 'blink', name: 'Blink', defaults: base(0.6, 0.3),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'duty', label: 'On time', min: 0.05, max: 0.95, step: 0.01, def: 0.35, fmt: pct }],
+      // Each dot switches on and off by itself, like a field of indicator lights.
+      fn: function (c, t, p) {
+        var k = 1 + Math.floor(c.rnd2 * 2);
+        return frac(t * p.speed * 0.5 * k + c.rnd) < p.duty ? 1 : 0.06;
+      }
+    },
+    {
+      id: 'flicker', name: 'Flicker', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'chaos', label: 'Chaos', min: 0.1, max: 1, step: 0.01, def: 0.7, fmt: pct }],
+      // Uneven, candle-like brightness: two wobbles at different rates per dot.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5;
+        var n = 0.5 + 0.25 * Math.sin((2 * f + c.rnd) * TAU) + 0.25 * Math.sin((3 * f + c.rnd2) * TAU);
+        return (1 - p.chaos) + p.chaos * n;
+      }
+    },
+    {
+      id: 'zigzag', name: 'Zigzag', defaults: base(0.65, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.4); },
+      params: [{ key: 'waves', label: 'Waves', min: 0.5, max: 4, step: 0.1, def: 1.5, fmt: dec1 }],
+      // A wave where every other row runs half a beat behind, so the front zigzags.
+      fn: function (c, t, p) {
+        var u = c.ux * p.waves * 0.5 + (c.row % 2) * 0.5 - t * p.speed * 0.4;
+        var tri = Math.abs(frac(u) * 2 - 1);
+        return tri * tri;
+      }
+    },
+    {
+      id: 'reveal', name: 'Reveal', defaults: base(0.75, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.25); },
+      params: [{ key: 'soft', label: 'Softness', min: 0.05, max: 1, step: 0.01, def: 0.3, fmt: pct }],
+      // The shape fills in from the centre outwards, then drains back out the same way.
+      fn: function (c, t, p) {
+        var progress = Math.abs(frac(t * p.speed * 0.25) * 2 - 1);
+        var v = (progress * (1 + p.soft) - c.d) / p.soft;
+        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
+      }
     }
   ];
 
