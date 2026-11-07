@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.23.2 | 2026-11-07 | `v0.23.2` | Canvas card always fills its parent card on any screen size: the stage follows the card's shape and the artboard is scaled to fit and centred inside it, so a small or tall window gets empty space around the grid (like the square frame) instead of a canvas shorter than its parent |
 | 0.23.1 | 2026-11-07 | `v0.23.1` | Social share text simplified: the title is "Dot Mania - Make The Dots Move" with one short line under it ("Draw on a grid, make it move, and export it anywhere."); no link in the text (no og:url), and the same line is the page description |
 | 0.23.0 | 2026-11-07 | `v0.23.0` | Social share preview: a 1200x630 image (assets/social-preview.png: one frame of the welcome popup's Rain animation in Glitter colors, drawn with the app's own engine across the whole canvas width, every column of the rain) plus Open Graph and Twitter card tags, so links to the app show a rich preview |
 | 0.22.19 | 2026-11-07 | `squashed` | Versions renumbered as 0.minor.patch by kind of change (new feature or notable redesign bumps the middle number, a fix or tweak bumps the last), and the 73 unpushed commits (36 entries, 0.17.6 to 0.22.18) squashed into one; Buildlog.md back at the repo root (docs/ folder removed); the page entry folders gathered into pages/ (addresses are now /pages/about, /pages/library and so on) |

@@ -48,8 +48,10 @@
 
   /* ---------- Artboard + grid ---------- */
 
-  // The editor stage is always 1920x1080. The artboard (state.art) is the part of it that holds dots:
-  // all of it, or a 1080x1080 square (67x67 cells) centred in the stage.
+  // The stage (the canvas card) always fills its parent card, whatever the screen size. Its logical size follows the
+  // card's shape, and the artboard (state.art: 1920x1080 or the 1080x1080 square) is scaled to fit entirely inside it and
+  // centred. So on a small or tall screen the canvas stays as big as its parent and the grid just has empty space
+  // around it, the same as the square frame does.
   var STAGE = { w: 1920, h: 1080 };
   function w() { return STAGE.w; }
   function h() { return STAGE.h; }
@@ -61,25 +63,33 @@
     oy = (h() - rows * CELL) / 2;
   }
 
-  // Scale the artboard down to fit the available space, keeping its aspect ratio.
-  function fitStage() {
-    var r = area.getBoundingClientRect();
-    var availW = r.width - 32, availH = r.height - 32;
-    if (availW <= 0 || availH <= 0) return;
-    var s = Math.min(availW / w(), availH / h());
-    stage.style.width = Math.floor(w() * s) + 'px';
-    stage.style.height = Math.floor(h() * s) + 'px';
-  }
-
-  function layout() {
+  var canvasSized = false;
+  function resizeCanvases() {
+    canvasSized = true;
     cv.width = idle.width = w();
     cv.height = idle.height = h();
     computeGrid();
     drawIdle();
-    fitStage();
     dirty = true;
     updateInfo();
   }
+
+  // Make the stage fill the card, and keep its drawing resolution in step with the card's shape.
+  function fitStage(force) {
+    var r = area.getBoundingClientRect();
+    var availW = r.width - 32, availH = r.height - 32;
+    if (availW <= 0 || availH <= 0) { if (!canvasSized) resizeCanvases(); return; }   // card not on screen yet: still give the canvas a size
+    var s = Math.min(availW / state.art.w, availH / state.art.h);   // the artboard fits whole
+    var nw = Math.max(state.art.w, Math.round(availW / s)), nh = Math.max(state.art.h, Math.round(availH / s));
+    stage.style.width = Math.floor(availW) + 'px';
+    stage.style.height = Math.floor(availH) + 'px';
+    if (force === true || !canvasSized || nw !== STAGE.w || nh !== STAGE.h) {
+      STAGE.w = nw; STAGE.h = nh;
+      resizeCanvases();
+    }
+  }
+
+  function layout() { fitStage(true); }
 
   // Switch artboard size; the drawing stays centred and anything that no longer fits is dropped.
   function setArt(width, height) {
@@ -2015,7 +2025,7 @@
   setTool(state.tool);
   setInteraction(FLAGS.interaction ? state.interaction : 'auto');
   setPlaying(false);                        // opens paused: what you draw shows as drawn until you press Play
-  new ResizeObserver(fitStage).observe(area);
+  new ResizeObserver(function () { fitStage(); }).observe(area);
   layout();
   setupHome();
   showView(viewFromPath());
