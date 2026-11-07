@@ -4,6 +4,7 @@ Pre-release runs on `0.0.x` (patch bump per entry). `1.0.0` only when the public
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.0.35 | 2026-11-07 | `61cd4f4` | Randomize: new left bar group with a dice icon that picks new animation(s), sliders and color, leaving the drawing alone |
 | 0.0.34 | 2026-11-07 | `6a1d7d9` | Right panel: scrolling content no longer slides right up to the tabs divider, it is clipped a little below it like above Play |
 | 0.0.33 | 2026-11-07 | `a0e8613` | Stacking: extra space above the top divider so it matches the gap above the bottom one |
 | 0.0.32 | 2026-11-07 | `9d1365f` | Stacking: dividers are now separate lines with space between them and the switch, not a border around it |
