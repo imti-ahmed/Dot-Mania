@@ -809,21 +809,29 @@
     $('#statusIdle').hidden = false;
   }
 
-  // Version, views and GitHub stars. A value that is not available (no counter set up, repo private,
-  // offline) shows a dash.
+  // Version, views and GitHub stars. A value that is not available (no counter set up, offline)
+  // shows a dash.
   function buildStatus() {
     var site = window.SITE || {}, U = window.UPDATES || [];
-    function put(id, text) { $(id).querySelector('b').textContent = text; }
+    // n = 1 reads "1 Star" / "1 View"
+    function put(id, text, n) {
+      var el = $(id), unit = el.querySelector('.unit');
+      el.querySelector('b').textContent = text;
+      if (unit) unit.textContent = ' ' + unit.dataset.word + (n === 1 ? '' : 's');
+    }
+    document.querySelectorAll('.stat .unit').forEach(function (u) { u.dataset.word = u.textContent.replace(/s$/, ''); });
     put('#statVersion', U.length ? 'v' + U[0].v : '-');
+    put('#statViews', '-', 0);
+    put('#statStars', '-', 0);
     if (site.repo) $('#statStars').href = 'https://github.com/' + site.repo;
     function cached(key) { try { return JSON.parse(sessionStorage.getItem(key)); } catch (e) { return null; } }
     function remember(key, n) { try { sessionStorage.setItem(key, JSON.stringify(n)); } catch (e) {} }
     function load(id, key, url, pick) {
       var c = cached(key);
-      if (typeof c === 'number') { put(id, c.toLocaleString()); return; }
+      if (typeof c === 'number') { put(id, c.toLocaleString(), c); return; }
       fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
         var n = d && pick(d);
-        if (typeof n === 'number') { remember(key, n); put(id, n.toLocaleString()); }
+        if (typeof n === 'number') { remember(key, n); put(id, n.toLocaleString(), n); }
       }).catch(function () {});
     }
     if (site.repo) load('#statStars', 'dm-stars', 'https://api.github.com/repos/' + site.repo, function (d) { return d.stargazers_count; });
@@ -1134,6 +1142,14 @@
     }, exportOpts);
   }
 
+  // Saved files get a random, silly name instead of "dot-mania": e.g. grumpy-waffle-42.gif
+  var NAME_A = ['wobbly', 'sneaky', 'cosmic', 'grumpy', 'fuzzy', 'turbo', 'soggy', 'electric', 'jolly', 'spicy', 'mellow', 'cranky',
+    'bouncy', 'sleepy', 'funky', 'zesty', 'giddy', 'moody', 'glitchy', 'velvet', 'plasma', 'pocket', 'rowdy', 'dizzy'];
+  var NAME_B = ['waffle', 'pickle', 'noodle', 'comet', 'walrus', 'pixel', 'muffin', 'robot', 'taco', 'badger', 'goblin', 'biscuit',
+    'octopus', 'meteor', 'pancake', 'llama', 'jellybean', 'wizard', 'cactus', 'burrito', 'moth', 'toaster', 'yeti', 'dumpling'];
+  function choice(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function funkyName(ext) { return choice(NAME_A) + '-' + choice(NAME_B) + '-' + Math.floor(10 + Math.random() * 90) + '.' + ext; }
+
   function download(name, data, type) {
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([data], { type: type }));
@@ -1177,7 +1193,7 @@
       maxSide: GIF_MAX_SIDE, fps: GIF_FPS, tolerance: GIF_TOLERANCE,
       colors: color.mode === 'solid' || color.mode === 'white' ? GIF_COLORS_SIMPLE : GIF_COLORS_RICH
     }).then(function (blob) {
-      download('dot-mania.gif', blob, 'image/gif');
+      download(funkyName('gif'), blob, 'image/gif');
     }).catch(function (err) {
       console.error('GIF export failed', err);
       notify('GIF export failed');
@@ -1229,7 +1245,7 @@
       videoBusy = false;
       labelEl.textContent = original;
       setExportEnabled(cells.size > 0);
-      download('dot-mania.' + kind, new Blob(chunks, { type: mime.split(';')[0] }), mime);
+      download(funkyName(kind), new Blob(chunks, { type: mime.split(';')[0] }), mime);
     };
     function step(now) {
       var t = (now - t0) / 1000;
@@ -1265,7 +1281,7 @@
     if (exportOpts.bg === 'dark') { x.fillStyle = '#0b0b0a'; x.fillRect(0, 0, c.width, c.height); }
     if (exportOpts.grid) E.drawIdle(x, cols, rows, g, GRID_VIS);
     E.drawCells(x, E.buildList(cellArray()), f.preset.fn, f.vals, f.color, tl.t, tl.ph, g, false);
-    c.toBlob(function (blob) { if (blob) download('dot-mania.png', blob, 'image/png'); else notify('PNG export failed'); }, 'image/png');
+    c.toBlob(function (blob) { if (blob) download(funkyName('png'), blob, 'image/png'); else notify('PNG export failed'); }, 'image/png');
   }
 
   // SVG: the same frame as scalable vector (marks mirror engine.dot). Small, sharp at any size.
@@ -1336,13 +1352,13 @@
     wrap.innerHTML = mhtml;
     while (wrap.firstChild) mel.appendChild(wrap.firstChild);
 
-    on('#exportCode', function () { notify('Building code file…', { busy: true }); download('dot-mania.html', buildExport().html, 'text/html'); });
+    on('#exportCode', function () { notify('Building code file…', { busy: true }); download(funkyName('html'), buildExport().html, 'text/html'); });
     on('#exportGif', exportGif);
     on('#exportPng', exportPng);
-    on('#exportSvg', function () { if (cells.size) { notify('Rendering SVG…', { busy: true }); download('dot-mania.svg', buildSvg(), 'image/svg+xml'); } });
+    on('#exportSvg', function () { if (cells.size) { notify('Rendering SVG…', { busy: true }); download(funkyName('svg'), buildSvg(), 'image/svg+xml'); } });
     on('#exportLlm', function () { copyText(buildExport().llm, $('#exportLlm span'), 'Copy for LLM'); });
     on('#exportEmbed', function () { copyText(buildExport().snippet, $('#exportEmbed span'), 'Copy embed code'); });
-    on('#exportJs', function () { download('dot-mania.js', buildExport().script, 'text/javascript'); });
+    on('#exportJs', function () { download(funkyName('js'), buildExport().script, 'text/javascript'); });
     on('#exportWebm', function () { recordVideo('webm'); });
     on('#exportMp4', function () { recordVideo('mp4'); });
     ['webm', 'mp4'].forEach(function (k) {
