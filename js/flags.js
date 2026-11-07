@@ -30,7 +30,7 @@
     extraTools: false,          // Left bar: Eraser and Line tools (right-click on the canvas still erases)
     imageAdvanced: false,       // Image group: "Level" slider and "Fit / Fill" (default is 50% level, fit)
     interaction: false,         // Interaction group: Auto / Hover / Click playback (exported component too)
-    extraPresets: false,        // 20 more animations: Diamond, Burst, Blink, Twinkle, Blob, Tunnel, Plasma, Stripes, Blinds, Cross, Fireworks, Tide, Glint, Helix, Bounce, Strobe, Glitch, Checker, Orbit, Radar
+    extraPresets: false,        // 24 more animations: Diamond, Burst, Blink, Twinkle, Blob, Tunnel, Plasma, Stripes, Blinds, Cross, Fireworks, Tide, Glint, Helix, Carousel, Streaks, Chess, Swing, Bounce, Strobe, Glitch, Checker, Orbit, Radar
     starterShapes: false,       // Starters group: whole drawings (Full, Checkers, Disc, Ring, Diamond, Star, Heart, Snowflake)
     drawOptions: false,         // Draw group: brush size, and filled / outline rectangles and ellipses
     gridPanel: false,           // Grid group: grid size (8-48 px) and grid visibility

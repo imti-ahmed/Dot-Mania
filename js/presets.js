@@ -220,6 +220,64 @@
   // Behind FLAGS.extraPresets (see flags.js). Same shape as the presets above; each loops seamlessly at period().
   window.EXTRA_PRESETS = [
     {
+      id: 'carousel', name: 'Carousel', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'segments', label: 'Segments', min: 4, max: 16, step: 1, def: 8, fmt: num },
+        { key: 'trail', label: 'Trail', min: 0.1, max: 0.9, step: 0.01, def: 0.4, fmt: pct }
+      ],
+      // A light steps around the centre one slice at a time, like a carousel, leaving a short tail.
+      fn: function (c, t, p) {
+        var n = Math.round(p.segments);
+        var sector = Math.floor((c.a + Math.PI) / TAU * n) % n;
+        var step = Math.floor(t * p.speed * 0.5 * n);
+        var delta = ((step - sector) % n + n) % n, len = Math.max(1, p.trail * n);
+        return delta <= len ? 1 - delta / (len + 1) : 0.06;
+      }
+    },
+    {
+      id: 'streaks', name: 'Streaks', defaults: base(0.6, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'length', label: 'Length', min: 0.1, max: 0.7, step: 0.01, def: 0.3, fmt: pct }],
+      // Short dashes race along every row, some fast and some slow, in alternating directions.
+      fn: function (c, t, p) {
+        var mult = 1 + c.row % 3, dir = c.row % 2 ? -1 : 1;
+        var off = frac(Math.sin(c.row * 12.9898) * 43758.5453);
+        var x = frac(c.ux * 1.5 + dir * mult * t * p.speed * 0.5 + off);
+        return x < p.length ? 0.3 + 0.7 * (1 - x / p.length) : 0.05;
+      }
+    },
+    {
+      id: 'chess', name: 'Chess', defaults: base(0.7, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [{ key: 'block', label: 'Square', min: 1, max: 8, step: 1, def: 3, fmt: num }],
+      // A checkerboard where the light squares fade out as the dark ones fade in, and back.
+      fn: function (c, t, p) {
+        var b = Math.round(p.block), parity = (Math.floor(c.col / b) + Math.floor(c.row / b)) % 2;
+        var v = 0.5 + 0.5 * Math.cos((t * p.speed * 0.5 + parity * 0.5) * TAU);
+        return 0.05 + 0.95 * Math.pow(v, 1.5);
+      }
+    },
+    {
+      id: 'swing', name: 'Swing', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'width', label: 'Width', min: 0.05, max: 0.4, step: 0.01, def: 0.18, fmt: pct },
+        { key: 'lag', label: 'Lag', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // Every row has a dot swinging side to side like a pendulum, each a beat behind the row above.
+      fn: function (c, t, p) {
+        var pos = 0.85 * Math.sin((t * p.speed * 0.5 - c.vy * p.lag) * TAU);
+        var e = (c.ux - pos) / p.width;
+        var v = Math.exp(-e * e);
+        return v < 0.05 ? 0.05 : v;
+      }
+    },
+    {
       id: 'fireworks', name: 'Fireworks', defaults: base(0.7, 0.8),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },
@@ -481,64 +539,6 @@
   // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
   // To drop one: move it into EXTRA_PRESETS (behind the extraPresets flag) or delete it.
   window.TRIAL_PRESETS = [
-    {
-      id: 'carousel', name: 'Carousel', defaults: base(0.7, 0.7),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'segments', label: 'Segments', min: 4, max: 16, step: 1, def: 8, fmt: num },
-        { key: 'trail', label: 'Trail', min: 0.1, max: 0.9, step: 0.01, def: 0.4, fmt: pct }
-      ],
-      // A light steps around the centre one slice at a time, like a carousel, leaving a short tail.
-      fn: function (c, t, p) {
-        var n = Math.round(p.segments);
-        var sector = Math.floor((c.a + Math.PI) / TAU * n) % n;
-        var step = Math.floor(t * p.speed * 0.5 * n);
-        var delta = ((step - sector) % n + n) % n, len = Math.max(1, p.trail * n);
-        return delta <= len ? 1 - delta / (len + 1) : 0.06;
-      }
-    },
-    {
-      id: 'streaks', name: 'Streaks', defaults: base(0.6, 0.5),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [{ key: 'length', label: 'Length', min: 0.1, max: 0.7, step: 0.01, def: 0.3, fmt: pct }],
-      // Short dashes race along every row, some fast and some slow, in alternating directions.
-      fn: function (c, t, p) {
-        var mult = 1 + c.row % 3, dir = c.row % 2 ? -1 : 1;
-        var off = frac(Math.sin(c.row * 12.9898) * 43758.5453);
-        var x = frac(c.ux * 1.5 + dir * mult * t * p.speed * 0.5 + off);
-        return x < p.length ? 0.3 + 0.7 * (1 - x / p.length) : 0.05;
-      }
-    },
-    {
-      id: 'chess', name: 'Chess', defaults: base(0.7, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [{ key: 'block', label: 'Square', min: 1, max: 8, step: 1, def: 3, fmt: num }],
-      // A checkerboard where the light squares fade out as the dark ones fade in, and back.
-      fn: function (c, t, p) {
-        var b = Math.round(p.block), parity = (Math.floor(c.col / b) + Math.floor(c.row / b)) % 2;
-        var v = 0.5 + 0.5 * Math.cos((t * p.speed * 0.5 + parity * 0.5) * TAU);
-        return 0.05 + 0.95 * Math.pow(v, 1.5);
-      }
-    },
-    {
-      id: 'swing', name: 'Swing', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'width', label: 'Width', min: 0.05, max: 0.4, step: 0.01, def: 0.18, fmt: pct },
-        { key: 'lag', label: 'Lag', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
-      ],
-      // Every row has a dot swinging side to side like a pendulum, each a beat behind the row above.
-      fn: function (c, t, p) {
-        var pos = 0.85 * Math.sin((t * p.speed * 0.5 - c.vy * p.lag) * TAU);
-        var e = (c.ux - pos) / p.width;
-        var v = Math.exp(-e * e);
-        return v < 0.05 ? 0.05 : v;
-      }
-    }
   ];
 
   // Slider ranges for the controls every preset shares.
