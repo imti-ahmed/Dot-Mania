@@ -647,29 +647,85 @@
     buildControls();
   }
 
-  // A random piece of art: a few overlapping circles, rings, rectangles and diamonds, usually mirrored left to right.
+  // Random art that looks designed: one clear pattern, optionally cut to a shape.
+  //   concentric  nested rings / squares / diamonds      tiles     a repeating motif (dots, squares, diamonds, plus signs)
+  //   stripes     horizontal, vertical, diagonal, chevron or wavy bands
+  //   sunburst    rays from the centre                   checker   a big checkerboard
+  //   emblem      a few shapes mirrored four ways around the centre
   function randomArtCells() {
-    var set = new Set(), mirror = Math.random() < 0.7, n = 3 + Math.floor(Math.random() * 4), side = Math.min(cols, rows);
-    function add(c, r) {
-      if (c < 0 || r < 0 || c >= cols || r >= rows) return;
-      set.add(c + ',' + r);
-      if (mirror) set.add((cols - 1 - c) + ',' + r);
+    var cx = (cols - 1) / 2, cy = (rows - 1) / 2, side = Math.min(cols, rows), R = side * 0.47;
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function between(lo, hi) { return lo + Math.floor(Math.random() * (hi - lo + 1)); }
+    function mod(v, m) { return ((v % m) + m) % m; }
+    function dist(kind, x, y) {
+      return kind === 'circle' ? Math.sqrt(x * x + y * y) : kind === 'square' ? Math.max(Math.abs(x), Math.abs(y)) : Math.abs(x) + Math.abs(y);
     }
-    for (var i = 0; i < n; i++) {
-      var cx = Math.random() * cols, cy = Math.random() * rows, rad = (0.08 + Math.random() * 0.22) * side;
-      var kind = Math.floor(Math.random() * 4), ry = rad * (0.4 + Math.random() * 0.6);
-      for (var r = Math.floor(cy - rad - 1); r <= cy + rad + 1; r++) {
-        for (var c = Math.floor(cx - rad - 1); c <= cx + rad + 1; c++) {
-          var dx = c - cx, dy = r - cy, d = Math.sqrt(dx * dx + dy * dy);
-          var on = kind === 0 ? d <= rad
-            : kind === 1 ? Math.abs(d - rad) <= rad * 0.3 + 0.5
-            : kind === 2 ? Math.abs(dx) <= rad && Math.abs(dy) <= ry
-            : Math.abs(dx) + Math.abs(dy) <= rad;
-          if (on) add(c, r);
+    // is (x, y) inside a motif of size h centred on the origin?
+    function motif(kind, x, y, h) {
+      var ax = Math.abs(x), ay = Math.abs(y);
+      return kind === 'circle' ? x * x + y * y <= h * h
+        : kind === 'square' ? Math.max(ax, ay) <= h
+        : kind === 'diamond' ? ax + ay <= h * 1.25
+        : kind === 'ring' ? Math.abs(Math.sqrt(x * x + y * y) - h) <= Math.max(1, h * 0.28)
+        : Math.min(ax, ay) <= Math.max(1, h * 0.3) && Math.max(ax, ay) <= h * 1.1;     // plus
+    }
+
+    var out = new Set();
+    for (var attempt = 0; attempt < 4 && out.size < 30; attempt++) {
+      out = new Set();
+      var kind = pick(['concentric', 'tiles', 'stripes', 'sunburst', 'checker', 'emblem']);
+      var maskKind = pick(['none', 'circle', 'square', 'diamond']), maskR = R * (maskKind === 'diamond' ? 1.15 : maskKind === 'square' ? 0.9 : 1);
+      var test;
+
+      if (kind === 'concentric') {
+        var shape = pick(['circle', 'square', 'diamond']), w = between(3, 6);
+        maskKind = shape; maskR = R * (shape === 'diamond' ? 1.15 : shape === 'square' ? 0.9 : 1);
+        test = function (x, y) { return Math.floor(dist(shape, x, y) / w) % 2 === 0; };
+      } else if (kind === 'tiles') {
+        var s = between(8, 14), m = pick(['circle', 'square', 'diamond', 'plus']), h = s * 0.32, brick = Math.random() < 0.5;
+        test = function (x, y, c, r) {
+          var off = brick && Math.floor(r / s) % 2 ? s / 2 : 0;
+          return motif(m, mod(c + off, s) - (s - 1) / 2, mod(r, s) - (s - 1) / 2, h);
+        };
+      } else if (kind === 'stripes') {
+        var t = pick(['horizontal', 'vertical', 'diagonal', 'chevron', 'waves']), sw = between(3, 6);
+        test = function (x, y) {
+          var u = t === 'horizontal' ? y : t === 'vertical' ? x : t === 'diagonal' ? x + y
+            : t === 'chevron' ? y + Math.abs(x) * 0.6 : y + 5 * Math.sin(x * 0.15);
+          return mod(Math.floor(u / sw), 2) === 0;
+        };
+      } else if (kind === 'sunburst') {
+        var rays = between(6, 14) * 2;
+        test = function (x, y) {
+          var d = Math.sqrt(x * x + y * y), idx = Math.floor((Math.atan2(y, x) + Math.PI) / (Math.PI * 2) * rays);
+          return d <= side * 0.04 || (idx % 2 === 0 && d > side * 0.07);
+        };
+      } else if (kind === 'checker') {
+        var cs = between(4, 9);
+        test = function (x, y) { return mod(Math.floor(x / cs) + Math.floor(y / cs), 2) === 0; };
+      } else {
+        var parts = [], np = between(2, 3), centre = Math.random() < 0.6;
+        for (var i = 0; i < np; i++) {
+          parts.push({ k: pick(['circle', 'ring', 'square', 'diamond', 'plus']), px: between(2, Math.round(side * 0.3)), py: between(2, Math.round(side * 0.3)), h: between(3, Math.max(4, Math.round(side * 0.13))) });
+        }
+        var ck = pick(['circle', 'ring', 'square', 'diamond', 'plus']), ch = Math.round(side * 0.1);
+        test = function (x, y) {
+          var ax = Math.abs(x), ay = Math.abs(y);
+          if (centre && motif(ck, ax, ay, ch)) return true;
+          return parts.some(function (q) { return motif(q.k, ax - q.px, ay - q.py, q.h); });
+        };
+        maskKind = 'none';
+      }
+
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var x = c - cx, y = r - cy;
+          if (maskKind !== 'none' && dist(maskKind, x, y) > maskR) continue;
+          if (test(x, y, c, r)) out.add(c + ',' + r);
         }
       }
     }
-    return set;
+    return out;
   }
 
   // Randomize (left bar): a whole new piece. It picks a fresh canvas (everything filled, a starter shape or random

@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.38', date: '2026-11-07', items: [
+    'Randomize now draws designed patterns: nested rings, tiled shapes, stripes, sunbursts, checkerboards and mirrored emblems.'
+  ] },
   { v: '0.0.37', date: '2026-11-07', items: [
     'Sliders have a new round knob with a glowing centre.',
     'The Look section is now called Tuning.'
