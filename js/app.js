@@ -734,7 +734,13 @@
   function randomize() {
     function rnd(min, max, step) { return +(min + Math.round(Math.random() * (max - min) / step) * step).toFixed(4); }
 
-    // canvas (undoable)
+    // canvas size first (the art below is made for it). Changing size clears the undo history, as it does by hand.
+    imgSrc = null; imgRaster = null;
+    if (imgUI.opts) setImageActive(false);
+    var size = Math.random() < 0.5 ? [1920, 1080] : [1080, 1080];
+    if (size[0] !== state.art.w || size[1] !== state.art.h) setArt(size[0], size[1]);
+
+    // canvas art (undoable)
     var before = beginEdit(), roll = Math.random(), next = new Set(), shapes = window.SHAPES || [];
     if (roll < 0.25) {
       for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) next.add(c + ',' + r);
@@ -746,8 +752,6 @@
       next = randomArtCells();
     }
     if (!next.size) next = randomArtCells();
-    imgSrc = null; imgRaster = null;
-    if (imgUI.opts) setImageActive(false);
     cells = next; dirty = true;
     endEdit(before);
     updateInfo();

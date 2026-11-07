@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.0.40', date: '2026-11-07', items: [
+    'Randomize can also switch the canvas size between wide and square.'
+  ] },
   { v: '0.0.38', date: '2026-11-07', items: [
     'Randomize now draws designed patterns: nested rings, tiled shapes, stripes, sunbursts, checkerboards and mirrored emblems.'
   ] },
