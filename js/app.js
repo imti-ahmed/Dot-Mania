@@ -824,15 +824,23 @@
     put('#statViews', '-', 0);
     put('#statStars', '-', 0);
     if (site.repo) $('#statStars').href = 'https://github.com/' + site.repo;
-    function cached(key) { try { return JSON.parse(sessionStorage.getItem(key)); } catch (e) { return null; } }
-    function remember(key, n) { try { sessionStorage.setItem(key, JSON.stringify(n)); } catch (e) {} }
+    // Counts are cached in localStorage for 30 minutes: GitHub's API allows only 60 anonymous requests an hour
+    // per IP, which reloading while developing can use up. A stale value is shown if a fetch fails.
+    var TTL = 30 * 60 * 1000;
+    function cached(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
+    function remember(key, n) { try { localStorage.setItem(key, JSON.stringify({ n: n, t: Date.now() })); } catch (e) {} }
     function load(id, key, url, pick) {
-      var c = cached(key);
-      if (typeof c === 'number') { put(id, c.toLocaleString(), c); return; }
-      fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-        var n = d && pick(d);
-        if (typeof n === 'number') { remember(key, n); put(id, n.toLocaleString(), n); }
-      }).catch(function () {});
+      var c = cached(key), have = c && typeof c.n === 'number';
+      if (have) put(id, c.n.toLocaleString(), c.n);
+      if (have && Date.now() - c.t < TTL) return;
+      fetch(url).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function (d) {
+        var n = pick(d);
+        if (typeof n !== 'number') throw new Error('no number in response');
+        remember(key, n); put(id, n.toLocaleString(), n);
+      }).catch(function (err) { console.warn('[status] could not load ' + key + ':', err.message); });
     }
     if (site.repo) load('#statStars', 'dm-stars', 'https://api.github.com/repos/' + site.repo, function (d) { return d.stargazers_count; });
     if (site.viewsUrl) load('#statViews', 'dm-views', site.viewsUrl, function (d) { return d.count !== undefined ? d.count : d.value; });
