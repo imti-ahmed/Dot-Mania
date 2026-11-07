@@ -6,6 +6,7 @@
   --text-2: #ece7dd;
   --muted: #a19d94;
   --accent: #ef282d;
+  --panel-w: 360px;
   --well: #070707;
   --font-display: 'Doto', ui-monospace, monospace;
   --font-body: 'Archivo', system-ui, sans-serif;
@@ -147,7 +148,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   white-space: nowrap;
 }
 .tabs { display: flex; gap: 2px; }
-.readouts { display: flex; align-items: center; gap: 14px; }
 
 .navbtn {
   position: relative;
@@ -206,7 +206,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) 360px;
+  grid-template-columns: auto minmax(0, 1fr) var(--panel-w);
   gap: 16px;
 }
 
@@ -664,22 +664,34 @@ kbd {
 
 /* ---------- Toast ---------- */
 
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 28px;
-  transform: translateX(-50%);
-  padding: 10px 16px;
-  border-radius: 10px;
-  background: #0f0f0f;
-  box-shadow: 0 0 0 1px #262626, 0 14px 30px rgba(0, 0, 0, .5);
+/* ---------- Status bar (top right): views and stars, or what is happening right now ---------- */
+
+/* The divider before it lines up with the gap between the canvas and the right panel:
+   panel width + half the 16px gap, less the header padding (16), bar padding (6), flex gap (14) and divider (2). */
+.statusbar {
+  flex: none;
+  width: calc(var(--panel-w) - 29px);
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.status-idle, .status-msg { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.status-msg { gap: 10px; color: var(--text); }
+.status-msg #statusText {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: var(--text);
-  z-index: 10;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.statusbar .readout { padding: 0; }
+.statusbar .readout b { font-weight: 400; color: var(--text); }
+.status-msg.busy .led { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+@media (max-width: 900px) { .statusbar { width: auto; flex: 1; } }
 
 /* ---------- Library grid ---------- */
 

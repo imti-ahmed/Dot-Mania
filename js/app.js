@@ -628,8 +628,6 @@
 
   function updateInfo() {
     var n = cells.size;
-    $('#cellCount').textContent = n + (n === 1 ? ' cell' : ' cells');
-    $('#gridInfo').textContent = cols + ' × ' + rows + ' grid';
     $('#hint').classList.toggle('hidden', n > 0 || !!drag);
     setExportEnabled(n > 0);
   }
@@ -792,12 +790,52 @@
 
   /* ---------- Open an exported HTML file ---------- */
 
-  var toastTimer = 0;
-  function toast(msg) {
-    var t = $('#toast');
-    t.textContent = msg; t.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.hidden = true; }, 3200);
+  // Status bar: shows views and stars by default, and doubles as the notification area.
+  // notify(text)                     shows text for a few seconds, then goes back to views / stars
+  // notify(text, { busy: true })     stays (with a pulsing light) until the next notify() or notifyDone()
+  var statusTimer = 0;
+  function notify(msg, o) {
+    o = o || {};
+    clearTimeout(statusTimer);
+    $('#statusText').textContent = msg;
+    $('#statusMsg').classList.toggle('busy', !!o.busy);
+    $('#statusMsg').hidden = false;
+    $('#statusIdle').hidden = true;
+    if (!o.busy) statusTimer = setTimeout(notifyDone, o.ms || 3200);
+  }
+  function notifyDone() {
+    clearTimeout(statusTimer);
+    $('#statusMsg').hidden = true;
+    $('#statusIdle').hidden = false;
+  }
+
+  // Views and GitHub stars (each hidden if it is not configured or cannot be fetched).
+  function buildStatus() {
+    var site = window.SITE || {}, U = window.UPDATES || [];
+    $('#statVersion').textContent = U.length ? 'v' + U[0].v : '';
+    function show(id, n) {
+      var el = $(id);
+      el.querySelector('b').textContent = Number(n).toLocaleString();
+      el.hidden = false;
+      $('#statVersion').hidden = true;
+    }
+    function cached(key) { try { return JSON.parse(sessionStorage.getItem(key)); } catch (e) { return null; } }
+    function remember(key, n) { try { sessionStorage.setItem(key, JSON.stringify(n)); } catch (e) {} }
+    if (site.repo) {
+      var k = 'dm-stars', c = cached(k);
+      if (typeof c === 'number') show('#statStars', c);
+      else fetch('https://api.github.com/repos/' + site.repo).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (d && typeof d.stargazers_count === 'number') { remember(k, d.stargazers_count); show('#statStars', d.stargazers_count); }
+      }).catch(function () {});
+    }
+    if (site.viewsUrl) {
+      var vk = 'dm-views', vc = cached(vk);
+      if (typeof vc === 'number') show('#statViews', vc);
+      else fetch(site.viewsUrl).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        var n = d && (d.count !== undefined ? d.count : d.value);
+        if (typeof n === 'number') { remember(vk, n); show('#statViews', n); }
+      }).catch(function () {});
+    }
   }
 
   // The exported file holds `var DATA={...};` (drawing, values, colour) and `var presetFn=...;` (the animation).
@@ -825,9 +863,9 @@
     return { data: data, preset: preset };
   }
 
-  function importHtml(text) {
+  function importHtml(text, name) {
     var parsed = parseExport(text);
-    if (!parsed) { toast('Not a Dot Mania file'); return; }
+    if (!parsed) { notify('Not a Dot Mania file'); return; }
     var d = parsed.data;
 
     resetSession();                         // nothing from the current canvas carries over
@@ -856,7 +894,7 @@
     dirty = true;
     updateInfo();
     setFileLoaded(true);
-    toast(parsed.preset ? 'Opened ' + parsed.preset.name : 'Opened drawing (animation not recognised)');
+    notify(parsed.preset ? 'Opened ' + (name || parsed.preset.name) : 'Opened drawing (animation not recognised)');
   }
 
   var FILE_OPEN = '<path d="M2.5 4.5h4l1.5 1.5h5.5v6.5h-11z"/>', FILE_CLOSE = '<path d="M4 4l8 8M12 4l-8 8"/>';
@@ -893,13 +931,14 @@
   function closeFile() {
     resetSession();
     setFileLoaded(false);
-    toast('Fresh session');
+    notify('Fresh session');
   }
 
   function loadHtmlFile(file) {
+    notify('Opening ' + file.name + '…', { busy: true });
     var reader = new FileReader();
-    reader.onload = function () { importHtml(String(reader.result)); };
-    reader.onerror = function () { toast('Could not read that file'); };
+    reader.onload = function () { importHtml(String(reader.result), file.name); };
+    reader.onerror = function () { notify('Could not read that file'); };
     reader.readAsText(file);
   }
 
@@ -933,7 +972,6 @@
     view = id;
     document.querySelectorAll('[data-page]').forEach(function (el) { el.hidden = el.dataset.page !== id; });
     document.querySelectorAll('#tabs .navbtn').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.view === id)); });
-    $('#canvasReadouts').hidden = id !== 'canvas';
     if (id === 'canvas') fitStage();
     if (id === 'library') libStart();
   }
@@ -1026,10 +1064,11 @@
         .then(function (text) { libPreview(box, text, url, t.name); })
         .catch(function () { libIframe(box, url, t.name); });
       card.querySelector('[data-act="load"]').addEventListener('click', function () {
+        notify('Loading ' + t.name + '…', { busy: true });
         fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (text) {
           showView('canvas');
-          importHtml(text);
-        }).catch(function () { toast('Could not load. Open the app from a local server'); });
+          importHtml(text, t.name);
+        }).catch(function () { notify('Could not load. Open the app from a local server'); });
       });
       grid.appendChild(card);
     });
@@ -1106,6 +1145,7 @@
     a.href = URL.createObjectURL(new Blob([data], { type: type }));
     a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
+    notify('Saved ' + name);
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   }
 
@@ -1116,7 +1156,7 @@
   }
 
   function copyText(text, labelEl, original) {
-    var done = function () { labelEl.textContent = 'Copied'; setTimeout(function () { labelEl.textContent = original; }, 1600); };
+    var done = function () { notify('Copied to clipboard'); labelEl.textContent = 'Copied'; setTimeout(function () { labelEl.textContent = original; }, 1600); };
     var fallback = function () {
       var ta = document.createElement('textarea');
       ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done();
@@ -1134,6 +1174,7 @@
     color.steps = Math.max(2, Math.round(T * 6));
 
     gifBusy = true;
+    notify('Rendering GIF…', { busy: true });
     setExportEnabled(true);
     window.DotGif.encodeAnimation({
       E: E, list: E.buildList(cellArray()), preset: preset, vals: vals, color: color, T: T, secs: Math.min(T, GIF_MAX_SECONDS),
@@ -1145,6 +1186,7 @@
       download('dot-mania.gif', blob, 'image/gif');
     }).catch(function (err) {
       console.error('GIF export failed', err);
+      notify('GIF export failed');
     }).then(function () {
       gifBusy = false;
       setExportEnabled(cells.size > 0);
@@ -1164,7 +1206,7 @@
   function recordVideo(kind) {
     if (videoBusy || !cells.size) return;
     var mime = videoMime(kind);
-    if (!mime) { toast('This browser cannot record ' + kind.toUpperCase()); return; }
+    if (!mime) { notify('This browser cannot record ' + kind.toUpperCase()); return; }
 
     var preset = currentPreset(), p = Object.assign({}, state.values[preset.id]), color = Object.assign({}, state.color), T = preset.period(p);
     color.steps = Math.max(2, Math.round(T * 6));
@@ -1199,10 +1241,13 @@
       var t = (now - t0) / 1000;
       if (t >= dur) { rec.stop(); return; }
       draw(t);
-      labelEl.textContent = Math.round(t / dur * 100) + '%';
+      var pct = Math.round(t / dur * 100);
+      labelEl.textContent = pct + '%';
+      notify('Recording ' + kind.toUpperCase() + ' ' + pct + '%', { busy: true });
       requestAnimationFrame(step);
     }
     videoBusy = true;
+    notify('Recording ' + kind.toUpperCase() + ' 0%', { busy: true });
     setExportEnabled(true);
     draw(0);
     rec.start();
@@ -1219,13 +1264,14 @@
   // PNG: the frame on screen, full artboard size. Honours the Background choice (Transparent = alpha).
   function exportPng() {
     if (!cells.size) return;
+    notify('Rendering PNG…', { busy: true });
     var f = currentFrame(), g = exportGeo(), c = document.createElement('canvas');
     c.width = state.art.w; c.height = state.art.h;
     var x = c.getContext('2d');
     if (exportOpts.bg === 'dark') { x.fillStyle = '#0b0b0a'; x.fillRect(0, 0, c.width, c.height); }
     if (exportOpts.grid) E.drawIdle(x, cols, rows, g, GRID_VIS);
     E.drawCells(x, E.buildList(cellArray()), f.preset.fn, f.vals, f.color, tl.t, tl.ph, g, false);
-    c.toBlob(function (blob) { if (blob) download('dot-mania.png', blob, 'image/png'); }, 'image/png');
+    c.toBlob(function (blob) { if (blob) download('dot-mania.png', blob, 'image/png'); else notify('PNG export failed'); }, 'image/png');
   }
 
   // SVG: the same frame as scalable vector (marks mirror engine.dot). Small, sharp at any size.
@@ -1296,10 +1342,10 @@
     wrap.innerHTML = mhtml;
     while (wrap.firstChild) mel.appendChild(wrap.firstChild);
 
-    on('#exportCode', function () { download('dot-mania.html', buildExport().html, 'text/html'); });
+    on('#exportCode', function () { notify('Building code file…', { busy: true }); download('dot-mania.html', buildExport().html, 'text/html'); });
     on('#exportGif', exportGif);
     on('#exportPng', exportPng);
-    on('#exportSvg', function () { if (cells.size) download('dot-mania.svg', buildSvg(), 'image/svg+xml'); });
+    on('#exportSvg', function () { if (cells.size) { notify('Rendering SVG…', { busy: true }); download('dot-mania.svg', buildSvg(), 'image/svg+xml'); } });
     on('#exportLlm', function () { copyText(buildExport().llm, $('#exportLlm span'), 'Copy for LLM'); });
     on('#exportEmbed', function () { copyText(buildExport().snippet, $('#exportEmbed span'), 'Copy embed code'); });
     on('#exportJs', function () { download('dot-mania.js', buildExport().script, 'text/javascript'); });
@@ -1327,6 +1373,7 @@
   if (FLAGS.drawOptions) buildDraw();
   if (FLAGS.gridPanel) buildGrid();
   buildExportUI();
+  buildStatus();
   setupFiles();
   buildPages();
   selectPreset(state.preset);
