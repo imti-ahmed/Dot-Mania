@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.25.4', date: '2026-11-08', items: [
+    'The canvas is now a 1080 x 1080 square by default, and the long wide frame is gone.'
+  ] },
   { v: '0.24.0', date: '2026-11-07', items: [
     'New Select tool: drag a rectangle over any dots, then drag inside it to move them around.',
     'GIF export now includes the whole grid, not just the part you drew on.'

@@ -19,7 +19,7 @@
 
   var COMMON = window.COMMON_PARAMS, SWATCHES = window.SWATCHES, SHAPES = window.SHAPES || [];
   var MODES = ['add', 'remove', 'replace'];
-  var SIZES = { wide: [1920, 1080], square: [1080, 1080] };
+  var SIZES = window.FLAGS && window.FLAGS.canvasSizes ? { wide: [1920, 1080], square: [1080, 1080] } : { square: [1080, 1080] };   // wide only with the canvasSizes flag
   var EXPORTS = { html: 'exportCodeFile', gif: 'exportGif', png: 'exportPng', webm: 'exportWebm', mp4: 'exportMp4' };
   var DRAG_TOOL = { rectangle: 'rect', ellipse: 'ellipse', line: 'line' };
   var SHAPE_TYPES = ['rectangle', 'ellipse', 'line', 'polygon', 'fill'];
@@ -328,7 +328,7 @@
     { name: 'state', sig: 'state()', read: true, does: 'What is on screen now: canvas size, cols x rows, dots on, animation(s) and their values, colour, dot shape, interaction, playing, undo history.', input: schema(), fn: state },
     { name: 'getDots', sig: 'getDots()', read: true, does: 'The drawing as [[col,row],...].', input: schema(), fn: getDots },
     { name: 'clear', sig: 'clear()', does: 'Remove every dot (undoable).', input: schema(), fn: clear },
-    { name: 'setCanvas', sig: "setCanvas('wide'|'square')", does: 'Canvas size: wide 1920x1080 or square 1080x1080. The drawing stays centred; like the size buttons, this clears undo.',
+    { name: 'setCanvas', sig: "setCanvas('square')", does: 'Canvas size: square 1080x1080 (a wide 1920x1080 only exists when the canvasSizes flag is on). The drawing stays centred; like the size buttons, this clears undo.',
       input: schema({ size: { type: 'string', enum: Object.keys(SIZES) } }, ['size']), fn: setCanvas, run: function (i) { return setCanvas(i.size); } },
     { name: 'setDots', sig: "setDots([[col,row],...], { mode: 'add'|'remove'|'replace' })", does: 'Turn exact cells on or off.',
       input: schema({ cells: { type: 'array', items: CELL }, mode: MODE }, ['cells']), fn: setDots, run: function (i) { return setDots(i.cells, i); } },
@@ -373,7 +373,7 @@
       'The canvas is a grid of cells, ' + g.cell + ' px each. A cell is [col, row]: [0, 0] is the top-left cell,',
       'col grows to the right, row grows downwards. Each cell is one dot, on or off.',
       'Now: ' + s.w + 'x' + s.h + ' canvas = ' + g.cols + ' cols x ' + g.rows + ' rows (cols 0..' + (g.cols - 1) + ', rows 0..' + (g.rows - 1) + ').',
-      'Wide is 1920x1080 (' + Math.floor(1920 / g.cell) + 'x' + Math.floor(1080 / g.cell) + ' cells), square is 1080x1080 (' + Math.floor(1080 / g.cell) + 'x' + Math.floor(1080 / g.cell) + ').',
+      (SIZES.wide ? 'Wide is 1920x1080 (' + Math.floor(1920 / g.cell) + 'x' + Math.floor(1080 / g.cell) + ' cells), square is 1080x1080 (' + Math.floor(1080 / g.cell) + 'x' + Math.floor(1080 / g.cell) + ').' : 'The canvas is always the 1080x1080 square.'),
       'The canvas opens paused, showing the drawing as drawn: call play() to see it move. To check your work,',
       'take a screenshot. If a welcome popup covers the canvas, click "Let\'s Go" (or press Escape) first.',
       '',

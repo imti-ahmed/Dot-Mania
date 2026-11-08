@@ -20,7 +20,7 @@
   var state = {
     tool: 'pencil',
     playing: true,
-    art: { w: 1920, h: 1080 },     // artboard size in px (1920x1080 or 1080x1080)
+    art: { w: 1080, h: 1080 },     // artboard size in px (1080x1080 by default; the wide 1920x1080 is behind the canvasSizes flag)
     dotShape: 'dot',               // mark shape: dot | square | diamond | triangle
     preset: PRESETS[0].id,         // the base animation (first of the stack)
     stacking: false,               // Stacking switch: pick up to 3 animations that run together
@@ -965,7 +965,7 @@
     // canvas size first (the art below is made for it). Changing size clears the undo history, as it does by hand.
     imgSrc = null; imgRaster = null;
     if (imgUI.opts) setImageActive(false);
-    var size = Math.random() < 0.5 ? [1920, 1080] : [1080, 1080];
+    var size = FLAGS.canvasSizes && Math.random() < 0.5 ? [1920, 1080] : [1080, 1080];
     if (size[0] !== state.art.w || size[1] !== state.art.h) setArt(size[0], size[1]);
 
     // canvas art (undoable)
@@ -1479,7 +1479,7 @@
     if (FLAGS.interaction) setInteraction('auto');
     setPlaying(false);                      // a fresh session starts paused
     cells = new Set();
-    setArt(1920, 1080);                     // also clears history
+    setArt(1080, 1080);                     // also clears history
     repaintShapes(); repaintColor();
     setStacking(false);
     selectPreset(PRESETS[0].id);

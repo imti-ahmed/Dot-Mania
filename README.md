@@ -9,7 +9,7 @@ An animated dot-grid editor. Draw on a grid of dots (or turn a picture into dots
 - **Paused by default:** the studio opens paused, so what you draw shows exactly as drawn. Press **Play** (or `Space`) to run the animation; Pause goes back to the drawing as it is.
 - **Animations:** 15 presets (Shimmer, Pulse, Ripple, Wave, Spiral, Scan, Rain, Beats, Breathe, Sweep, Flicker, Zigzag, Reveal, Bars, Dissolve). Turn on **Stacking** to run up to 3 together; the first one you click is the base and each next one shapes it.
 - **Color:** gradient palettes, solid colors, and a custom color picker.
-- **Canvas sizes:** wide (1920x1080) or square (1080x1080, a 67x67 grid).
+- **Canvas size:** square, 1080x1080 (a 67x67 grid). The wide 1920x1080 option is behind the `canvasSizes` flag.
 - **Randomize** a whole new piece in one click.
 - **Export:** GIF, PNG, WebM, MP4, or a dependency-free HTML file. A **Quality** option sets GIF size and video quality. Exported HTML files can be reopened with **Open HTML** to keep editing.
 

@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
-  <link rel="stylesheet" href="src/css/style.css?v=0.25.3">
+  <link rel="stylesheet" href="src/css/style.css?v=0.25.4">
 </head>
 <body>
   <p class="agent-note" data-flag="agentTools">For AI agents: this editor has helper tools. Run window.dotMania.help() in the page for a guide to drawing, animating and exporting by script.</p>
@@ -88,11 +88,11 @@
           </button>
         </div>
         <p class="crafted"><span>Crafted by <a href="https://www.imtiyazahmed.com" target="_blank" rel="noopener">Imtiyaz Ahmed</a></span></p>
-        <div class="sizes" role="group" aria-label="Canvas size">
-          <button class="key" data-size="1920x1080" aria-pressed="true" title="1920 x 1080" aria-label="Landscape canvas">
+        <div class="sizes" role="group" aria-label="Canvas size" data-flag="canvasSizes">
+          <button class="key" data-size="1920x1080" aria-pressed="false" title="1920 x 1080" aria-label="Landscape canvas">
             <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="1.5" width="20" height="11.25" rx="1.5"/></svg>
           </button>
-          <button class="key" data-size="1080x1080" aria-pressed="false" title="1080 x 1080" aria-label="Square canvas">
+          <button class="key" data-size="1080x1080" aria-pressed="true" title="1080 x 1080" aria-label="Square canvas">
             <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="1" width="12" height="12" rx="1.5"/></svg>
           </button>
         </div>
@@ -333,17 +333,17 @@
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
-  <script src="src/js/core/flags.js?v=0.25.3"></script>
-  <script src="src/js/core/presets.js?v=0.25.3"></script>
-  <script src="src/js/core/shapes.js?v=0.25.3"></script>
-  <script src="src/js/core/engine.js?v=0.25.3"></script>
-  <script src="src/js/core/image.js?v=0.25.3"></script>
-  <script src="src/js/export/export.js?v=0.25.3"></script>
-  <script src="src/js/export/gif.js?v=0.25.3"></script>
-  <script src="src/js/data/library.js?v=0.25.3"></script>
-  <script src="src/js/data/site.js?v=0.25.3"></script>
-  <script src="src/js/data/whatsnew.js?v=0.25.3"></script>
-  <script src="src/js/app.js?v=0.25.3"></script>
-  <script src="src/js/agent.js?v=0.25.3"></script>
+  <script src="src/js/core/flags.js?v=0.25.4"></script>
+  <script src="src/js/core/presets.js?v=0.25.4"></script>
+  <script src="src/js/core/shapes.js?v=0.25.4"></script>
+  <script src="src/js/core/engine.js?v=0.25.4"></script>
+  <script src="src/js/core/image.js?v=0.25.4"></script>
+  <script src="src/js/export/export.js?v=0.25.4"></script>
+  <script src="src/js/export/gif.js?v=0.25.4"></script>
+  <script src="src/js/data/library.js?v=0.25.4"></script>
+  <script src="src/js/data/site.js?v=0.25.4"></script>
+  <script src="src/js/data/whatsnew.js?v=0.25.4"></script>
+  <script src="src/js/app.js?v=0.25.4"></script>
+  <script src="src/js/agent.js?v=0.25.4"></script>
 </body>
 </html>
