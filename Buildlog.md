@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.35.2 | 2026-11-08 | `v0.35.2` | Fire: full-strength dots (what you draw, paused) are now yellow instead of near-white |
 | 0.35.1 | 2026-11-08 | `v0.35.1` | Color circles show a fluid blended gradient of the palette instead of a plain linear one |
 | 0.35.0 | 2026-11-08 | `v0.35.0` | Color: 3 rows x 5 columns of gradient circles; five new gradients (Ice, Lava, Dusk, Mint, Gold) and Holo turned on |
 | 0.34.2 | 2026-11-08 | `v0.34.2` | Color: 3 columns of gradient circles only (solid circles removed, the spectrum card makes any single colour); Forest turned on to make a full 3 x 3 |

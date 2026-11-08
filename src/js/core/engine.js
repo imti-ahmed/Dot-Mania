@@ -50,7 +50,7 @@
         var n = m.steps || 12;
         var g = hash(Math.floor(ph * n + c.rnd * 10) % n, c.rnd * 500);
         return g > 0.8 ? '#ffffff' : 'hsl(' + ((c.rnd * 360) | 0) + ',85%,' + ((55 + g * 20) | 0) + '%)';
-      case 'fire': return gradient(STOPS.fire, v);
+      case 'fire': return gradient(STOPS.fire, v * 0.75);      // full strength tops out at yellow, not near-white
       case 'ocean': return gradient(STOPS.ocean, 0.5 + 0.5 * Math.sin((c.ux * 0.9 + c.uy * 0.5) * Math.PI - ph * TAU));
       case 'sunset': return gradient(STOPS.sunset, 0.5 + c.uy * 0.5 + 0.15 * Math.sin(ph * TAU + c.ux * 2));
       case 'neon': return gradient(STOPS.neon, 0.5 + 0.5 * Math.sin(c.d * TAU * 0.8 - ph * TAU));
