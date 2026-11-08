@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.35.4 | 2026-11-08 | `v0.35.4` | Glitter circle is now little coloured dots (confetti) on a dark base |
 | 0.35.3 | 2026-11-08 | `v0.35.3` | Color circles: Rainbow is a clean left-to-right spectrum, Glitter is sparkles on pink / cyan / violet, so they no longer look alike |
 | 0.35.2 | 2026-11-08 | `v0.35.2` | Fire: full-strength dots (what you draw, paused) are now yellow instead of near-white |
 | 0.35.1 | 2026-11-08 | `v0.35.1` | Color circles show a fluid blended gradient of the palette instead of a plain linear one |

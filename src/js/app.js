@@ -1061,11 +1061,9 @@
     var rgb = function (c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }, st, i, n;
     if (id === 'white') return '#ffffff';
     if (id === 'glitter') {
-      // sparkles: tiny white flecks scattered over a mix of hot pink, cyan and violet
-      var fleck = function (x, y, r) { return 'radial-gradient(circle at ' + x + '% ' + y + '%, #fff 0, #fff ' + r + 'px, transparent ' + (r + 1) + 'px)'; };
-      return [fleck(22, 30, 1.4), fleck(68, 20, 1.2), fleck(48, 52, 1.6), fleck(80, 62, 1.2), fleck(30, 76, 1.3), fleck(58, 84, 1),
-              'radial-gradient(circle at 25% 25%, #ff5fa2, transparent 60%)', 'radial-gradient(circle at 80% 30%, #2de2e6, transparent 60%)',
-              'radial-gradient(circle at 50% 90%, #8f7bff, #3a2a7a)'].join(',');
+      // confetti: little dots of different colours (and a white one) on a dark base, like the real glitter look
+      var dots = function (c, x, y) { return 'radial-gradient(circle, ' + c + ' 1.6px, transparent 2.2px) ' + x + 'px ' + y + 'px / 11px 11px'; };
+      return [dots('#ffffff', 2, 3), dots('#ff5fa2', 7, 8), dots('#2de2e6', 1, 8), dots('#ffd23f', 8, 2), '#1c1b22'].join(',');
     }
     if (id === 'rainbow') {
       st = [];
