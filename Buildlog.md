@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.35.7 | 2026-11-08 | `v0.35.7` | Color: the circles and the spectrum are two separate cards |
 | 0.35.6 | 2026-11-08 | `v0.35.6` | Color circles: every gradient has its own angle, and Ice, Lava, Dusk and Mint were re-coloured so no two look alike |
 | 0.35.5 | 2026-11-08 | `v0.35.5` | Glitter circle is a colours-only blend (pink, cyan, yellow, violet) |
 | 0.35.4 | 2026-11-08 | `v0.35.4` | Glitter circle is now little coloured dots (confetti) on a dark base |
