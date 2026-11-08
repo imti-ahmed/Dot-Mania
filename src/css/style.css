@@ -1445,3 +1445,7 @@ body[data-view="home"] .app {
 :root { --key-h: 32px; }
 .sidebar .key, .toolstrip .key, .editstrip .key, .sizes .key, .presets .key, .keygrid .key, .seg .key, .stack .key,
 .panel-tabs .key, .panel-foot .key, .layer-pick, .layer-del, #addLayerBtn, #selActions .key, #editActions .key { height: var(--key-h); min-height: var(--key-h); }
+
+/* ---------- Prop panel: a carved divider above every option section ---------- */
+aside.panel .group-label:not(.first) { position: relative; margin-top: 8px; padding-top: 14px; }
+aside.panel .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
