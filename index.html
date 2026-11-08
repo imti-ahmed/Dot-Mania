@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
-  <link rel="stylesheet" href="src/css/style.css?v=0.31.1">
+  <link rel="stylesheet" href="src/css/style.css?v=0.31.2">
 </head>
 <body>
   <p class="agent-note" data-flag="agentTools">For AI agents: this editor has helper tools. Run window.dotMania.help() in the page for a guide to drawing, animating and exporting by script.</p>
@@ -86,15 +86,15 @@
           <button class="key" id="randomBtn" title="Randomize: new canvas size and art, animation, sliders and color" aria-label="Randomize">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" rx="2.5"/><circle cx="5.6" cy="5.6" r=".9" fill="currentColor" stroke="none"/><circle cx="10.4" cy="5.6" r=".9" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r=".9" fill="currentColor" stroke="none"/><circle cx="5.6" cy="10.4" r=".9" fill="currentColor" stroke="none"/><circle cx="10.4" cy="10.4" r=".9" fill="currentColor" stroke="none"/></svg><span class="lbl">Randomize</span>
           </button>
+          <button class="key" id="importBtn" title="Open an HTML file exported from Dot Mania (or drop it on the canvas)">
+            <svg id="fileIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+            <span id="fileLabel">Open HTML</span>
+          </button>
         </div>
-        <div class="editstrip" role="group" aria-label="Playback and files">
+        <div class="editstrip" role="group" aria-label="Playback">
             <button class="key" id="playBtn" aria-pressed="false" title="Play / pause (Space)">
               <svg id="playIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
               <span id="playLabel">Pause</span>
-            </button>
-            <button class="key" id="importBtn" title="Open an HTML file exported from Dot Mania (or drop it on the canvas)">
-              <svg id="fileIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
-              <span id="fileLabel">Open HTML</span>
             </button>
         </div>
         <p class="crafted"><span>Crafted By<a href="https://www.imtiyazahmed.com" target="_blank" rel="noopener">Imtiyaz Ahmed</a></span></p>
@@ -347,17 +347,17 @@
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
-  <script src="src/js/core/flags.js?v=0.31.1"></script>
-  <script src="src/js/core/presets.js?v=0.31.1"></script>
-  <script src="src/js/core/shapes.js?v=0.31.1"></script>
-  <script src="src/js/core/engine.js?v=0.31.1"></script>
-  <script src="src/js/core/image.js?v=0.31.1"></script>
-  <script src="src/js/export/export.js?v=0.31.1"></script>
-  <script src="src/js/export/gif.js?v=0.31.1"></script>
-  <script src="src/js/data/library.js?v=0.31.1"></script>
-  <script src="src/js/data/site.js?v=0.31.1"></script>
-  <script src="src/js/data/whatsnew.js?v=0.31.1"></script>
-  <script src="src/js/app.js?v=0.31.1"></script>
-  <script src="src/js/agent.js?v=0.31.1"></script>
+  <script src="src/js/core/flags.js?v=0.31.2"></script>
+  <script src="src/js/core/presets.js?v=0.31.2"></script>
+  <script src="src/js/core/shapes.js?v=0.31.2"></script>
+  <script src="src/js/core/engine.js?v=0.31.2"></script>
+  <script src="src/js/core/image.js?v=0.31.2"></script>
+  <script src="src/js/export/export.js?v=0.31.2"></script>
+  <script src="src/js/export/gif.js?v=0.31.2"></script>
+  <script src="src/js/data/library.js?v=0.31.2"></script>
+  <script src="src/js/data/site.js?v=0.31.2"></script>
+  <script src="src/js/data/whatsnew.js?v=0.31.2"></script>
+  <script src="src/js/app.js?v=0.31.2"></script>
+  <script src="src/js/agent.js?v=0.31.2"></script>
 </body>
 </html>

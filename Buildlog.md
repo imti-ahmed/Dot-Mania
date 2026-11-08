@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.31.2 | 2026-11-08 | `v0.31.2` | Open HTML moved into the Randomize group in the Left panel; Play stays in its own group |
 | 0.31.1 | 2026-11-08 | `v0.31.1` | Prop panel: the divider above Tuning is gone (it now shows only with the stackingSwitch flag) |
 | 0.31.0 | 2026-11-08 | `v0.31.0` | Layers capped at 5; Play and Open HTML moved from the Prop panel footer to the Left panel (above the credit) |
 | 0.30.1 | 2026-11-08 | `v0.30.1` | Prop header: no brackets; the layer name sits in a 116px slot at the right end, cut off by a full-height vertical divider |
