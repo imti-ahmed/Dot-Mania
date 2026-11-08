@@ -8,8 +8,8 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.25.3 | 2026-11-08 | `v0.25.3` | pages/ folder renamed to tabs/: addresses are now /tabs/about, /tabs/library, /tabs/whats-new, /tabs/guide, /tabs/canvas; stale address comments fixed |
 | 0.25.2 | 2026-11-08 | `v0.25.2` | Assets tidied: icons/ and previews/ folders, clearer names, unused icon-512.png removed |
-| 0.24.1 | 2026-11-08 | `v0.24.1` | Added PR check (GitHub Action): syntax, version match, linked files, build log row, no external scripts, templates in sync, flags unchanged, core files need owner review |
 | 0.25.1 | 2026-11-08 | `v0.25.1` | Added PR check (GitHub Action): syntax, version match, linked files, build log row, no external scripts, templates in sync, flags unchanged, core files need owner review |
 | 0.25.0 | 2026-11-08 | `v0.25.0` | Helper tools for AI agents: `window.dotMania` (src/js/agent.js) draws, picks animation and colour, plays and exports through the editor's own functions (undoable like a hand edit), also registered as WebMCP tools where the browser offers them. Found via a hidden note and a meta tag; `agentTools` flag, on |
 | 0.24.0 | 2026-11-07 | `v0.24.0` | New Select tool (V): drag a rectangle over any dots, then drag inside it to move them (Delete removes, Esc clears). GIF export now covers the whole artboard instead of cropping to the drawing |

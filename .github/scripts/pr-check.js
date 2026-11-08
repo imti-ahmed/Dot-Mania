@@ -48,7 +48,7 @@ catch (e) { fail('buildlog', 'could not compare with ' + BASE); }
 if (!changed.includes('Buildlog.md')) fail('buildlog', 'Buildlog.md was not updated. Add a row for this change.');
 
 // 5. No external scripts or stylesheets (the app has no dependencies)
-const htmlFiles = ['index.html', ...walk('pages', '.html'), ...walk('templates', '.html'), ...walk('assets', '.html')];
+const htmlFiles = ['index.html', ...walk('tabs', '.html'), ...walk('templates', '.html'), ...walk('assets', '.html')];
 for (const f of htmlFiles) {
   const t = read(f);
   if (/<script[^>]+src=["'](?:https?:)?\/\//i.test(t)) fail('external', f + ' loads a script from another website');
@@ -95,7 +95,7 @@ else if (baseFlags) {
 }
 
 // 8. Protected files: the core of the app. A PR touching these needs the owner's review.
-const protectedPaths = ['src/js/core/', 'src/js/export/', 'src/css/style.css', 'pages/'];
+const protectedPaths = ['src/js/core/', 'src/js/export/', 'src/css/style.css', 'tabs/'];
 const touched = changed.filter((f) => protectedPaths.some((p) => f.startsWith(p)));
 if (touched.length) fail('protected', 'This PR changes core files, which only the owner approves:\n    ' + touched.join('\n    '));
 

@@ -107,7 +107,7 @@ window.WHATS_NEW = [
     'Animations show in three rows. Tap More to see the rest.'
   ] },
   { v: '0.9.0', date: '2026-11-07', items: [
-    'Every page has its own address: /library, /about, /whats-new and /guide.',
+    'Every tab has its own address: /tabs/library, /tabs/about, /tabs/whats-new and /tabs/guide.',
     'What\'s New is now written in plain language, separate from the developer log.'
   ] },
   { v: '0.8.4', date: '2026-11-07', items: [

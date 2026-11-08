@@ -34,10 +34,10 @@
     colorRandom: false,         // Color group: a Randomize button in the colour grid (the left bar Randomize still picks a colour)
     forestColor: false,         // Color group: the "Forest" green gradient
     homePage: false,            // A welcome page at / in front of the tool (off: the tool opens straight away at /)
-    aboutPage: false,           // Top nav: the About page (/about)
-    guidePage: false,           // Top nav: the Guide page (/guide)
-    libraryPage: false,         // Top nav: the Library page of ready-made templates (/library)
-    whatsNewPage: false,        // Top nav: the What's New page (/whats-new)
+    aboutPage: false,           // Top nav: the About page (/tabs/about)
+    guidePage: false,           // Top nav: the Guide page (/tabs/guide)
+    libraryPage: false,         // Top nav: the Library page of ready-made templates (/tabs/library)
+    whatsNewPage: false,        // Top nav: the What's New page (/tabs/whats-new)
     holoColor: false,           // Color group: the "Holo" multi-colour gradient
     whiteColor: false,          // Color group: the "White" preset
     extraTools: false,          // Left bar: the Line tool (the Eraser is always in the Clear group)

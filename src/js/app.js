@@ -1528,15 +1528,15 @@
   var VIEWS = ['home', 'canvas', 'about', 'library', 'updates', 'guide'];
   var VIEW_FLAG = { home: 'homePage', about: 'aboutPage', library: 'libraryPage', updates: 'whatsNewPage', guide: 'guidePage' };      // pages that can be switched off
   function viewOn(id) { return !VIEW_FLAG[id] || FLAGS[VIEW_FLAG[id]]; }
-  // With the welcome page off (the default) the tool is the front door at /, and /canvas still works too.
+  // With the welcome page off (the default) the tool is the front door at /, and /tabs/canvas still works too.
   var HOME_ON = !!FLAGS.homePage, DEFAULT_VIEW = HOME_ON ? 'home' : 'canvas';
-  // The page entry folders live together in /pages, so the addresses are /pages/about, /pages/library and so on.
-  var SLUGS = { home: HOME_ON ? '' : 'pages/home', canvas: HOME_ON ? 'pages/canvas' : '', about: 'pages/about', library: 'pages/library', updates: 'pages/whats-new', guide: 'pages/guide' };
-  // Where the app lives (works at the site root or in a sub-folder, and from the /pages/about etc. entry pages).
+  // The page entry folders live together in /tabs, so the addresses are /tabs/about, /tabs/library and so on.
+  var SLUGS = { home: HOME_ON ? '' : 'tabs/home', canvas: HOME_ON ? 'tabs/canvas' : '', about: 'tabs/about', library: 'tabs/library', updates: 'tabs/whats-new', guide: 'tabs/guide' };
+  // Where the app lives (works at the site root or in a sub-folder, and from the /tabs/about etc. entry pages).
   var ROOT = new URL('.', document.baseURI).pathname;
   function viewFromPath() {
     var slug = location.pathname.slice(ROOT.length).replace(/index\.html$/, '').replace(/\/+$/, '');
-    var v = VIEWS.find(function (x) { return SLUGS[x] === slug; }) || (slug === 'pages/canvas' ? 'canvas' : null);
+    var v = VIEWS.find(function (x) { return SLUGS[x] === slug; }) || (slug === 'tabs/canvas' ? 'canvas' : null);
     if (v && !viewOn(v)) { try { history.replaceState(null, '', ROOT); } catch (e) {} return DEFAULT_VIEW; }   // a disabled page: back to the front door
     return v || DEFAULT_VIEW;
   }

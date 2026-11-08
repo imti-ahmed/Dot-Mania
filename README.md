@@ -51,17 +51,17 @@ Add `?flags=all` to the address to switch on features that are currently hidden,
 | Address | Page |
 |---|---|
 | `/` | The editor, opening with the closed beta welcome popup |
-| `/pages/canvas` | The editor (same thing) |
-| `/pages/about` | About (switched off for now) |
-| `/pages/guide` | Guide and shortcuts (switched off for now) |
-| `/pages/library` | Ready-made templates (switched off for now) |
-| `/pages/whats-new` | What's New (switched off for now) |
+| `/tabs/canvas` | The editor (same thing) |
+| `/tabs/about` | About (switched off for now) |
+| `/tabs/guide` | Guide and shortcuts (switched off for now) |
+| `/tabs/library` | Ready-made templates (switched off for now) |
+| `/tabs/whats-new` | What's New (switched off for now) |
 
 ## Project structure
 
 ```
 index.html                     the app (entry)
-pages/                         one small entry folder per page address (about, canvas, guide, library, whats-new), each loads the one real app
+tabs/                         one small entry folder per page address (about, canvas, guide, library, whats-new), each loads the one real app
 src/
   css/style.css
   js/
