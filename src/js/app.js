@@ -1228,7 +1228,7 @@
       list.appendChild(row);
     });
     if (add) add.disabled = layers.length >= LAYER_MAX;
-    if (tag && layers[activeLayer]) tag.textContent = '(' + layers[activeLayer].name + ')';
+    if (tag && layers[activeLayer]) tag.textContent = layers[activeLayer].name;
   }
 
   var stackRow = null;

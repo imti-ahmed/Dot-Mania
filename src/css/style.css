@@ -1417,5 +1417,18 @@ body[data-view="home"] .app {
 @media (max-width: 1150px) { .panel2 > .panel2-top { flex: none; min-height: 0; } }
 
 /* Prop header: the layer name sits at the right end in brackets, after a vertical divider */
-.panel-meta { min-width: 0; display: flex; align-items: center; gap: 10px; }
-.panel-meta .divider { height: 14px; }
+
+/* Prop header: a slim slot at the right end, cut off by a full-height vertical divider, wide enough for a layer name */
+.panel-header { align-items: center; height: 44px; padding: 0 0 0 16px; }
+.panel-meta {
+  align-self: stretch;
+  flex: none;
+  width: 116px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-left: 2px solid #070707;
+  box-shadow: inset 1px 0 0 #3a3a3a;
+}
+.panel-meta .panel-sub { max-width: 100%; }

@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.30.1 | 2026-11-08 | `v0.30.1` | Prop header: no brackets; the layer name sits in a 116px slot at the right end, cut off by a full-height vertical divider |
 | 0.30.0 | 2026-11-08 | `v0.30.0` | Pen renamed Draw (tool name and help text; shortcut stays P). Select tool recolours: with a rectangle selected, choosing a mode, swatch or custom colour applies it to the dots inside (one undoable step; undo now also tracks colour-only changes) |
 | 0.29.5 | 2026-11-08 | `v0.29.5` | Prop panel header: the layer name shows at the right end in brackets, after a vertical divider |
 | 0.29.4 | 2026-11-08 | `v0.29.4` | Export card (Btmend) is as tall as its content so it has no scroll bar; the Layers card (Topend) takes the remaining height and scrolls instead |
