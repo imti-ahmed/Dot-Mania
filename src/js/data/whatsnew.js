@@ -6,6 +6,11 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.28.0', date: '2026-11-08', items: [
+    'Use more than one colour on the same canvas: every dot keeps the colour it was drawn with.',
+    'Changing the colour only affects what you draw next, not what is already on the canvas.',
+    'The right side is now two panels. The second one (a top and a bottom card) is empty for now.'
+  ] },
   { v: '0.27.0', date: '2026-11-08', items: [
     'The right panel now has three tabs: Animate, Layers and Export.',
     'New Layers tab: stack up to 3 animations, add or remove layers, change their order and tune each one on its own.',

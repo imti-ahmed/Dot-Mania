@@ -38,6 +38,7 @@
   });
 
   var cells = new Set();      // selected cells as "col,row"
+  var cellColor = new Map();  // each cell's own colour, fixed when it was drawn: "col,row" -> { mode, hex, cycle }
   var list = [];              // precomputed per-cell data for the animation
   var dirty = true;
   var repaintColor = function () {}, repaintShapes = function () {};   // set once those panels are built
@@ -96,12 +97,13 @@
     var oldCols = cols, oldRows = rows;
     state.art = { w: width, h: height };
     computeGrid();
-    var dc = Math.floor((cols - oldCols) / 2), dr = Math.floor((rows - oldRows) / 2), next = new Set();
+    var dc = Math.floor((cols - oldCols) / 2), dr = Math.floor((rows - oldRows) / 2), next = new Set(), nextColor = new Map();
+    syncColors();
     cells.forEach(function (k) {
       var p = k.split(','), c = +p[0] + dc, r = +p[1] + dr;
-      if (c >= 0 && r >= 0 && c < cols && r < rows) next.add(c + ',' + r);
+      if (c >= 0 && r >= 0 && c < cols && r < rows) { next.add(c + ',' + r); nextColor.set(c + ',' + r, cellColor.get(k)); }
     });
-    cells = next;
+    cells = next; cellColor = nextColor;
     undoStack = []; redoStack = [];
     hover = null; drag = null;
     layout();
@@ -123,9 +125,23 @@
   function exportGeo() {
     return { ox: (state.art.w - cols * CELL) / 2, oy: (state.art.h - rows * CELL) / 2, cell: CELL, shape: state.dotShape };
   }
+  // A dot keeps the colour that was selected when it was drawn. Changing the colour later only affects new dots.
+  var lastSnap = null;
+  function colorSnap() {
+    var c = state.color, cy = c.cycle === undefined ? 1 : c.cycle;
+    if (lastSnap && lastSnap.mode === c.mode && lastSnap.hex === c.hex && lastSnap.cycle === cy) return lastSnap;
+    return (lastSnap = { mode: c.mode, hex: c.hex, cycle: cy });
+  }
+  // Drop colours of dots that are gone, and give any new dot the colour selected right now.
+  function syncColors() {
+    cellColor.forEach(function (v, k) { if (!cells.has(k)) cellColor.delete(k); });
+    var snap = null;
+    cells.forEach(function (k) { if (!cellColor.has(k)) cellColor.set(k, snap || (snap = colorSnap())); });
+  }
   function cellArray() {
+    syncColors();
     var a = [];
-    cells.forEach(function (k) { var p = k.split(','); a.push([+p[0], +p[1]]); });
+    cells.forEach(function (k) { var p = k.split(','); a.push([+p[0], +p[1], cellColor.get(k)]); });
     return a;
   }
   function rebuild() { dirty = false; list = E.buildList(cellArray()); }
@@ -273,7 +289,8 @@
     a.forEach(function (k) { if (!b.has(k)) same = false; });
     return same;
   }
-  function beginEdit() { return new Set(cells); }
+  function beginEdit() { syncColors(); var s = new Set(cells); s.colors = new Map(cellColor); return s; }
+  function restoreEdit(s) { cells = new Set(s); cellColor = new Map(s.colors || []); }
   function endEdit(before) {
     if (sameSet(before, cells)) return;
     undoStack.push(before);
@@ -282,14 +299,14 @@
   }
   function undo() {
     if (!undoStack.length) return;
-    redoStack.push(new Set(cells));
-    cells = undoStack.pop(); sel = null;
+    redoStack.push(beginEdit());
+    restoreEdit(undoStack.pop()); sel = null;
     dirty = true; updateInfo();
   }
   function redo() {
     if (!redoStack.length) return;
-    undoStack.push(new Set(cells));
-    cells = redoStack.pop(); sel = null;
+    undoStack.push(beginEdit());
+    restoreEdit(redoStack.pop()); sel = null;
     dirty = true; updateInfo();
   }
   /* ---------- Drawing ---------- */
@@ -511,8 +528,10 @@
         var q = k.split(','), c = +q[0], r = +q[1];
         if (!(c >= b.c0 && c <= b.c1 && r >= b.r0 && r <= b.r1)) next.add(k);
       });
-      drag.picked.forEach(function (q) { next.add((q[0] + dc) + ',' + (q[1] + dr)); });
-      cells = next;
+      var nextColor = new Map(), bc = drag.before.colors || new Map();
+      next.forEach(function (k) { if (bc.has(k)) nextColor.set(k, bc.get(k)); });
+      drag.picked.forEach(function (q) { var nk = (q[0] + dc) + ',' + (q[1] + dr); next.add(nk); nextColor.set(nk, bc.get(q[0] + ',' + q[1])); });
+      cells = next; cellColor = nextColor;
       sel = { c0: b.c0 + dc, r0: b.r0 + dr, c1: b.c1 + dc, r1: b.r1 + dr };
       dirty = true; updateInfo();
       return;
@@ -521,7 +540,7 @@
     if (e.shiftKey) {
       // Shift: the stroke so far becomes one straight line from where it began (move the pointer to aim it)
       var end = snapLine(drag.start, p);
-      cells = new Set(drag.before);
+      restoreEdit(drag.before);
       lineCells(drag.start, end).forEach(function (q) { stamp(q[0], q[1], !drag.erase); });
       dirty = true;
       drag.last = end;
@@ -983,7 +1002,7 @@
       next = randomArtCells();
     }
     if (!next.size) next = randomArtCells();
-    cells = next; dirty = true;
+    cells = next; cellColor = new Map(); dirty = true;     // all new dots: they take the new colour
     endEdit(before);
     updateInfo();
 
@@ -1128,7 +1147,7 @@
       b.className = 'key'; b.textContent = sh.name;
       b.addEventListener('click', function () {
         var before = beginEdit();
-        cells = new Set();
+        cells = new Set(); cellColor = new Map();
         sh.gen(cols, rows, 0.8).forEach(function (q) { cells.add(q[0] + ',' + q[1]); });
         dirty = true;
         endEdit(before);
@@ -1304,7 +1323,7 @@
     if (!imgSrc) return;
     var arr = window.DotImage.toCells(getRaster(), cols, rows, imgOpts), next = new Set();
     for (var i = 0; i < arr.length; i++) next.add(arr[i][0] + ',' + arr[i][1]);
-    cells = next;
+    cells = next; cellColor = new Map();
     dirty = true;
     updateInfo();
   }
@@ -1497,7 +1516,12 @@
 
     d.runs.forEach(function (row) {
       row[1].forEach(function (run) {
-        for (var n = 0; n < run[1]; n++) setCell(run[0] + n, row[0], true);
+        var pc = d.palette && d.palette[run[2] || 0];
+        var own = pc ? { mode: pc.mode, hex: pc.hex, cycle: pc.cycle === undefined ? 1 : pc.cycle } : null;
+        for (var n = 0; n < run[1]; n++) {
+          setCell(run[0] + n, row[0], true);
+          if (own) cellColor.set((run[0] + n) + ',' + row[0], own);
+        }
       });
     });
 
@@ -1548,7 +1572,7 @@
     if (imgUI.opts) setImageActive(false);
     if (FLAGS.interaction) setInteraction('auto');
     setPlaying(false);                      // a fresh session starts paused
-    cells = new Set();
+    cells = new Set(); cellColor = new Map();
     setArt(1080, 1080);                     // also clears history
     repaintShapes(); repaintColor();
     setStacking(false);
@@ -1671,7 +1695,7 @@
     if (!parsed || !parsed.preset) { libIframe(box, url, name); return; }
     var d = parsed.data, cells = [];
     d.runs.forEach(function (row) {
-      row[1].forEach(function (run) { for (var n = 0; n < run[1]; n++) cells.push([run[0] + n, row[0]]); });
+      row[1].forEach(function (run) { for (var n = 0; n < run[1]; n++) cells.push([run[0] + n, row[0], d.palette ? d.palette[run[2] || 0] : undefined]); });
     });
     // zoom > 1 shows the middle of the animation bigger (the dots grow), instead of the whole canvas shrunk
     var pw = width || PREVIEW_W, base = pw / d.w, s = base * (zoom || 1), cv = document.createElement('canvas');
@@ -1977,7 +2001,7 @@
       var v = state.playing ? f.preset.fn(c, tl.t, p) : 1;
       v = v < 0 ? 0 : v > 1 ? 1 : v;
       var x = g.ox + (c.col + 0.5) * g.cell, y = g.oy + (c.row + 0.5) * g.cell, sz = g.cell * p.size * (0.4 + 0.6 * v);
-      var fill = E.colorFor(f.color, c, v, tl.ph);
+      var fill = E.colorFor(c.color ? Object.assign({}, c.color, { steps: f.color.steps }) : f.color, c, v, tl.ph);
       if (p.glow > 0.01 && v > 0.05) out.push(svgMark(x, y, sz * 1.9, g.shape, fill, 0.2 * p.glow * v));
       out.push(svgMark(x, y, sz, g.shape, fill, 0.18 + 0.82 * v));
     });
@@ -2140,7 +2164,7 @@
     state: state, presets: PRESETS, colorModes: COLOR_MODES, dotShapes: DOT_SHAPES, interactions: INTERACTIONS,
     stackMax: STACK_MAX, exportOpts: exportOpts,
     grid: function () { return { cols: cols, rows: rows, cell: CELL }; },
-    cells: cellArray,
+    cells: function () { return cellArray().map(function (c) { return [c[0], c[1]]; }); },   // [col, row] pairs only (colours stay internal)
     history: function () { return { undo: undoStack.length, redo: redoStack.length }; },
     busy: function () { return { gif: gifBusy, video: videoBusy }; },
     view: function () { return { view: view, welcomeOpen: welcomeOpen }; },

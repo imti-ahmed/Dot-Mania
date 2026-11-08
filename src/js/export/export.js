@@ -17,7 +17,7 @@
     var cells = [];
     DATA.runs.forEach(function (row) {
       row[1].forEach(function (run) {
-        for (var i = 0; i < run[1]; i++) cells.push([run[0] + i, row[0]]);
+        for (var i = 0; i < run[1]; i++) cells.push([run[0] + i, row[0], DATA.palette ? DATA.palette[run[2] || 0] : undefined]);
       });
     });
     var list = E.buildList(cells);
@@ -142,17 +142,27 @@
     });
   }
 
-  // Cells -> rows of [startCol, length] runs, compact for big fills.
-  function encode(cells) {
-    var byRow = {};
-    cells.forEach(function (c) { (byRow[c[1]] = byRow[c[1]] || []).push(c[0]); });
-    return Object.keys(byRow).map(Number).sort(function (a, b) { return a - b; }).map(function (r) {
-      var cs = byRow[r].sort(function (a, b) { return a - b; }), runs = [], start = cs[0], len = 1;
-      for (var i = 1; i < cs.length; i++) {
-        if (cs[i] === cs[i - 1] + 1) len++;
-        else { runs.push([start, len]); start = cs[i]; len = 1; }
+  // Cells -> rows of [startCol, length, colourIndex] runs, compact for big fills. Each dot keeps its own colour:
+  // colours are listed once in palette and a run points to one.
+  function encode(cells, palette, fallback) {
+    var byRow = {}, index = {};
+    function colorIndex(c) {
+      c = c || fallback;
+      var key = c.mode + '|' + c.hex + '|' + (c.cycle === undefined ? 1 : c.cycle);
+      if (!(key in index)) {
+        index[key] = palette.length;
+        palette.push({ mode: c.mode, hex: c.hex, steps: fallback.steps, cycle: c.cycle === undefined ? 1 : c.cycle });
       }
-      runs.push([start, len]);
+      return index[key];
+    }
+    cells.forEach(function (c) { (byRow[c[1]] = byRow[c[1]] || []).push([c[0], colorIndex(c[2])]); });
+    return Object.keys(byRow).map(Number).sort(function (a, b) { return a - b; }).map(function (r) {
+      var cs = byRow[r].sort(function (a, b) { return a[0] - b[0]; }), runs = [], start = cs[0][0], len = 1, ci = cs[0][1];
+      for (var i = 1; i < cs.length; i++) {
+        if (cs[i][0] === cs[i - 1][0] + 1 && cs[i][1] === ci) len++;
+        else { runs.push([start, len, ci]); start = cs[i][0]; len = 1; ci = cs[i][1]; }
+      }
+      runs.push([start, len, ci]);
       return [r, runs];
     });
   }
@@ -177,6 +187,8 @@
   // snapshot: { cells, art:{w,h}, cols, rows, geo:{ox,oy,cell}, preset, values, color, interaction, period }
   // opts: { bg: 'dark' | 'transparent', grid: boolean }
   function build(snapshot, opts) {
+    var palette = [], baseColor = { mode: snapshot.color.mode, hex: snapshot.color.hex, steps: snapshot.color.steps || 12, cycle: snapshot.color.cycle === undefined ? 1 : snapshot.color.cycle };
+    var runs = encode(snapshot.cells, palette, baseColor);
     var data = {
       w: snapshot.art.w, h: snapshot.art.h,
       gridCols: snapshot.cols, gridRows: snapshot.rows, geo: snapshot.geo,
@@ -185,7 +197,7 @@
       bg: opts.bg === 'dark' ? '#0b0b0a' : null,
       grid: !!opts.grid, gridVis: snapshot.gridVis === undefined ? 0.35 : snapshot.gridVis,
       period: snapshot.period, mode: snapshot.interaction, still: snapshot.period * 0.35,
-      runs: encode(snapshot.cells)
+      runs: runs, palette: palette
     };
 
     var json = JSON.stringify(data);
@@ -221,7 +233,7 @@
       '- Canvas: ' + data.w + ' x ' + data.h + ' (fixed aspect ratio; it scales to its container)',
       '- Animation: ' + snapshot.preset.name + ', one seamless loop is about ' + snapshot.period.toFixed(1) + 's',
       '- Mark shape: ' + (snapshot.geo.shape || 'dot'),
-      '- Color: ' + describeColor(snapshot.color),
+      '- Color: ' + (palette.length > 1 ? palette.length + ' colors, each dot keeps its own (' + palette.map(describeColor).join(', ') + ')' : describeColor(palette[0] || snapshot.color)),
       '- Background: ' + (data.bg ? 'solid dark (' + data.bg + ')' : 'transparent'),
       '- Interaction: ' + INTERACTION_TEXT[snapshot.interaction],
       '',

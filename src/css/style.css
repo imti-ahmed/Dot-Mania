@@ -557,7 +557,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* ---------- Small screens ---------- */
 
-@media (max-width: 1000px) {
+@media (max-width: 1150px) {
   body { overflow: auto; }
   .app { height: auto; min-height: 100%; }
   .main { grid-template-columns: 1fr; }
@@ -701,7 +701,7 @@ a.stat:hover { color: var(--text); }
 .statusbar .readout b { font-weight: 400; color: var(--text); }
 .status-msg.busy .led { animation: pulse 1s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .25; } }
-@media (max-width: 1000px) { .statusbar { width: auto; flex: 1; } }
+@media (max-width: 1150px) { .statusbar { width: auto; flex: 1; } }
 
 /* ---------- Library grid ---------- */
 
@@ -785,7 +785,7 @@ a.stat:hover { color: var(--text); }
 }
 .sizes { margin-top: auto; }
 
-@media (max-width: 1000px) {
+@media (max-width: 1150px) {
   .sidebar > * + * { border-top: 0; border-left: 2px solid #070707; box-shadow: inset 1px 0 0 #3a3a3a; }
   .sizes { margin-top: 0; }
 }
@@ -1331,18 +1331,18 @@ body[data-view="home"] .app {
 .sidebar > .sizes { margin-top: 0; }
 .crafted a { color: var(--text); font-weight: 700; text-decoration: none; transition: color .15s; }
 .crafted a:hover { color: var(--accent); }
-@media (max-width: 1000px) { .sidebar > .crafted { display: none; } }
+@media (max-width: 1150px) { .sidebar > .crafted { display: none; } }
 
 /* ---------- Canvas view: square card, side panels take the free width ---------- */
 /* The canvas card is a square as tall as the screen allows (header 68 + padding 32 + gap 16 = 116px). The width left over
    is shared: a slim fixed 164px to the left bar (icons + text), all the rest to the right panel. */
 :root {
-  --stage-size: max(360px, min(calc(100vh - 116px), calc(100vw - 64px - 164px - 340px)));
-  --rest-w: calc(100vw - 64px - var(--stage-size));
+  --stage-size: max(360px, min(calc(100vh - 116px), calc(100vw - 80px - 164px - 340px - 220px)));
+  --rest-w: calc(100vw - 80px - var(--stage-size));
   --side-w: 164px;
-  --panel-w: max(340px, calc(var(--rest-w) - var(--side-w)));
+  --panel-w: max(340px, calc((var(--rest-w) - var(--side-w)) * .6));   /* the main right panel; the second right panel takes what is left */
 }
-.main[data-page="canvas"] { grid-template-columns: var(--side-w) var(--stage-size) minmax(0, 1fr); }
+.main[data-page="canvas"] { grid-template-columns: var(--side-w) var(--stage-size) var(--panel-w) minmax(0, 1fr); }
 .main[data-page="canvas"] .stage-card { width: var(--stage-size); height: var(--stage-size); align-self: start; }
 
 /* Left bar: icon + text rows */
@@ -1353,7 +1353,10 @@ body[data-view="home"] .app {
 .toolstrip, .editstrip, .sizes { padding-left: 10px; padding-right: 10px; }
 .sidebar > .crafted span { writing-mode: horizontal-tb; transform: none; }
 .sidebar > .crafted { flex: 1 0 auto; }
-@media (max-width: 1000px) {
+@media (max-width: 1150px) {
+  .main[data-page="canvas"] { grid-template-columns: 1fr; }
+  .main[data-page="canvas"] .stage-card { width: auto; height: 70vh; }
+  .panel2 { min-height: 320px; }
   .sidebar .key { width: auto; }
   .toolstrip .key, .editstrip .key, .sizes .key { width: auto; }
 }
@@ -1385,3 +1388,7 @@ body[data-view="home"] .app {
 .layer-name { flex: 1; min-width: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .layer-tag { flex: none; font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .layer-btn { flex: none; width: 30px; height: 28px; padding: 0; border-radius: 8px; justify-content: center; font-size: 14px; letter-spacing: 0; }
+
+/* ---------- Second right panel: two empty cards, top and bottom (content to come) ---------- */
+.panel2 { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 16px; }
+.panel2 > .card { flex: 1 1 0; min-height: 0; }

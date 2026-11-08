@@ -76,7 +76,7 @@
     for (i = 0; i < cells.length; i++) {
       var c = cells[i][0], r = cells[i][1], dx = c - cx, dy = r - cy;
       list.push({
-        col: c, row: r,
+        col: c, row: r, color: cells[i][2],      // color: this dot's own colour (undefined = the shared one)
         d: Math.hypot(dx, dy) / R,
         a: Math.atan2(dy, dx),
         ux: dx / R, uy: dy / R,
@@ -116,7 +116,8 @@
       v = v < 0 ? 0 : v > 1 ? 1 : v;
       var x = geo.ox + (c.col + 0.5) * geo.cell, y = geo.oy + (c.row + 0.5) * geo.cell;
       var s = geo.cell * p.size * (0.4 + 0.6 * v);
-      ctx.fillStyle = colorFor(mode, c, v, phase);
+      var cm = c.color ? (c.color.steps = mode.steps, c.color) : mode;
+      ctx.fillStyle = colorFor(cm, c, v, phase);
       if (p.glow > 0.01 && v > 0.05) {
         ctx.globalAlpha = 0.2 * p.glow * v;
         dot(ctx, x, y, s * 1.9, geo.shape);
