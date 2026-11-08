@@ -13,7 +13,7 @@
  *             new counter with the value from views.json and change `views` here.
  */
 window.SITE = {
-  version: '0.37.1',
+  version: '0.38.0',
   repo: 'imti-ahmed/Dot-Mania',
   views: { namespace: 'dot-mania-imti-ahmed', key: 'views' }
 };

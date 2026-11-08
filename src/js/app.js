@@ -1673,6 +1673,12 @@
   function setImageActive(on) {
     imgUI.opts.classList.toggle('is-empty', !on);
     imgUI.remove.disabled = !on;
+    if (imgUI.drop) {
+      imgUI.drop.classList.toggle('has-image', !!on);
+      imgUI.drop.querySelector('.img-title').textContent = on ? 'Image loaded' : 'Upload image';
+      imgUI.drop.querySelector('.img-hint').textContent = on ? 'click to replace it' : 'or drop it on the canvas';
+      imgUI.thumb();
+    }
   }
 
   function loadImageFile(file) {
@@ -1693,20 +1699,52 @@
     el.src = url;
   }
 
+  // One style tile: a tiny dot picture of what the style does, with its name below.
+  var STYLE_ICONS = {
+    threshold: ['.xxx.', 'xxxxx', 'xxxxx', 'xxxxx', '.xxx.'],
+    dither:    ['.x.x.', 'xx.xx', 'x.x.x', 'xx.xx', '.x.x.'],
+    outline:   ['.xxx.', 'x...x', 'x...x', 'x...x', '.xxx.']
+  };
+  function styleIcon(id) {
+    var d = '';
+    STYLE_ICONS[id].forEach(function (row, y) {
+      row.split('').forEach(function (ch, x) { d += '<circle cx="' + (4 + x * 5) + '" cy="' + (4 + y * 5) + '" r="1.7" opacity="' + (ch === 'x' ? 1 : 0.14) + '"/>'; });
+    });
+    return '<svg width="28" height="28" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">' + d + '</svg>';
+  }
+
   function buildImage() {
     var el = $('#imageControls');
 
-    var pair = document.createElement('div');
-    pair.className = 'pair';
-    pair.innerHTML =
-      '<button class="key" id="imgUpload" title="Upload a picture (or drop one on the canvas)"><span>Upload image</span></button>' +
-      '<button class="key" id="imgRemove" title="Stop using the picture (the dots stay)" disabled><span>Remove</span></button>';
-    el.appendChild(pair);
+    // The upload card: a thumbnail slot, what to do, and a small remove button.
+    var drop = document.createElement('div');
+    drop.className = 'img-drop';
+    drop.innerHTML =
+      '<button class="img-pick" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)">' +
+        '<span class="img-thumb"><canvas width="96" height="96"></canvas><b>+</b></span>' +
+        '<span class="img-text"><span class="img-title">Upload image</span><span class="img-hint">or drop it on the canvas</span></span>' +
+      '</button>' +
+      '<button class="key img-x" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" aria-label="Remove image" disabled>\u00d7</button>';
+    el.appendChild(drop);
 
     var opts = document.createElement('div');
     opts.className = 'img-opts is-empty';
-    var styleRow = segRow('Style', [{ v: 'threshold', label: 'Threshold' }, { v: 'dither', label: 'Dither' }, { v: 'outline', label: 'Outline' }],
-      function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); });
+
+    var cap = document.createElement('div');
+    cap.className = 'sub-label'; cap.textContent = 'Style';
+    var tiles = document.createElement('div');
+    tiles.className = 'style-tiles';
+    [['threshold', 'Threshold'], ['dither', 'Dither'], ['outline', 'Outline']].forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'style-tile'; b.dataset.v = s[0];
+      b.innerHTML = styleIcon(s[0]) + '<span>' + s[1] + '</span>';
+      b.addEventListener('click', function () { imgOpts.style = s[0]; paintTiles(); applyImage(); });
+      tiles.appendChild(b);
+    });
+    function paintTiles() { tiles.querySelectorAll('.style-tile').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === imgOpts.style)); }); }
+    paintTiles();
+    opts.appendChild(cap); opts.appendChild(tiles);
+
     var levelRow = sliderRow({
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
       fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.level = v; applyImage(); }
@@ -1714,11 +1752,18 @@
     var onRow = switchRow('Dots on', 'Dark', 'Light', function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
       function () { return imgOpts.fit; }, function (v) { imgOpts.fit = v; imgRaster = null; applyImage(); });
-    var rowsToShow = FLAGS.imageAdvanced ? [styleRow, levelRow, onRow, fitRow] : [styleRow, onRow];
-    rowsToShow.forEach(function (r) { opts.appendChild(r); });
+    (FLAGS.imageAdvanced ? [levelRow, onRow, fitRow] : [onRow]).forEach(function (r) { opts.appendChild(r); });
     el.appendChild(opts);
 
-    imgUI = { opts: opts, onRow: onRow, remove: pair.querySelector('#imgRemove') };
+    // The thumbnail: the picture, cropped to the square slot (blank again when there is no picture).
+    var thumb = drop.querySelector('canvas'), tctx = thumb.getContext('2d');
+    function drawThumb() {
+      tctx.clearRect(0, 0, 96, 96);
+      if (!imgSrc) return;
+      var sc = Math.max(96 / imgSrc.w, 96 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
+      tctx.drawImage(imgSrc.el, (96 - w) / 2, (96 - h) / 2, w, h);
+    }
+    imgUI = { opts: opts, onRow: onRow, remove: drop.querySelector('#imgRemove'), drop: drop, thumb: drawThumb };
 
     var input = $('#imageFile');
     $('#imgUpload').addEventListener('click', function () { input.click(); });
