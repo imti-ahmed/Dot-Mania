@@ -6,6 +6,10 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.30.0', date: '2026-11-08', items: [
+    'The Pen tool is now called Draw.',
+    'Select can now recolour: drag a rectangle over dots, then pick a colour to change just those dots.'
+  ] },
   { v: '0.29.2', date: '2026-11-08', items: [
     'Export has an SVG button instead of PNG: a plain, still picture of your drawing that stays sharp at any size.'
   ] },

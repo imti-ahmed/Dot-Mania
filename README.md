@@ -4,7 +4,7 @@ An animated dot-grid editor. Draw on a grid of dots (or turn a picture into dots
 
 ## Features
 
-- **Draw** on a 16px grid with the pen, shape, circle and fill tools. Hold `Shift` with the pen for a straight line. The eraser (`E`) or right-click drag erases. Undo with `Ctrl+Z`.
+- **Draw** on a 16px grid with the pen, shape, circle and fill tools. Hold `Shift` with Draw for a straight line. The eraser (`E`) or right-click drag erases. Undo with `Ctrl+Z`.
 - **Pictures:** upload an image and it becomes black-and-white dots.
 - **Paused by default:** the studio opens paused, so what you draw shows exactly as drawn. Press **Play** (or `Space`) to run the animation; Pause goes back to the drawing as it is.
 - **Animations:** 15 presets (Shimmer, Pulse, Ripple, Wave, Spiral, Scan, Rain, Beats, Breathe, Sweep, Flicker, Zigzag, Reveal, Bars, Dissolve). Use **Layers** (top right) to add layers: each layer has its own dots, colours and animation, all running on one canvas.

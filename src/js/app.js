@@ -445,8 +445,28 @@
   }
   function beginEdit() { syncColors(); var s = new Set(cells); s.colors = new Map(cellColor); return s; }
   function restoreEdit(s) { cells = new Set(s); cellColor = new Map(s.colors || []); }
+  function sameColors(a, b) {          // colours of the same dots (a: Map from a snapshot, b: the live Map)
+    var same = true;
+    b.forEach(function (c, k) {
+      var o = a && a.get(k);
+      if (!o || o.mode !== c.mode || o.hex !== c.hex || o.cycle !== c.cycle) same = false;
+    });
+    return same;
+  }
+  // The Select tool: choosing a colour while a rectangle is selected recolours the dots inside it (one undoable step).
+  function recolorSelection() {
+    if (!sel || drag || !cells.size) return;
+    var before = beginEdit(), snap = colorSnap(), n = 0;
+    cells.forEach(function (k) {
+      var q = k.split(','), c = +q[0], r = +q[1];
+      if (c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1) { cellColor.set(k, snap); n++; }
+    });
+    if (!n) return;
+    dirty = true;
+    endEdit(before);
+  }
   function endEdit(before) {
-    if (sameSet(before, cells)) return;
+    if (sameSet(before, cells) && sameColors(before.colors, cellColor)) return;
     undoStack.push(before);
     if (undoStack.length > 80) undoStack.shift();
     redoStack = [];
@@ -732,7 +752,7 @@
     return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
   };
   var TOOLS = [
-    { id: 'pencil',  name: 'Pen',    key: 'p', icon: ICON('<path d="M2.5 13.5l.8-3.2 7.2-7.2 2.4 2.4-7.2 7.2z"/><path d="M9.2 4.4l2.4 2.4"/>') },
+    { id: 'pencil',  name: 'Draw',   key: 'p', icon: ICON('<path d="M2.5 13.5l.8-3.2 7.2-7.2 2.4 2.4-7.2 7.2z"/><path d="M9.2 4.4l2.4 2.4"/>') },
     { id: 'eraser',  group: 'edit', name: 'Eraser', key: 'e', icon: ICON('<path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/>') },
     { sep: true, extra: true },
     { id: 'line',    extra: true, name: 'Line', key: 'l', icon: ICON('<path d="M3 13L13 3"/><circle cx="3" cy="13" r="1" fill="currentColor"/><circle cx="13" cy="3" r="1" fill="currentColor"/>') },
@@ -887,7 +907,7 @@
     COLOR_MODES.forEach(function (c) {
       var b = document.createElement('button');
       b.className = 'key'; b.textContent = c.name; b.dataset.mode = c.id;
-      b.addEventListener('click', function () { m.mode = c.id; paint(); });
+      b.addEventListener('click', function () { m.mode = c.id; paint(); recolorSelection(); });
       grid.appendChild(b);
     });
     if (FLAGS.colorRandom) {
@@ -907,7 +927,7 @@
       var b = document.createElement('button');
       b.className = 'swatch'; b.style.setProperty('--c', c); b.dataset.color = c;
       b.setAttribute('aria-label', 'Color ' + c);
-      b.addEventListener('click', function () { m.mode = 'solid'; m.hex = c; paint(); });
+      b.addEventListener('click', function () { m.mode = 'solid'; m.hex = c; paint(); recolorSelection(); });
       box.appendChild(b);
     });
     var custom = document.createElement('button');
@@ -915,7 +935,7 @@
     custom.setAttribute('aria-label', 'Custom color');
     custom.title = 'Pick any color';
     custom.addEventListener('click', function () {
-      picker.toggle(custom, state.color.hex, function (hex) { m.mode = 'solid'; m.hex = hex; paint(); });
+      picker.toggle(custom, state.color.hex, function (hex) { m.mode = 'solid'; m.hex = hex; paint(); recolorSelection(); });
     });
     box.appendChild(custom);
     el.appendChild(row);

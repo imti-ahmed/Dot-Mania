@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
-  <link rel="stylesheet" href="src/css/style.css?v=0.29.5">
+  <link rel="stylesheet" href="src/css/style.css?v=0.30.0">
 </head>
 <body>
   <p class="agent-note" data-flag="agentTools">For AI agents: this editor has helper tools. Run window.dotMania.help() in the page for a guide to drawing, animating and exporting by script.</p>
@@ -215,13 +215,13 @@
       <div class="how-card open">
         <h3 class="how-title" id="howModalTitle">How to use</h3>
         <ol class="how-steps">
-          <li><b>Draw something</b><span>Pick the Pen on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
+          <li><b>Draw something</b><span>Pick Draw on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
           <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Use Add layer (top right) to give another set of dots its own animation. Press Play to watch it move.</span></li>
           <li><b>Shape the look</b><span>Under Tuning, change the speed, size and glow. Then choose a color, a gradient, or your own.</span></li>
           <li><b>Not sure? Randomize</b><span>The dice on the left makes a whole new piece. Press Ctrl+Z if you want yours back.</span></li>
           <li><b>Save it</b><span>In the Export panel (bottom right), pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
         </ol>
-        <p class="how-tip"><b>Tips</b> Hold Shift with the pen for a straight line. Press Space to play or pause.</p>
+        <p class="how-tip"><b>Tips</b> Hold Shift with Draw for a straight line. Press Space to play or pause.</p>
       </div>
     </div>
 
@@ -294,12 +294,12 @@
       </ol>
       <h2 class="page-sub">Shortcuts</h2>
       <table class="page-table">
-        <tr><td><kbd>P</kbd> <kbd>R</kbd> <kbd>O</kbd> <kbd>F</kbd> <kbd>E</kbd></td><td>Pen, shape, circle, fill, eraser</td></tr>
+        <tr><td><kbd>P</kbd> <kbd>R</kbd> <kbd>O</kbd> <kbd>F</kbd> <kbd>E</kbd></td><td>Draw, shape, circle, fill, eraser</td></tr>
         <tr><td><kbd>1</kbd>&ndash;<kbd>9</kbd></td><td>Pick an animation</td></tr>
         <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>Z</kbd></td><td>Undo</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Z</kbd></td><td>Redo</td></tr>
-        <tr><td><kbd>Shift</kbd> + drag</td><td>Pen: draw a straight line (flat, upright or 45&deg;). Shapes stay square.</td></tr>
+        <tr><td><kbd>Shift</kbd> + drag</td><td>Draw: draw a straight line (flat, upright or 45&deg;). Shapes stay square.</td></tr>
         <tr><td>Right-click drag</td><td>Erase</td></tr>
       </table>
     </section>
@@ -333,13 +333,13 @@
     <aside class="how-card" id="howDrawer" aria-label="How to use" aria-hidden="true">
       <h3 class="how-title">How to use</h3>
       <ol class="how-steps">
-        <li><b>Draw something</b><span>Pick the Pen on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
+        <li><b>Draw something</b><span>Pick Draw on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
         <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Use Add layer (top right) to give another set of dots its own animation. Press Play to watch it move.</span></li>
         <li><b>Shape the look</b><span>Under Tuning, change the speed, size and glow. Then choose a color, a gradient, or your own.</span></li>
         <li><b>Not sure? Randomize</b><span>The dice on the left makes a whole new piece. Press Ctrl+Z if you want yours back.</span></li>
         <li><b>Save it</b><span>In the Export panel (bottom right), pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
       </ol>
-      <p class="how-tip"><b>Tips</b> Hold Shift with the pen for a straight line. Press Space to play or pause.</p>
+      <p class="how-tip"><b>Tips</b> Hold Shift with Draw for a straight line. Press Space to play or pause.</p>
     </aside>
    </div>
   </div>
@@ -347,17 +347,17 @@
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
-  <script src="src/js/core/flags.js?v=0.29.5"></script>
-  <script src="src/js/core/presets.js?v=0.29.5"></script>
-  <script src="src/js/core/shapes.js?v=0.29.5"></script>
-  <script src="src/js/core/engine.js?v=0.29.5"></script>
-  <script src="src/js/core/image.js?v=0.29.5"></script>
-  <script src="src/js/export/export.js?v=0.29.5"></script>
-  <script src="src/js/export/gif.js?v=0.29.5"></script>
-  <script src="src/js/data/library.js?v=0.29.5"></script>
-  <script src="src/js/data/site.js?v=0.29.5"></script>
-  <script src="src/js/data/whatsnew.js?v=0.29.5"></script>
-  <script src="src/js/app.js?v=0.29.5"></script>
-  <script src="src/js/agent.js?v=0.29.5"></script>
+  <script src="src/js/core/flags.js?v=0.30.0"></script>
+  <script src="src/js/core/presets.js?v=0.30.0"></script>
+  <script src="src/js/core/shapes.js?v=0.30.0"></script>
+  <script src="src/js/core/engine.js?v=0.30.0"></script>
+  <script src="src/js/core/image.js?v=0.30.0"></script>
+  <script src="src/js/export/export.js?v=0.30.0"></script>
+  <script src="src/js/export/gif.js?v=0.30.0"></script>
+  <script src="src/js/data/library.js?v=0.30.0"></script>
+  <script src="src/js/data/site.js?v=0.30.0"></script>
+  <script src="src/js/data/whatsnew.js?v=0.30.0"></script>
+  <script src="src/js/app.js?v=0.30.0"></script>
+  <script src="src/js/agent.js?v=0.30.0"></script>
 </body>
 </html>
