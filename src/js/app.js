@@ -1051,45 +1051,82 @@
     return { toggle: toggle };
   })();
 
+  // Preview background for a colour style circle: its gradient, sampled from the real colour function.
+  function modePreview(id) {
+    if (id === 'white') return '#ffffff';
+    if (id === 'glitter') return 'conic-gradient(#ffffff, #ff5fa2, #2de2e6, #ffd23f, #8f7bff, #5cf08a, #ffffff)';
+    var stops = [], n = 6, i, c;
+    for (i = 0; i < n; i++) {
+      var x = i / (n - 1);
+      c = { d: x, ux: x * 2 - 1, uy: x * 2 - 1, rnd: 0.5 };
+      stops.push(E.colorFor({ mode: id, steps: 12, cycle: 1 }, c, x, 0.12));
+    }
+    return 'linear-gradient(135deg,' + stops.join(',') + ')';
+  }
+  // The colour spectrum card: left to right is the hue, top is light, middle is pure, bottom is dark.
+  function spectrumHex(x, y) {
+    var h = x * 360, l = 1 - y, a = Math.min(l, 1 - l), f = function (n) {
+      var k = (n + h / 30) % 12, v = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+      return Math.round(v * 255).toString(16).padStart(2, '0');
+    };
+    return '#' + f(0) + f(8) + f(4);
+  }
+  function hexToSpectrum(hex) {
+    var n = parseInt(hex.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, bl = (n & 255) / 255;
+    var max = Math.max(r, g, bl), min = Math.min(r, g, bl), d = max - min, h = 0;
+    if (d > 0) h = 60 * (max === r ? ((g - bl) / d + 6) % 6 : max === g ? (bl - r) / d + 2 : (r - g) / d + 4);
+    return { x: h / 360, y: 1 - (max + min) / 2 };
+  }
+
   function buildColor() {
     var el = $('#colorControls'), m = state.color;
+    // One grid of circles: the colour styles first, then the solid colours, two rows.
     var grid = document.createElement('div');
-    grid.className = 'keygrid';
+    grid.className = 'swatch-grid';
     COLOR_MODES.forEach(function (c) {
       var b = document.createElement('button');
-      b.className = 'key'; b.textContent = c.name; b.dataset.mode = c.id;
+      b.className = 'swatch'; b.style.background = modePreview(c.id); b.dataset.mode = c.id;
+      b.title = c.name; b.setAttribute('aria-label', c.name + ' colour');
       b.addEventListener('click', function () { m.mode = c.id; paint(); recolorSelection(); });
       grid.appendChild(b);
     });
-    if (FLAGS.colorRandom) {
-      var rb = document.createElement('button');
-      rb.className = 'key'; rb.title = 'Randomize color'; rb.setAttribute('aria-label', 'Randomize color');
-      rb.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.5h8A2.5 2.5 0 0 1 14.5 4v8a2.5 2.5 0 0 1-2.5 2.5H4A2.5 2.5 0 0 1 1.5 12V4A2.5 2.5 0 0 1 4 1.5zM5 4a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2zM8 7a1 1 0 100 2 1 1 0 000-2zm-3 3a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z"/></svg>';
-      rb.addEventListener('click', randomColor);
-      grid.appendChild(rb);
-    }
-    el.appendChild(grid);
-
-    var row = document.createElement('div');
-    row.className = 'row color-row';
-    row.innerHTML = '<span class="lbl">Color</span><div class="swatches wide"></div>';
-    var box = row.querySelector('.swatches');
     SWATCHES.forEach(function (c) {
       var b = document.createElement('button');
       b.className = 'swatch'; b.style.setProperty('--c', c); b.dataset.color = c;
-      b.setAttribute('aria-label', 'Color ' + c);
+      b.title = c; b.setAttribute('aria-label', 'Color ' + c);
       b.addEventListener('click', function () { m.mode = 'solid'; m.hex = c; paint(); recolorSelection(); });
-      box.appendChild(b);
+      grid.appendChild(b);
     });
-    var custom = document.createElement('button');
-    custom.className = 'swatch custom';
-    custom.setAttribute('aria-label', 'Custom color');
-    custom.title = 'Pick any color';
-    custom.addEventListener('click', function () {
-      picker.toggle(custom, state.color.hex, function (hex) { m.mode = 'solid'; m.hex = hex; paint(); recolorSelection(); });
+    grid.style.setProperty('--per-row', Math.ceil((COLOR_MODES.length + SWATCHES.length) / 2));
+    el.appendChild(grid);
+    if (FLAGS.colorRandom) {
+      var rb = document.createElement('button');
+      rb.className = 'key'; rb.textContent = 'Random'; rb.title = 'Randomize color';
+      rb.addEventListener('click', randomColor);
+      el.appendChild(rb);
+    }
+
+    // Spectrum card with a small circle: drag it to make any colour.
+    var spec = document.createElement('div');
+    spec.className = 'spectrum'; spec.title = 'Drag to pick any color';
+    spec.innerHTML = '<i class="spectrum-knob"></i>';
+    var knob = spec.firstChild, last = null;
+    function pick(e) {
+      var r = spec.getBoundingClientRect();
+      var x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), y = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+      last = { x: x, y: y, hex: spectrumHex(x, y) };
+      m.mode = 'solid'; m.hex = last.hex;
+      paint();
+    }
+    spec.addEventListener('pointerdown', function (e) {
+      spec.setPointerCapture(e.pointerId); pick(e);
+      var stop = function () {
+        spec.removeEventListener('pointermove', pick); spec.removeEventListener('pointerup', stop);
+        recolorSelection();                       // one undo step for the whole drag
+      };
+      spec.addEventListener('pointermove', pick); spec.addEventListener('pointerup', stop);
     });
-    box.appendChild(custom);
-    el.appendChild(row);
+    el.appendChild(spec);
 
     // Cycle (flag): how many times the colours loop per animation loop. Whole numbers, so exports still loop seamlessly.
     var cycleRow = null, CYCLING = ['rainbow', 'glitter', 'ocean', 'sunset', 'neon', 'aurora', 'candy', 'forest', 'holo'];
@@ -1103,14 +1140,17 @@
 
     function paint() {
       var solid = m.mode === 'solid';
-      grid.querySelectorAll('.key[data-mode]').forEach(function (k) { k.setAttribute('aria-pressed', String(k.dataset.mode === m.mode)); });
-      box.querySelectorAll('.swatch:not(.custom)').forEach(function (s) {
+      grid.querySelectorAll('.swatch[data-mode]').forEach(function (k) { k.setAttribute('aria-pressed', String(k.dataset.mode === m.mode)); });
+      grid.querySelectorAll('.swatch[data-color]').forEach(function (s) {
         s.setAttribute('aria-pressed', String(solid && s.dataset.color === m.hex));
       });
       var isCustom = solid && SWATCHES.indexOf(m.hex) === -1;
-      custom.classList.toggle('set', isCustom);
-      custom.setAttribute('aria-pressed', String(isCustom));
-      if (isCustom) custom.style.setProperty('--c', m.hex);
+      knob.hidden = !isCustom;
+      if (isCustom) {
+        var pos = last && last.hex === m.hex ? last : hexToSpectrum(m.hex);
+        knob.style.left = pos.x * 100 + '%'; knob.style.top = pos.y * 100 + '%';
+        knob.style.setProperty('--c', m.hex);
+      }
       if (cycleRow) cycleRow.hidden = CYCLING.indexOf(m.mode) === -1;
     }
     paint();

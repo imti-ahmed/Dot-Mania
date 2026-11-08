@@ -1422,14 +1422,6 @@ body[data-view="home"] .app {
 .panel-header { align-items: center; height: 44px; padding: 0 16px; }
 
 /* ---------- Prop panel: compact Colour and Image ---------- */
-/* Colour: the colour styles on the left as small chips, the solid colours on the right, side by side. */
-#colorControls { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 8px 12px; align-items: start; }
-#colorControls > .row:not(.color-row) { grid-column: 1 / -1; }
-#colorControls .keygrid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
-#colorControls .keygrid .key { height: var(--key-h); padding: 0 2px; border-radius: 7px; font-size: 9px; letter-spacing: .03em; }
-#colorControls .row.color-row { display: block; min-height: 0; padding: 0; }
-#colorControls .row.color-row .lbl { display: none; }
-#colorControls .swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 4px; justify-items: center; padding: 3px 0 0; }
 
 /* Image: Upload / Remove on one line, the two choices side by side with their label above. */
 #imageControls .pair .key { height: var(--key-h); }
@@ -1449,3 +1441,31 @@ body[data-view="home"] .app {
 /* ---------- Prop panel: a carved divider above every option section ---------- */
 aside.panel .group-label:not(.first) { position: relative; margin-top: 8px; padding-top: 14px; }
 aside.panel .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
+
+/* ---------- Colour: circles in two rows, then a spectrum card ---------- */
+#colorControls { display: flex; flex-direction: column; gap: 12px; }
+#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(var(--per-row, 8), 1fr); gap: 12px 0; justify-items: center; padding: 2px 0; }
+#colorControls .swatch { width: 22px; height: 22px; background: var(--c); }
+.spectrum {
+  position: relative;
+  height: 64px;
+  border-radius: 10px;
+  cursor: crosshair;
+  touch-action: none;
+  background:
+    linear-gradient(to bottom, #fff 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0) 50%, #000 100%),
+    linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .6), 0 1px 0 rgba(255, 255, 255, .05);
+}
+.spectrum-knob {
+  position: absolute;
+  width: 14px; height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--c, #fff);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .6), 0 2px 5px rgba(0, 0, 0, .6);
+  pointer-events: none;
+}
+.spectrum-knob[hidden] { display: none; }
+#colorControls .swatch[data-mode][aria-pressed="true"] { box-shadow: 0 0 0 2px #151515, 0 0 0 3px #fff, 0 0 10px rgba(255, 255, 255, .5); }

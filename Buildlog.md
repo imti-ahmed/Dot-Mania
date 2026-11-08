@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.34.0 | 2026-11-08 | `v0.34.0` | Color: colour styles and solid colours are circles in two rows (styles show their gradient); the custom picker button is replaced by a spectrum card with a draggable circle |
 | 0.33.6 | 2026-11-08 | `v0.33.6` | Welcome popup turned off for now (`welcomePopup` flag) |
 | 0.33.5 | 2026-11-08 | `v0.33.5` | Prop panel order: Shapes, Color, Animations, Tuning, then the rest |
 | 0.33.4 | 2026-11-08 | `v0.33.4` | Prop panel: a divider above every option section (Tuning, Color, Shapes, Image ...) |
