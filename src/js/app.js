@@ -307,7 +307,7 @@
    * The editor works on one layer at a time (the active one): its data lives in the usual variables (cells, state.preset, ...)
    * and is swapped in and out when you pick another layer. All layers are drawn together, each running its own animation.
    */
-  var layers = [], activeLayer = 0, LAYER_MAX = 8;
+  var layers = [], activeLayer = 0, LAYER_MAX = 5;
 
   function layerName() {
     var n = 1, names = layers.map(function (L) { return L.name; });
