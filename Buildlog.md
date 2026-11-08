@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.31.1 | 2026-11-08 | `v0.31.1` | Prop panel: the divider above Tuning is gone (it now shows only with the stackingSwitch flag) |
 | 0.31.0 | 2026-11-08 | `v0.31.0` | Layers capped at 5; Play and Open HTML moved from the Prop panel footer to the Left panel (above the credit) |
 | 0.30.1 | 2026-11-08 | `v0.30.1` | Prop header: no brackets; the layer name sits in a 116px slot at the right end, cut off by a full-height vertical divider |
 | 0.30.0 | 2026-11-08 | `v0.30.0` | Pen renamed Draw (tool name and help text; shortcut stays P). Select tool recolours: with a rectangle selected, choosing a mode, swatch or custom colour applies it to the dots inside (one undoable step; undo now also tracks colour-only changes) |
