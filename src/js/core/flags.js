@@ -17,7 +17,7 @@
 
     pointerOptions: false,      // Edit tab: a Pointer group to try the other canvas pointers (the Square one is the final choice)
     welcomeOnce: false,         // Welcome popup: first visit only, then again after 5 hours (off = it shows on every visit, for testing)
-    welcomePopup: true,         // Closed beta: a welcome popup (preview, intro, Let's Go / How to use / Feedback) over the tool
+    welcomePopup: false,        // Closed beta: a welcome popup (preview, intro, Let's Go / How to use / Feedback) over the tool
     dotShapes: true,            // Shapes group: Dot / Square / Diamond / Triangle marks
     imageUpload: true,          // Image group: upload a picture (or drop one on the canvas) and animate it
     exportCodeFile: true,       // Export: "Code File" (ready-to-open .html with the component)

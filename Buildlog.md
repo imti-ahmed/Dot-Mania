@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.33.6 | 2026-11-08 | `v0.33.6` | Welcome popup turned off for now (`welcomePopup` flag) |
 | 0.33.5 | 2026-11-08 | `v0.33.5` | Prop panel order: Shapes, Color, Animations, Tuning, then the rest |
 | 0.33.4 | 2026-11-08 | `v0.33.4` | Prop panel: a divider above every option section (Tuning, Color, Shapes, Image ...) |
 | 0.33.3 | 2026-11-08 | `v0.33.3` | Prop panel header: layer name and its vertical divider removed |
