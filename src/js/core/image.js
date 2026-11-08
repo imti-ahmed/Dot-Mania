@@ -7,7 +7,7 @@
  *   DotImage.suggestOn(px)                      'dark' | 'light'  which tones should become dots
  *   DotImage.toCells(px, cols, rows, opts)      [[col,row], ...]
  *
- * opts: { style: 'threshold' | 'dither' | 'halftone', level: 0..1, on: 'dark' | 'light' }
+ * opts: { style: 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light' }
  *   level is the amount of "ink": higher means more dots.
  *   Transparent pixels (alpha < 50%) never become dots, so logos with transparent backgrounds just work.
  */
@@ -91,6 +91,13 @@
         if (!solid[p]) continue;
         x = p % cols; y = (p / cols) | 0;
         if (v[p] > (B[(y & 3) * 4 + (x & 3)] + 0.5) / 16) out.push([x, y]);
+      }
+    } else if (o.style === 'outline') {
+      // Only the edge: a cell that is ink and touches a cell that is not ink (or the picture's border).
+      var ink = function (xx, yy) { return xx >= 0 && yy >= 0 && xx < cols && yy < rows && solid[yy * cols + xx] && v[yy * cols + xx] > 0.5; };
+      for (p = 0; p < n; p++) {
+        x = p % cols; y = (p / cols) | 0;
+        if (ink(x, y) && !(ink(x - 1, y) && ink(x + 1, y) && ink(x, y - 1) && ink(x, y + 1))) out.push([x, y]);
       }
     } else {
       for (p = 0; p < n; p++) if (solid[p] && v[p] > 0.5) out.push([p % cols, (p / cols) | 0]);

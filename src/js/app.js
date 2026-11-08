@@ -1691,7 +1691,7 @@
 
     var opts = document.createElement('div');
     opts.className = 'img-opts is-empty';
-    var styleRow = segRow('Style', [{ v: 'threshold', label: 'Threshold' }, { v: 'dither', label: 'Dither' }, { v: 'halftone', label: 'Halftone' }],
+    var styleRow = segRow('Style', [{ v: 'threshold', label: 'Threshold' }, { v: 'dither', label: 'Dither' }, { v: 'outline', label: 'Outline' }],
       function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); });
     var levelRow = sliderRow({
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,

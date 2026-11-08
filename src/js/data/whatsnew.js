@@ -10,7 +10,7 @@ window.WHATS_NEW = [
     'The Hash shape is now ASCII: every dot becomes a text character such as @, #, % or *.'
   ] },
   { v: '0.36.0', date: '2026-11-08', items: [
-    'Image upload has a third style, Halftone, which turns tones into a neat, regular pattern of dots.'
+    'Image upload has a third style, Outline, which keeps only the edge of the picture as dots.'
   ] },
   { v: '0.33.0', date: '2026-11-08', items: [
     'Select now shows Move, Resize and Delete in the left panel while something is selected.',
