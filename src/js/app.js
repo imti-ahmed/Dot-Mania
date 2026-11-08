@@ -963,6 +963,7 @@
     input.addEventListener('input', function () { o.onChange(sync()); });
     if (o.onCommit) input.addEventListener('change', o.onCommit);
     sync();
+    row.set = function (v) { input.value = v; sync(); };
     return row;
   }
 
@@ -1613,7 +1614,13 @@
 
   var imgSrc = null;          // { el, w, h } the uploaded picture
   var imgRaster = null;       // that picture drawn at one pixel per grid cell (cached)
-  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', fit: 'fit' };
+  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', fit: 'fit', tone: 0.25 };
+  // "Dots on" slider: left of the middle = dots on the dark parts, right = on the light parts; the further out, the more dots.
+  function setTone(s) {
+    imgOpts.tone = s;
+    imgOpts.on = s < 0.5 ? 'dark' : 'light';
+    imgOpts.level = 0.2 + 0.6 * Math.abs(2 * s - 1);
+  }
   var imgUI = {};
 
   // Halve repeatedly until close to the target size; one big jump would alias badly.
@@ -1669,8 +1676,8 @@
       imgSrc = { el: el, w: el.naturalWidth || 512, h: el.naturalHeight || 512 };   // SVGs may report 0
       imgRaster = null;
       var before = beginEdit();
-      imgOpts.on = window.DotImage.suggestOn(getRaster());                           // dots on the minority tone
-      imgUI.onRow.repaint();
+      setTone(window.DotImage.suggestOn(getRaster()) === 'light' ? 0.75 : 0.25);     // dots on the minority tone
+      imgUI.onRow.set(imgOpts.tone);
       applyImage();
       endEdit(before);
       setImageActive(true);
@@ -1697,8 +1704,11 @@
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
       fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.level = v; applyImage(); }
     });
-    var onRow = segRow('Dots on', [{ v: 'dark', label: 'Dark' }, { v: 'light', label: 'Light' }],
-      function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
+    var onRow = sliderRow({
+      label: 'Dots on', min: 0, max: 1, step: 0.01, value: imgOpts.tone,
+      fmt: function (v) { return (v < 0.5 ? 'Dark ' : 'Light ') + Math.round(Math.abs(2 * v - 1) * 100) + '%'; },
+      onChange: function (v) { setTone(v); applyImage(); }
+    });
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
       function () { return imgOpts.fit; }, function (v) { imgOpts.fit = v; imgRaster = null; applyImage(); });
     var rowsToShow = FLAGS.imageAdvanced ? [styleRow, levelRow, onRow, fitRow] : [styleRow, onRow];

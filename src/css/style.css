@@ -1428,6 +1428,8 @@ body[data-view="home"] .app {
 .img-opts { display: flex; flex-direction: column; gap: 8px; }
 .img-opts .row { grid-template-columns: 74px minmax(0, 1fr); gap: 10px; min-height: 0; padding: 0; }
 .img-opts .row .lbl { font-size: 11px; }
+.img-opts .row:has(.slider) { grid-template-columns: 74px minmax(0, 1fr) 62px; }
+.img-opts .row:has(.slider) .out { font-size: 10px; white-space: nowrap; }
 .img-opts .seg { gap: 6px; }
 .img-opts .seg:has(.key:nth-child(3)) { grid-template-columns: repeat(3, 1fr); gap: 4px; }
 .img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 2px; font-size: 10px; }
