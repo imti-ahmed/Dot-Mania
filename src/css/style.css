@@ -672,7 +672,7 @@ kbd {
    panel width + half the 16px gap, less the header padding (16), bar padding (6), flex gap (14) and divider (2). */
 .statusbar {
   flex: none;
-  width: calc(var(--panel-w) - 29px);
+  width: 331px;               /* fixed: the header looks the same whatever the side panels measure (was the 360px panel width less 29) */
   min-width: 0;
   display: flex;
   align-items: center;
