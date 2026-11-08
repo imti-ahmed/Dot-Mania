@@ -1474,3 +1474,9 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 
 /* Colour: the circles and the spectrum are two separate cards */
 #colorControls .swatch-grid { padding: 12px 8px; border-radius: 10px; background: var(--well); box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); }
+
+/* Export: the same carved divider above every option section; the card takes all the height it needs from Layers */
+.panel2-bottom .group-label:not(.first) { position: relative; margin-top: 8px; padding-top: 14px; }
+.panel2-bottom .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
+.panel2 > .panel2-bottom { flex: 0 0 auto; }
+@media (min-width: 1151px) { .panel2 > .panel2-top { min-height: 96px; } }

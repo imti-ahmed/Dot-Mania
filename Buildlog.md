@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.35.9 | 2026-11-08 | `v0.35.9` | Export panel: dividers between its option sections; the card never scrolls and takes the extra height from Layers (which scrolls its own list) |
 | 0.35.8 | 2026-11-08 | `v0.35.8` | Image options fixed: Style and Dots on go back to one row each (label left, two buttons right) with readable text, instead of cramped half-width columns |
 | 0.35.7 | 2026-11-08 | `v0.35.7` | Color: the circles and the spectrum are two separate cards |
 | 0.35.6 | 2026-11-08 | `v0.35.6` | Color circles: every gradient has its own angle, and Ice, Lava, Dusk and Mint were re-coloured so no two look alike |
