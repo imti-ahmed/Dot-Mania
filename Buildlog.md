@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.37.1 | 2026-11-08 | `v0.37.1` | Image: "Dots on" is a two-way switch (pill with a sliding knob) instead of two buttons or a slider; behaviour is back to plain Dark / Light |
 | 0.37.0 | 2026-11-08 | `v0.37.0` | Image: "Dots on" is a slider (Dark to Light, further from the middle = more dots) instead of two buttons |
 | 0.36.4 | 2026-11-08 | `v0.36.4` | Shapes: ASCII replaced by Heart (ASCII still draws in older files, not offered) |
 | 0.36.3 | 2026-11-08 | `v0.36.3` | Image: Halftone button replaced by Outline (only the edge of the picture becomes dots); Halftone stays in the code, not offered |

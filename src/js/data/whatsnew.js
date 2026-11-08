@@ -7,7 +7,7 @@
  */
 window.WHATS_NEW = [
   { v: '0.37.0', date: '2026-11-08', items: [
-    'Image upload: Dots on is now a slider from Dark to Light. The further from the middle, the more dots.'
+    'Image upload: Dots on is now a switch you slide between Dark and Light.'
   ] },
   { v: '0.36.1', date: '2026-11-08', items: [
     'The Hash shape is now a Heart.'

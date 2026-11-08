@@ -1428,8 +1428,6 @@ body[data-view="home"] .app {
 .img-opts { display: flex; flex-direction: column; gap: 8px; }
 .img-opts .row { grid-template-columns: 74px minmax(0, 1fr); gap: 10px; min-height: 0; padding: 0; }
 .img-opts .row .lbl { font-size: 11px; }
-.img-opts .row:has(.slider) { grid-template-columns: 74px minmax(0, 1fr) 62px; }
-.img-opts .row:has(.slider) .out { font-size: 10px; white-space: nowrap; }
 .img-opts .seg { gap: 6px; }
 .img-opts .seg:has(.key:nth-child(3)) { grid-template-columns: repeat(3, 1fr); gap: 4px; }
 .img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 2px; font-size: 10px; }
@@ -1484,3 +1482,10 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 .panel2-bottom .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
 .panel2 > .panel2-bottom { flex: 0 0 auto; }
 @media (min-width: 1151px) { .panel2 > .panel2-top { min-height: 96px; } }
+
+/* Two-way switch (Image: Dots on): a pill, the knob slides to the chosen side */
+.switch2 { position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: center; height: var(--key-h); padding: 0; border-radius: 999px; background: var(--well); box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.switch2 span { position: relative; z-index: 1; text-align: center; transition: color .15s; }
+.switch2 .knob { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 999px; background: #1d1d1d; box-shadow: 0 2px 0 #080808, 0 3px 6px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .12); transition: transform .18s ease; }
+.switch2.right .knob { transform: translateX(100%); }
+.switch2:not(.right) span:first-of-type, .switch2.right span:last-of-type { color: var(--text); }
