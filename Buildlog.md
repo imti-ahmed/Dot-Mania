@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.29.1 | 2026-11-08 | `v0.29.1` | Code export buttons side by side with shorter names (HTML, Copy LLM) |
 | 0.29.0 | 2026-11-08 | `v0.29.0` | Real layers: each layer has its own dots, per-dot colours, animation, values, mark shape and undo history; all play together on one canvas (engine drawLayers, loop = longest animation, others time-scaled to whole cycles). Prop panel loses its tabs (header "Properties"); Topend panel = Layers (add / pick / delete, Layer 1, Layer 2...); Btmend panel = Export. Exports (component, GIF, WebM, PNG, SVG), Open HTML and Library previews handle several layers; old single-animation files still open. Old stacking tab removed |
 | 0.28.0 | 2026-11-08 | `v0.28.0` | Per-dot colour: each dot keeps the colour selected when it was drawn (cellColor map, kept through undo, Select-move and canvas resize); exports store a colour palette with the runs and the component, import, library preview, GIF/WebM/PNG/SVG use it. Right side split in two: a second panel with an empty top and bottom card; stacked layout below 1150px |
 | 0.27.0 | 2026-11-08 | `v0.27.0` | Right panel tabs are Animate / Layers / Export. New Layers tab (stack list: add up to 3, reorder, remove, per-layer sliders); old Stacking switch hidden behind the new `stackingSwitch` flag; picking in Animate ends the stack. Preset and shape grids add columns on a wide panel (container query) instead of stretching |
