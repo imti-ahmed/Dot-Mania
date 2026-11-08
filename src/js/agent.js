@@ -347,7 +347,7 @@
       fn: setAnimation, run: function (i) { return setAnimation(i.animation, i.values); } },
     { name: 'setColor', sig: "setColor({ mode, hex })", does: "A colour mode (see options().colors), or { hex: '#ef282d' } for one solid colour.",
       input: schema({ mode: { type: 'string' }, hex: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' } }), fn: setColor },
-    { name: 'setDotShape', sig: "setDotShape('dot'|'square'|'diamond'|'triangle'|'star'|'ascii')", does: 'The shape of every mark.',
+    { name: 'setDotShape', sig: "setDotShape('dot'|'square'|'diamond'|'triangle'|'star'|'heart')", does: 'The shape of every mark.',
       input: schema({ shape: { type: 'string', enum: ids(A.dotShapes) } }, ['shape']), fn: setDotShape, run: function (i) { return setDotShape(i.shape); } },
     { name: 'setInteraction', sig: "setInteraction('auto'|'hover'|'click')", does: 'How the exported animation plays (only when the interaction flag is on).',
       input: schema({ mode: { type: 'string', enum: ids(A.interactions) } }, ['mode']), fn: setInteraction, run: function (i) { return setInteraction(i.mode); } },

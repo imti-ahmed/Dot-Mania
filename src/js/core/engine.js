@@ -1,7 +1,7 @@
 /*
  * Rendering engine shared by the editor and the exported web component.
  *
- * geo = { ox, oy, cell, shape } where shape is 'dot' | 'square' | 'diamond' | 'triangle' | 'star' | 'ascii' ('hash' still draws, for older files).
+ * geo = { ox, oy, cell, shape } where shape is 'dot' | 'square' | 'diamond' | 'triangle' | 'star' | 'heart' ('hash' and 'ascii' still draw, for older files).
  *
  * IMPORTANT: the functions below are serialised with Function.prototype.toString()
  * and pasted into exported code, so they must stay self-contained: they may only use
@@ -127,6 +127,12 @@
         var ang = -Math.PI / 2 + n * Math.PI / 5, rad = n % 2 ? r * 0.45 : r;
         if (n) ctx.lineTo(x + Math.cos(ang) * rad, y + Math.sin(ang) * rad); else ctx.moveTo(x + Math.cos(ang) * rad, y + Math.sin(ang) * rad);
       }
+      ctx.closePath();
+    } else if (shape === 'heart') {                 // two lobes and a point, centred on its bounding box
+      r = h * 1.3;
+      ctx.moveTo(x, y + r * 0.85);
+      ctx.bezierCurveTo(x - r * 1.3, y + r * 0.1, x - r * 0.9, y - r * 0.9, x, y - r * 0.35);
+      ctx.bezierCurveTo(x + r * 0.9, y - r * 0.9, x + r * 1.3, y + r * 0.1, x, y + r * 0.85);
       ctx.closePath();
     } else if (shape === 'triangle') {
       r = h * 1.4;                                   // pointing up, centred on its bounding box

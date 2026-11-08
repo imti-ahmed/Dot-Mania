@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.36.4 | 2026-11-08 | `v0.36.4` | Shapes: ASCII replaced by Heart (ASCII still draws in older files, not offered) |
 | 0.36.3 | 2026-11-08 | `v0.36.3` | Image: Halftone button replaced by Outline (only the edge of the picture becomes dots); Halftone stays in the code, not offered |
 | 0.36.2 | 2026-11-08 | `v0.36.2` | Image: Dither and Halftone keep texture in solid areas (full ink = 78% of dots) so flat shapes and logos no longer look the same as Threshold |
 | 0.36.1 | 2026-11-08 | `v0.36.1` | Shapes: Hash replaced by ASCII (text characters such as @ # % & * picked by position); Hash still draws in older files |

@@ -7,7 +7,7 @@
  */
 window.WHATS_NEW = [
   { v: '0.36.1', date: '2026-11-08', items: [
-    'The Hash shape is now ASCII: every dot becomes a text character such as @, #, % or *.'
+    'The Hash shape is now a Heart.'
   ] },
   { v: '0.36.0', date: '2026-11-08', items: [
     'Image upload has a third style, Outline, which keeps only the edge of the picture as dots.'
