@@ -1425,10 +1425,11 @@ body[data-view="home"] .app {
 
 /* Image: Upload / Remove on one line, the two choices side by side with their label above. */
 #imageControls .pair .key { height: var(--key-h); }
-.img-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
-.img-opts .row { grid-template-columns: 1fr; gap: 4px; min-height: 0; padding: 0; }
-.img-opts .row .lbl { font-size: 10px; }
-.img-opts .seg .key { height: var(--key-h); padding: 0 3px; font-size: 9px; letter-spacing: .03em; }
+.img-opts { display: flex; flex-direction: column; gap: 8px; }
+.img-opts .row { grid-template-columns: 74px minmax(0, 1fr); gap: 10px; min-height: 0; padding: 0; }
+.img-opts .row .lbl { font-size: 11px; }
+.img-opts .seg { gap: 6px; }
+.img-opts .seg .key { height: var(--key-h); padding: 0 6px; font-size: 11px; }
 
 /* Left panel: the Select options sit where Eraser / Invert / Clear were */
 #selActions[hidden], #editActions[hidden] { display: none; }
