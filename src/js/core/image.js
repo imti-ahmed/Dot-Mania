@@ -59,6 +59,9 @@
       v[p] = Math.max(0, Math.min(1, ink + bias));
     }
 
+    // Dither and Halftone keep a little texture even in solid areas (full ink = about 78% of the dots), so flat shapes and
+    // logos show the difference between them and Threshold; photos keep their tones, just a touch lighter.
+    if (o.style === 'dither' || o.style === 'halftone') for (p = 0; p < n; p++) v[p] *= 0.78;
     var out = [], x, y;
     if (o.style === 'dither') {
       // Floyd-Steinberg, serpentine: smooth tones become a believable density of dots.

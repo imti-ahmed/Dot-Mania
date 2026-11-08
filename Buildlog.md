@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.36.2 | 2026-11-08 | `v0.36.2` | Image: Dither and Halftone keep texture in solid areas (full ink = 78% of dots) so flat shapes and logos no longer look the same as Threshold |
 | 0.36.1 | 2026-11-08 | `v0.36.1` | Shapes: Hash replaced by ASCII (text characters such as @ # % & * picked by position); Hash still draws in older files |
 | 0.36.0 | 2026-11-08 | `v0.36.0` | Image: third style, Halftone (ordered dither: a regular printed-dot pattern) next to Threshold and Dither |
 | 0.35.9 | 2026-11-08 | `v0.35.9` | Export panel: dividers between its option sections; the card never scrolls and takes the extra height from Layers (which scrolls its own list) |
