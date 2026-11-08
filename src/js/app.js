@@ -21,7 +21,7 @@
     tool: 'pencil',
     playing: true,
     art: { w: 1080, h: 1080 },     // artboard size in px (1080x1080 by default; the wide 1920x1080 is behind the canvasSizes flag)
-    dotShape: 'dot',               // mark shape: dot | square | diamond | triangle
+    dotShape: 'dot',               // mark shape: dot | square | diamond | triangle | star | hash
     preset: PRESETS[0].id,         // the base animation (first of the stack)
     stacking: false,               // Stacking switch: pick up to 3 animations that run together
     stack: [PRESETS[0].id],        // animation ids in the order they were clicked
@@ -1250,7 +1250,9 @@
     { id: 'dot', name: 'Dot' },
     { id: 'square', name: 'Square' },
     { id: 'diamond', name: 'Diamond' },
-    { id: 'triangle', name: 'Triangle' }
+    { id: 'triangle', name: 'Triangle' },
+    { id: 'star', name: 'Star' },
+    { id: 'hash', name: 'Hash' }
   ];
   function buildDotShapes() {
     var grid = document.createElement('div');
@@ -2122,6 +2124,18 @@
     var attrs = ' fill="' + fill + '"' + (op < 1 ? ' fill-opacity="' + op.toFixed(3) + '"' : '') + '/>';
     if (shape === 'square') return '<rect x="' + n(x - h) + '" y="' + n(y - h) + '" width="' + n(s) + '" height="' + n(s) + '"' + attrs;
     if (shape === 'diamond') { r = h * 1.25; return '<polygon points="' + pts([[x, y - r], [x + r, y], [x, y + r], [x - r, y]]) + '"' + attrs; }
+    if (shape === 'star') {
+      r = h * 1.45;
+      var sp = [];
+      for (var q = 0; q < 10; q++) { var an = -Math.PI / 2 + q * Math.PI / 5, rd = q % 2 ? r * 0.45 : r; sp.push([x + Math.cos(an) * rd, y + Math.sin(an) * rd]); }
+      return '<polygon points="' + pts(sp) + '"' + attrs;
+    }
+    if (shape === 'hash') {
+      var hl = h * 1.15, hb = h * 0.4, th = Math.max(1, s * 0.22);
+      return [[x - hb - th / 2, y - hl, th, hl * 2], [x + hb - th / 2, y - hl, th, hl * 2], [x - hl, y - hb - th / 2, hl * 2, th], [x - hl, y + hb - th / 2, hl * 2, th]]
+        .map(function (b) { return 'M' + n(b[0]) + ' ' + n(b[1]) + 'h' + n(b[2]) + 'v' + n(b[3]) + 'h' + n(-b[2]) + 'z'; })
+        .reduce(function (d, part) { return d + part; }, '<path d="') + '"' + attrs;
+    }
     if (shape === 'triangle') { r = h * 1.4; return '<polygon points="' + pts([[x, y - r * 0.85], [x + r * 0.9, y + r * 0.85], [x - r * 0.9, y + r * 0.85]]) + '"' + attrs; }
     return '<circle cx="' + n(x) + '" cy="' + n(y) + '" r="' + n(h) + '"' + attrs;
   }

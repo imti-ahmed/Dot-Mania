@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.32.0', date: '2026-11-08', items: [
+    'Two new dot shapes: Star and Hash (#).'
+  ] },
   { v: '0.31.0', date: '2026-11-08', items: [
     'Layers are limited to 5.',
     'Play and Open HTML moved to the left panel.'

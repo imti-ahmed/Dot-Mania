@@ -1,7 +1,7 @@
 /*
  * Rendering engine shared by the editor and the exported web component.
  *
- * geo = { ox, oy, cell, shape } where shape is 'dot' | 'square' | 'diamond' | 'triangle'.
+ * geo = { ox, oy, cell, shape } where shape is 'dot' | 'square' | 'diamond' | 'triangle' | 'star' | 'hash'.
  *
  * IMPORTANT: the functions below are serialised with Function.prototype.toString()
  * and pasted into exported code, so they must stay self-contained: they may only use
@@ -92,10 +92,25 @@
   function dot(ctx, x, y, s, shape) {
     var h = s / 2, r;
     if (shape === 'square') { ctx.fillRect(x - h, y - h, s, s); return; }
+    if (shape === 'hash') {                          // # : two upright and two flat bars
+      var hl = h * 1.15, hb = h * 0.4, th = Math.max(1, s * 0.22);
+      ctx.beginPath();                               // one path, so the crossings are not drawn twice (no darker spots)
+      ctx.rect(x - hb - th / 2, y - hl, th, hl * 2); ctx.rect(x + hb - th / 2, y - hl, th, hl * 2);
+      ctx.rect(x - hl, y - hb - th / 2, hl * 2, th); ctx.rect(x - hl, y + hb - th / 2, hl * 2, th);
+      ctx.fill();
+      return;
+    }
     ctx.beginPath();
     if (shape === 'diamond') {
       r = h * 1.25;
       ctx.moveTo(x, y - r); ctx.lineTo(x + r, y); ctx.lineTo(x, y + r); ctx.lineTo(x - r, y);
+      ctx.closePath();
+    } else if (shape === 'star') {                  // a five-point star, point up
+      r = h * 1.45;
+      for (var n = 0; n < 10; n++) {
+        var ang = -Math.PI / 2 + n * Math.PI / 5, rad = n % 2 ? r * 0.45 : r;
+        if (n) ctx.lineTo(x + Math.cos(ang) * rad, y + Math.sin(ang) * rad); else ctx.moveTo(x + Math.cos(ang) * rad, y + Math.sin(ang) * rad);
+      }
       ctx.closePath();
     } else if (shape === 'triangle') {
       r = h * 1.4;                                   // pointing up, centred on its bounding box
