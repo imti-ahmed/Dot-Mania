@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.33.3 | 2026-11-08 | `v0.33.3` | Prop panel header: layer name and its vertical divider removed |
 | 0.33.2 | 2026-11-08 | `v0.33.2` | Every studio button now has the same height (32px, one `--key-h` variable), including the compact Colour, Image, Layers and Select buttons |
 | 0.33.1 | 2026-11-08 | `v0.33.1` | Select pointer feedback: resize arrows on the handles (by direction), a move cross inside the selection, a closed hand while dragging it |
 | 0.33.0 | 2026-11-08 | `v0.33.0` | Select: with a selection the Left panel shows Move / Resize / Delete instead of Eraser / Invert / Clear; Resize uses 8 handles (Shift keeps proportions, Alt from centre, dots re-sampled with colours kept). Circle + Shift draws from the centre outward; Alt = from centre for Shape and Circle. Prop panel: Colour (chips + swatches side by side) and Image (options side by side) made compact |

@@ -1359,7 +1359,7 @@
 
   // The Layers list in the Topend panel: pick a layer to edit it, remove one, or add a new one.
   function buildLayerPanel() {
-    var list = $('#layerList'), add = $('#addLayerBtn'), tag = $('#propLayer');
+    var list = $('#layerList'), add = $('#addLayerBtn');
     if (!list) return;
     list.innerHTML = '';
     layers.forEach(function (L, i) {
@@ -1379,7 +1379,6 @@
       list.appendChild(row);
     });
     if (add) add.disabled = layers.length >= LAYER_MAX;
-    if (tag && layers[activeLayer]) tag.textContent = layers[activeLayer].name;
   }
 
   var stackRow = null;

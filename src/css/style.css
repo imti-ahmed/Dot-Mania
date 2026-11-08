@@ -1418,20 +1418,8 @@ body[data-view="home"] .app {
 
 /* Prop header: the layer name sits at the right end in brackets, after a vertical divider */
 
-/* Prop header: a slim slot at the right end, cut off by a full-height vertical divider, wide enough for a layer name */
-.panel-header { align-items: center; height: 44px; padding: 0 0 0 16px; }
-.panel-meta {
-  align-self: stretch;
-  flex: none;
-  width: 116px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 10px;
-  border-left: 2px solid #070707;
-  box-shadow: inset 1px 0 0 #3a3a3a;
-}
-.panel-meta .panel-sub { max-width: 100%; }
+/* Prop header */
+.panel-header { align-items: center; height: 44px; padding: 0 16px; }
 
 /* ---------- Prop panel: compact Colour and Image ---------- */
 /* Colour: the colour styles on the left as small chips, the solid colours on the right, side by side. */
