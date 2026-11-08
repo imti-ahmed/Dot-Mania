@@ -26,6 +26,7 @@
     exportMp4: true,            // Export > Media: "MP4" video of the full loop (needs a browser that can record MP4)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
+    agentTools: true,           // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */
 
