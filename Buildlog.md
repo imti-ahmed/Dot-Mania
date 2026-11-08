@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.26.3 | 2026-11-08 | `v0.26.3` | Left bar credit on two lines (Crafted By / Imtiyaz Ahmed), pinned to the bottom end; no sideways scroll |
 | 0.26.2 | 2026-11-08 | `v0.26.2` | Header navbar back to how it was: the status bar (version, views, stars) is a fixed 331px again instead of following the wider right panel |
 | 0.26.1 | 2026-11-08 | `v0.26.1` | Left bar made slim: fixed 164px wide, the rest of the freed width goes to the right panel |
 | 0.26.0 | 2026-11-08 | `v0.26.0` | Canvas card is a square sized to the screen height; the freed width goes to the side panels (left about a third, right the rest); left bar buttons are icon + text; stacked layout now below 1000px |

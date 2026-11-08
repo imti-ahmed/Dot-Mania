@@ -1357,3 +1357,8 @@ body[data-view="home"] .app {
   .sidebar .key { width: auto; }
   .toolstrip .key, .editstrip .key, .sizes .key { width: auto; }
 }
+
+/* Credit: two lines, pinned to the bottom end of the left bar, no sideways scroll */
+.sidebar { overflow-x: hidden; }
+.sidebar > .crafted { margin-top: auto; flex: none; padding: 14px 10px; text-align: center; }
+.sidebar > .crafted span { display: flex; flex-direction: column; gap: 3px; align-items: center; line-height: 1.3; }
