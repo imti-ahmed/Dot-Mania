@@ -1058,15 +1058,22 @@
 
   // Preview background for a colour style circle: its gradient, sampled from the real colour function.
   function modePreview(id) {
+    var rgb = function (c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }, st, i, n;
     if (id === 'white') return '#ffffff';
-    if (id === 'glitter') return 'conic-gradient(#ffffff, #ff5fa2, #2de2e6, #ffd23f, #8f7bff, #5cf08a, #ffffff)';
-    var stops = [], n = 6, i, c;
-    for (i = 0; i < n; i++) {
-      var x = i / (n - 1);
-      c = { d: x, ux: x * 2 - 1, uy: x * 2 - 1, rnd: 0.5 };
-      stops.push(E.colorFor({ mode: id, steps: 12, cycle: 1 }, c, x, 0.12));
+    if (id === 'rainbow' || id === 'glitter') {
+      st = [];
+      for (i = 0; i <= 6; i++) st.push('hsl(' + (i * 60 + (id === 'glitter' ? 20 : 0)) + ',90%,62%)');
+      return 'radial-gradient(circle at 70% 25%, rgba(255,255,255,.55), transparent 45%), conic-gradient(from 40deg,' + st.join(',') + ')';
     }
-    return 'linear-gradient(135deg,' + stops.join(',') + ')';
+    var S = E.STOPS[id];
+    if (!S) return '#888';
+    // a fluid blend: the palette as a soft diagonal sweep, with the first and last colours bleeding in as glows
+    n = S.length;
+    st = S.map(rgb);
+    return 'radial-gradient(circle at 25% 78%, ' + st[0] + ', transparent 58%), ' +
+           'radial-gradient(circle at 78% 22%, ' + st[n - 1] + ', transparent 55%), ' +
+           'radial-gradient(circle at 70% 78%, ' + st[Math.floor(n / 2)] + ', transparent 60%), ' +
+           'linear-gradient(135deg,' + st.join(',') + ')';
   }
   // The colour spectrum card: left to right is the hue, top is light, middle is pure, bottom is dark.
   function spectrumHex(x, y) {
