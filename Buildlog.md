@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.1 | 2026-11-08 | `v0.38.1` | Image laid out like Color: a preview box on the left with Upload/Replace and Remove below it, the three styles on top and Dots on below, on the right |
 | 0.38.0 | 2026-11-08 | `v0.38.0` | Image option remade: an upload card with a thumbnail and a small remove button, three style tiles with dot pictures (Threshold, Dither, Outline), and the Dots on switch |
 | 0.37.1 | 2026-11-08 | `v0.37.1` | Image: "Dots on" is a two-way switch (pill with a sliding knob) instead of two buttons or a slider; behaviour is back to plain Dark / Light |
 | 0.37.0 | 2026-11-08 | `v0.37.0` | Image: "Dots on" is a slider (Dark to Light, further from the middle = more dots) instead of two buttons |

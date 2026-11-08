@@ -1675,8 +1675,7 @@
     imgUI.remove.disabled = !on;
     if (imgUI.drop) {
       imgUI.drop.classList.toggle('has-image', !!on);
-      imgUI.drop.querySelector('.img-title').textContent = on ? 'Image loaded' : 'Upload image';
-      imgUI.drop.querySelector('.img-hint').textContent = on ? 'click to replace it' : 'or drop it on the canvas';
+      $('#imgUpload span').textContent = on ? 'Replace' : 'Upload';
       imgUI.thumb();
     }
   }
@@ -1716,34 +1715,32 @@
   function buildImage() {
     var el = $('#imageControls');
 
-    // The upload card: a thumbnail slot, what to do, and a small remove button.
-    var drop = document.createElement('div');
-    drop.className = 'img-drop';
-    drop.innerHTML =
-      '<button class="img-pick" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)">' +
-        '<span class="img-thumb"><canvas width="96" height="96"></canvas><b>+</b></span>' +
-        '<span class="img-text"><span class="img-title">Upload image</span><span class="img-hint">or drop it on the canvas</span></span>' +
-      '</button>' +
-      '<button class="key img-x" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" aria-label="Remove image" disabled>\u00d7</button>';
-    el.appendChild(drop);
+    // Left: a preview box with the picture, and Replace / Remove below it.
+    var left = document.createElement('div');
+    left.className = 'img-left';
+    left.innerHTML =
+      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)"><canvas width="160" height="160"></canvas><b>+</b></button>' +
+      '<button class="key" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)"><span>Upload</span></button>' +
+      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" disabled><span>Remove</span></button>';
+    el.appendChild(left);
 
+    // Right: the style at the top, Dots on below.
     var opts = document.createElement('div');
     opts.className = 'img-opts is-empty';
-
     var cap = document.createElement('div');
     cap.className = 'sub-label'; cap.textContent = 'Style';
-    var tiles = document.createElement('div');
-    tiles.className = 'style-tiles';
+    var list = document.createElement('div');
+    list.className = 'style-list';
     [['threshold', 'Threshold'], ['dither', 'Dither'], ['outline', 'Outline']].forEach(function (s) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'style-tile'; b.dataset.v = s[0];
       b.innerHTML = styleIcon(s[0]) + '<span>' + s[1] + '</span>';
       b.addEventListener('click', function () { imgOpts.style = s[0]; paintTiles(); applyImage(); });
-      tiles.appendChild(b);
+      list.appendChild(b);
     });
-    function paintTiles() { tiles.querySelectorAll('.style-tile').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === imgOpts.style)); }); }
+    function paintTiles() { list.querySelectorAll('.style-tile').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === imgOpts.style)); }); }
     paintTiles();
-    opts.appendChild(cap); opts.appendChild(tiles);
+    opts.appendChild(cap); opts.appendChild(list);
 
     var levelRow = sliderRow({
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
@@ -1755,18 +1752,20 @@
     (FLAGS.imageAdvanced ? [levelRow, onRow, fitRow] : [onRow]).forEach(function (r) { opts.appendChild(r); });
     el.appendChild(opts);
 
-    // The thumbnail: the picture, cropped to the square slot (blank again when there is no picture).
-    var thumb = drop.querySelector('canvas'), tctx = thumb.getContext('2d');
+    // The preview: the whole picture, fitted into the square (blank again when there is no picture).
+    var preview = left.querySelector('#imgPreview'), canvas = preview.querySelector('canvas'), pctx = canvas.getContext('2d');
     function drawThumb() {
-      tctx.clearRect(0, 0, 96, 96);
+      pctx.clearRect(0, 0, 160, 160);
       if (!imgSrc) return;
-      var sc = Math.max(96 / imgSrc.w, 96 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
-      tctx.drawImage(imgSrc.el, (96 - w) / 2, (96 - h) / 2, w, h);
+      var sc = Math.min(160 / imgSrc.w, 160 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
+      pctx.drawImage(imgSrc.el, (160 - w) / 2, (160 - h) / 2, w, h);
     }
-    imgUI = { opts: opts, onRow: onRow, remove: drop.querySelector('#imgRemove'), drop: drop, thumb: drawThumb };
+    imgUI = { opts: opts, onRow: onRow, remove: left.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
 
     var input = $('#imageFile');
-    $('#imgUpload').addEventListener('click', function () { input.click(); });
+    function pick() { input.click(); }
+    preview.addEventListener('click', pick);
+    $('#imgUpload').addEventListener('click', pick);
     input.addEventListener('change', function () { loadImageFile(input.files[0]); input.value = ''; });
     imgUI.remove.addEventListener('click', function () { imgSrc = null; imgRaster = null; setImageActive(false); });
   }
