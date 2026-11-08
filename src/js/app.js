@@ -1080,7 +1080,7 @@
 
   function buildColor() {
     var el = $('#colorControls'), m = state.color;
-    // One grid of circles: the colour styles first, then the solid colours, two rows.
+    // One grid of circles, one per colour style; any single colour comes from the spectrum card.
     var grid = document.createElement('div');
     grid.className = 'swatch-grid';
     COLOR_MODES.forEach(function (c) {
@@ -1090,14 +1090,6 @@
       b.addEventListener('click', function () { m.mode = c.id; paint(); recolorSelection(); });
       grid.appendChild(b);
     });
-    SWATCHES.forEach(function (c) {
-      var b = document.createElement('button');
-      b.className = 'swatch'; b.style.setProperty('--c', c); b.dataset.color = c;
-      b.title = c; b.setAttribute('aria-label', 'Color ' + c);
-      b.addEventListener('click', function () { m.mode = 'solid'; m.hex = c; paint(); recolorSelection(); });
-      grid.appendChild(b);
-    });
-    grid.style.setProperty('--per-row', Math.ceil((COLOR_MODES.length + SWATCHES.length) / 2));
     el.appendChild(grid);
     if (FLAGS.colorRandom) {
       var rb = document.createElement('button');

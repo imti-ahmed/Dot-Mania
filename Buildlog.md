@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.34.2 | 2026-11-08 | `v0.34.2` | Color: 3 columns of gradient circles only (solid circles removed, the spectrum card makes any single colour); Forest turned on to make a full 3 x 3 |
 | 0.34.1 | 2026-11-08 | `v0.34.1` | Color: circles on the left, spectrum card on the right |
 | 0.34.0 | 2026-11-08 | `v0.34.0` | Color: colour styles and solid colours are circles in two rows (styles show their gradient); the custom picker button is replaced by a spectrum card with a draggable circle |
 | 0.33.6 | 2026-11-08 | `v0.33.6` | Welcome popup turned off for now (`welcomePopup` flag) |

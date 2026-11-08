@@ -1445,7 +1445,7 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 /* ---------- Colour: circles in two rows, then a spectrum card ---------- */
 #colorControls { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 10px 12px; align-items: stretch; }
 #colorControls > .row, #colorControls > .key { grid-column: 1 / -1; }
-#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 0; align-content: space-between; justify-items: center; padding: 2px 0; }
+#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 0; align-content: space-between; justify-items: center; padding: 2px 0; }
 #colorControls .swatch { width: 22px; height: 22px; background: var(--c); }
 .spectrum {
   position: relative;

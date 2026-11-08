@@ -32,7 +32,7 @@
 
     exportPng: false,           // Export > Media: "PNG" (the frame on screen, at full size; replaced by SVG)
     colorRandom: false,         // Color group: a Randomize button in the colour grid (the left bar Randomize still picks a colour)
-    forestColor: false,         // Color group: the "Forest" green gradient
+    forestColor: true,          // Color group: the "Forest" green gradient
     homePage: false,            // A welcome page at / in front of the tool (off: the tool opens straight away at /)
     aboutPage: false,           // Top nav: the About page (/tabs/about)
     guidePage: false,           // Top nav: the Guide page (/tabs/guide)
