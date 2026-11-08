@@ -786,13 +786,13 @@
     }
     common('speed');
     common('size');
-    layers.forEach(function (preset) {
+    if (layers.length > 1) {
+      var hint = document.createElement('div');
+      hint.className = 'sub-label'; hint.textContent = 'Each layer’s own sliders are in Layers';
+      el.appendChild(hint);
+    }
+    (layers.length === 1 ? layers : []).forEach(function (preset) {
       var vals = state.values[preset.id];
-      if (layers.length > 1) {
-        var sub = document.createElement('div');
-        sub.className = 'sub-label'; sub.textContent = preset.name;
-        el.appendChild(sub);
-      }
       preset.params.forEach(function (q) {
         el.appendChild(sliderRow({
           label: q.label, min: q.min, max: q.max, step: q.step, fmt: q.fmt,
@@ -801,6 +801,7 @@
       });
     });
     common('glow');
+    buildLayers();
   }
 
   // Three rows of four. When there are more presets than fit, the last slot is a quiet "More" button
@@ -850,6 +851,8 @@
   function selectPreset(id) {
     state.preset = id;
     state.stack = [id];
+    state.stacking = false;
+    if (stackRow) stackRow.repaint();
     if (MAIN.length > PRESET_SLOTS && MAIN.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1 && !presetsOpen) {
       presetsOpen = true; renderPresets();      // never leave the chosen animation hidden
     }
@@ -859,7 +862,7 @@
 
   // A click on an animation: picks it, or with Stacking on adds it to / removes it from the stack.
   function onPresetClick(id) {
-    if (!state.stacking) { selectPreset(id); return; }
+    if (!state.stacking || !FLAGS.stackingSwitch) { selectPreset(id); return; }
     var i = state.stack.indexOf(id);
     if (i > -1) {
       if (state.stack.length === 1) return;
@@ -1009,6 +1012,73 @@
     buildControls();
     setPlaying(true);
     notify('Randomized');
+  }
+
+  /* ---------- Layers tab: the stack as a list (add up to 3, reorder, remove, tune each) ---------- */
+
+  function layersChanged() {
+    state.preset = state.stack[0];
+    state.stacking = state.stack.length > 1;
+    if (stackRow) stackRow.repaint();
+    refreshPresets();
+    buildControls();                                 // also rebuilds the Layers tab
+  }
+  function addLayer(id) {
+    if (state.stack.length >= STACK_MAX || state.stack.indexOf(id) > -1) return;
+    state.stack.push(id);
+    layersChanged();
+  }
+  function removeLayer(i) {
+    if (state.stack.length < 2) return;
+    state.stack.splice(i, 1);
+    layersChanged();
+  }
+  function moveLayer(i, d) {
+    var j = i + d;
+    if (j < 0 || j >= state.stack.length) return;
+    var t = state.stack[i]; state.stack[i] = state.stack[j]; state.stack[j] = t;
+    layersChanged();
+  }
+  function buildLayers() {
+    var list = $('#layerList'), add = $('#layerAdd');
+    if (!list || !add) return;
+    list.innerHTML = ''; add.innerHTML = '';
+    var many = state.stack.length > 1;
+    state.stack.forEach(function (id, i) {
+      var preset = presetById(id), vals = state.values[id], card = document.createElement('div');
+      card.className = 'layer';
+      var head = document.createElement('div');
+      head.className = 'layer-head';
+      head.innerHTML = '<span class="layer-num">' + (i + 1) + '</span><span class="layer-name"></span>' + (i === 0 ? '<span class="layer-tag">Base</span>' : '');
+      head.querySelector('.layer-name').textContent = preset.name;
+      function btn(label, title, on, disabled) {
+        var b = document.createElement('button');
+        b.className = 'key layer-btn'; b.textContent = label; b.title = title; b.setAttribute('aria-label', title);
+        b.disabled = disabled; b.addEventListener('click', on);
+        head.appendChild(b);
+      }
+      btn('↑', 'Move up', function () { moveLayer(i, -1); }, i === 0);
+      btn('↓', 'Move down', function () { moveLayer(i, 1); }, i === state.stack.length - 1);
+      btn('×', 'Remove layer', function () { removeLayer(i); }, !many);
+      card.appendChild(head);
+      if (many) preset.params.forEach(function (q) {
+        card.appendChild(sliderRow({
+          label: q.label, min: q.min, max: q.max, step: q.step, fmt: q.fmt,
+          value: vals[q.key], onChange: function (v) { vals[q.key] = v; }
+        }));
+      });
+      list.appendChild(card);
+    });
+    var full = state.stack.length >= STACK_MAX;
+    $('#layerAddLabel').textContent = full ? 'Layers are full (' + STACK_MAX + ')' : 'Add a layer (up to ' + STACK_MAX + ')';
+    add.hidden = full;
+    MAIN.forEach(function (p) {
+      if (state.stack.indexOf(p.id) > -1) return;
+      var b = document.createElement('button');
+      b.className = 'key'; b.textContent = p.name; b.dataset.id = p.id;
+      b.addEventListener('click', function () { addLayer(p.id); });
+      add.appendChild(b);
+    });
   }
 
   var stackRow = null;

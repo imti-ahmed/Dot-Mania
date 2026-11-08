@@ -6,6 +6,11 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.27.0', date: '2026-11-08', items: [
+    'The right panel now has three tabs: Animate, Layers and Export.',
+    'New Layers tab: stack up to 3 animations, add or remove layers, change their order and tune each one on its own.',
+    'Animation buttons keep an even size, adding columns on a wide panel instead of stretching.'
+  ] },
   { v: '0.26.0', date: '2026-11-08', items: [
     'The canvas card is now a square that fits your screen, with wider side panels around it.',
     'The left panel shows a name next to every tool icon.'

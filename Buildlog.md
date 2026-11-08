@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.27.0 | 2026-11-08 | `v0.27.0` | Right panel tabs are Animate / Layers / Export. New Layers tab (stack list: add up to 3, reorder, remove, per-layer sliders); old Stacking switch hidden behind the new `stackingSwitch` flag; picking in Animate ends the stack. Preset and shape grids add columns on a wide panel (container query) instead of stretching |
 | 0.26.3 | 2026-11-08 | `v0.26.3` | Left bar credit on two lines (Crafted By / Imtiyaz Ahmed), pinned to the bottom end; no sideways scroll |
 | 0.26.2 | 2026-11-08 | `v0.26.2` | Header navbar back to how it was: the status bar (version, views, stars) is a fixed 331px again instead of following the wider right panel |
 | 0.26.1 | 2026-11-08 | `v0.26.1` | Left bar made slim: fixed 164px wide, the rest of the freed width goes to the right panel |

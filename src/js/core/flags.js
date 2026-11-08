@@ -51,6 +51,7 @@
     exportGridOption: false,    // Export: show / hide the empty grid
     exportCopyEmbed: false,     // Export: "Copy embed code" (just the component snippet, no instructions)
     exportDownloadJs: false,    // Export: "Download .js" (the component script on its own)
+    stackingSwitch: false,      // Animate tab: the Stacking Off / On switch (Layers tab now does the stacking: add, reorder, remove)
     canvasSizes: false,         // Left bar: the canvas size buttons and the wide 1920x1080 canvas (off: always the 1080x1080 square)
     statusHeader: false         // the "Preset / Looping" title bar above the panel
   };
