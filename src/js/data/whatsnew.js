@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.36.0', date: '2026-11-08', items: [
+    'Image upload has a third style, Halftone, which turns tones into a neat, regular pattern of dots.'
+  ] },
   { v: '0.33.0', date: '2026-11-08', items: [
     'Select now shows Move, Resize and Delete in the left panel while something is selected.',
     'Resize: drag a handle to stretch the selected dots. Hold Shift to keep the proportions and Alt to resize from the centre.',

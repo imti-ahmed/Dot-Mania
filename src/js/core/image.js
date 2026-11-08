@@ -7,7 +7,7 @@
  *   DotImage.suggestOn(px)                      'dark' | 'light'  which tones should become dots
  *   DotImage.toCells(px, cols, rows, opts)      [[col,row], ...]
  *
- * opts: { style: 'threshold' | 'dither', level: 0..1, on: 'dark' | 'light' }
+ * opts: { style: 'threshold' | 'dither' | 'halftone', level: 0..1, on: 'dark' | 'light' }
  *   level is the amount of "ink": higher means more dots.
  *   Transparent pixels (alpha < 50%) never become dots, so logos with transparent backgrounds just work.
  */
@@ -80,6 +80,14 @@
           spread(x, y + 1, 5 / 16);
           spread(x + dir, y + 1, 1 / 16);
         }
+      }
+    } else if (o.style === 'halftone') {
+      // Ordered (Bayer 4x4) dither: tones become a regular, printed-looking pattern instead of scattered dots.
+      var B = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+      for (p = 0; p < n; p++) {
+        if (!solid[p]) continue;
+        x = p % cols; y = (p / cols) | 0;
+        if (v[p] > (B[(y & 3) * 4 + (x & 3)] + 0.5) / 16) out.push([x, y]);
       }
     } else {
       for (p = 0; p < n; p++) if (solid[p] && v[p] > 0.5) out.push([p % cols, (p / cols) | 0]);

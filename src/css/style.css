@@ -1429,6 +1429,8 @@ body[data-view="home"] .app {
 .img-opts .row { grid-template-columns: 74px minmax(0, 1fr); gap: 10px; min-height: 0; padding: 0; }
 .img-opts .row .lbl { font-size: 11px; }
 .img-opts .seg { gap: 6px; }
+.img-opts .seg:has(.key:nth-child(3)) { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 2px; font-size: 10px; }
 .img-opts .seg .key { height: var(--key-h); padding: 0 6px; font-size: 11px; }
 
 /* Left panel: the Select options sit where Eraser / Invert / Clear were */
