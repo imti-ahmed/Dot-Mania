@@ -1443,12 +1443,13 @@ aside.panel .group-label:not(.first) { position: relative; margin-top: 8px; padd
 aside.panel .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
 
 /* ---------- Colour: circles in two rows, then a spectrum card ---------- */
-#colorControls { display: flex; flex-direction: column; gap: 12px; }
-#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(var(--per-row, 8), 1fr); gap: 12px 0; justify-items: center; padding: 2px 0; }
+#colorControls { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 10px 12px; align-items: stretch; }
+#colorControls > .row, #colorControls > .key { grid-column: 1 / -1; }
+#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 0; align-content: space-between; justify-items: center; padding: 2px 0; }
 #colorControls .swatch { width: 22px; height: 22px; background: var(--c); }
 .spectrum {
   position: relative;
-  height: 64px;
+  min-height: 96px;
   border-radius: 10px;
   cursor: crosshair;
   touch-action: none;
