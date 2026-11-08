@@ -44,6 +44,7 @@
   var repaintColor = function () {}, repaintShapes = function () {};   // set once those panels are built
   var cols = 0, rows = 0, ox = 0, oy = 0;
   var hover = null, drag = null, sel = null;   // sel: the Select tool's rectangle {c0,r0,c1,r1}
+  var baseCursor = '', hoverPt = null, lastCursor = null;   // the chosen pointer, where it is on the canvas, and what is applied now
   var selMode = 'move';                        // with a selection: 'move' (drag inside) or 'resize' (drag a handle)
   var undoStack = [], redoStack = [];
   var tl = E.makeTimeline('auto');   // what time the animation is at (see engine.js)
@@ -286,6 +287,7 @@
       }
     }
     syncSelectionUI();
+    updateCursor();
 
     // hover marker: the brush footprint for pencil / eraser, a single cell otherwise
     if (hover && state.tool !== 'select' && !(drag && drag.shapeTool)) {
@@ -648,6 +650,7 @@
       var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' + c.svg + '</svg>';
       cv.style.cursor = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '") ' + c.hx + ' ' + c.hy + ', crosshair';
     }
+    baseCursor = cv.style.cursor; lastCursor = null;
     document.querySelectorAll('#pointerControls .key').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.cursor === c.id)); });
     if (remember) { try { localStorage.setItem('dm-cursor', c.id); } catch (e) {} }
     return c.id;
@@ -717,7 +720,7 @@
 
   cv.addEventListener('pointermove', function (e) {
     var p = cellAt(e);
-    hover = p;
+    hover = p; hoverPt = canvasPoint(e);
     if (!drag) return;
     if (drag.mode === 'marquee') { drag.cur = p; return; }
     if (drag.mode === 'resize') { resizeSelection(p, e.shiftKey, e.altKey); return; }
@@ -780,7 +783,7 @@
   }
   cv.addEventListener('pointerup', endDrag);
   cv.addEventListener('pointercancel', endDrag);
-  cv.addEventListener('pointerleave', function () { hover = null; });
+  cv.addEventListener('pointerleave', function () { hover = null; hoverPt = null; });
 
   /* ---------- Select: resize, delete and the options that replace Eraser / Invert / Clear ---------- */
 
@@ -852,6 +855,22 @@
     cells = next; cellColor = nextColor;
     sel = { c0: nL, r0: nT, c1: nL + nw - 1, r1: nT + nh - 1 };
     dirty = true; updateInfo();
+  }
+  // The pointer tells you what a drag will do: a resize arrow on a handle, a move cross inside the selection
+  // (a closed hand while you drag it), otherwise the chosen drawing pointer.
+  var RESIZE_CURSOR = { n: 'ns-resize', s: 'ns-resize', e: 'ew-resize', w: 'ew-resize', nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize' };
+  function updateCursor() {
+    var want = baseCursor;
+    if (state.tool === 'select') {
+      if (drag && drag.mode === 'move') want = 'grabbing';
+      else if (drag && drag.mode === 'resize') want = RESIZE_CURSOR[drag.handle];
+      else if (sel && hoverPt && !drag) {
+        var g = selMode === 'resize' ? handleAt(hoverPt.x, hoverPt.y) : null;
+        if (g) want = RESIZE_CURSOR[g];
+        else if (hoverPt.x >= ox + sel.c0 * CELL && hoverPt.x <= ox + (sel.c1 + 1) * CELL && hoverPt.y >= oy + sel.r0 * CELL && hoverPt.y <= oy + (sel.r1 + 1) * CELL) want = 'move';
+      }
+    }
+    if (want !== lastCursor) { lastCursor = want; cv.style.cursor = want; }
   }
   function deleteSelection() {
     if (!sel) return;
