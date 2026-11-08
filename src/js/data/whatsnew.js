@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.29.2', date: '2026-11-08', items: [
+    'Export has an SVG button instead of PNG: a plain, still picture of your drawing that stays sharp at any size.'
+  ] },
   { v: '0.29.0', date: '2026-11-08', items: [
     'Layers: add as many as 8. Each layer has its own drawing, colours and animation, and they all play together on one canvas.',
     'Pick a layer to edit it: the Properties panel then shows only the animation and settings of that layer.',

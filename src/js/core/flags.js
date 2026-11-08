@@ -21,16 +21,16 @@
     dotShapes: true,            // Shapes group: Dot / Square / Diamond / Triangle marks
     imageUpload: true,          // Image group: upload a picture (or drop one on the canvas) and animate it
     exportCodeFile: true,       // Export: "Code File" (ready-to-open .html with the component)
-    exportPng: true,            // Export > Media: "PNG" (the frame on screen, at full size)
     exportWebm: true,           // Export > Media: "WebM" video of the full loop (1-2 cycles, loops seamlessly)
     exportMp4: true,            // Export > Media: "MP4" video of the full loop (needs a browser that can record MP4)
+    exportSvg: true,            // Export > Media: "SVG" (a plain still of the drawing, not animated, as scalable vector)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
     agentTools: true,           // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */
 
-    exportSvg: false,           // Export > Media: "SVG" (the frame on screen as scalable vector)
+    exportPng: false,           // Export > Media: "PNG" (the frame on screen, at full size; replaced by SVG)
     colorRandom: false,         // Color group: a Randomize button in the colour grid (the left bar Randomize still picks a colour)
     forestColor: false,         // Color group: the "Forest" green gradient
     homePage: false,            // A welcome page at / in front of the tool (off: the tool opens straight away at /)

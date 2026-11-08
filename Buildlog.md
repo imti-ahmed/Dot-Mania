@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.29.2 | 2026-11-08 | `v0.29.2` | Export: SVG replaces PNG (exportSvg flag on, exportPng off); the SVG is a plain still of the drawing, not animated |
 | 0.29.1 | 2026-11-08 | `v0.29.1` | Code export buttons side by side with shorter names (HTML, Copy LLM) |
 | 0.29.0 | 2026-11-08 | `v0.29.0` | Real layers: each layer has its own dots, per-dot colours, animation, values, mark shape and undo history; all play together on one canvas (engine drawLayers, loop = longest animation, others time-scaled to whole cycles). Prop panel loses its tabs (header "Properties"); Topend panel = Layers (add / pick / delete, Layer 1, Layer 2...); Btmend panel = Export. Exports (component, GIF, WebM, PNG, SVG), Open HTML and Library previews handle several layers; old single-animation files still open. Old stacking tab removed |
 | 0.28.0 | 2026-11-08 | `v0.28.0` | Per-dot colour: each dot keeps the colour selected when it was drawn (cellColor map, kept through undo, Select-move and canvas resize); exports store a colour palette with the runs and the component, import, library preview, GIF/WebM/PNG/SVG use it. Right side split in two: a second panel with an empty top and bottom card; stacked layout below 1150px |

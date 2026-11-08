@@ -2117,10 +2117,9 @@
     f.layers.forEach(function (L) {
       var p = L.p;
       L.list.forEach(function (c) {
-        var v = state.playing ? L.fn(c, tl.t * L.k, p) : 1;
-        v = v < 0 ? 0 : v > 1 ? 1 : v;
+        var v = 1;                                   // a plain still: every dot as drawn, not animated
         var x = g.ox + (c.col + 0.5) * g.cell, y = g.oy + (c.row + 0.5) * g.cell, sz = g.cell * p.size * (0.4 + 0.6 * v);
-        var fill = E.colorFor(c.color ? Object.assign({}, c.color, { steps: L.color.steps }) : L.color, c, v, tl.ph);
+        var fill = E.colorFor(c.color ? Object.assign({}, c.color, { steps: L.color.steps }) : L.color, c, v, 0);
         if (p.glow > 0.01 && v > 0.05) out.push(svgMark(x, y, sz * 1.9, L.shape, fill, 0.2 * p.glow * v));
         out.push(svgMark(x, y, sz, L.shape, fill, 0.18 + 0.82 * v));
       });
@@ -2154,7 +2153,7 @@
     var media = [];
     if (FLAGS.exportGif) media.push(key('exportGif', 'GIF', 'Download one seamless loop as an animated GIF'));
     if (FLAGS.exportPng) media.push(key('exportPng', 'PNG', 'Download the frame on screen as a PNG'));
-    if (FLAGS.exportSvg) media.push(key('exportSvg', 'SVG', 'Download the frame on screen as a scalable vector'));
+    if (FLAGS.exportSvg) media.push(key('exportSvg', 'SVG', 'Download the drawing as a still SVG (plain, not animated)'));
     var mel = $('#exportMedia');
     // Quality: its own option, applies to GIF size and video bitrate
     var q = segRow('', [{ v: 'low', label: 'Low' }, { v: 'medium', label: 'Medium' }, { v: 'high', label: 'High' }],
@@ -2175,7 +2174,7 @@
     on('#exportCode', function () { notify('Building code file…', { busy: true }); download(funkyName('html'), buildExport().html, 'text/html'); });
     on('#exportGif', exportGif);
     on('#exportPng', exportPng);
-    on('#exportSvg', function () { if (cells.size) { notify('Rendering SVG…', { busy: true }); download(funkyName('svg'), buildSvg(), 'image/svg+xml'); } });
+    on('#exportSvg', function () { if (anyCells()) { notify('Rendering SVG…', { busy: true }); download(funkyName('svg'), buildSvg(), 'image/svg+xml'); } });
     on('#exportLlm', function () { copyText(buildExport().llm, $('#exportLlm span'), 'Copy LLM'); });
     on('#exportEmbed', function () { copyText(buildExport().snippet, $('#exportEmbed span'), 'Copy embed code'); });
     on('#exportJs', function () { download(funkyName('js'), buildExport().script, 'text/javascript'); });
