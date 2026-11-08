@@ -128,6 +128,15 @@
     ctx.globalAlpha = 1;
   }
 
+  // Draw every layer on one canvas. layers: [{ list, fn, p, color, shape, k }]; each layer has its own dots, animation and
+  // look, and runs at its own speed (k scales time so every layer finishes whole cycles when the longest one loops).
+  function drawLayers(ctx, layers, time, phase, geo, full) {
+    for (var i = 0; i < layers.length; i++) {
+      var l = layers[i];
+      drawCells(ctx, l.list, l.fn, l.p, l.color, time * l.k, phase, { ox: geo.ox, oy: geo.oy, cell: geo.cell, shape: l.shape || geo.shape }, full);
+    }
+  }
+
   // The faint empty grid, in the same mark shape. vis: 0..1.
   function drawIdle(ctx, cols, rows, geo, vis) {
     ctx.fillStyle = 'rgba(246,239,227,' + (0.03 + 0.3 * vis).toFixed(3) + ')';
@@ -165,7 +174,7 @@
 
   window.DotEngine = {
     STOPS: STOPS, hash: hash, gradient: gradient, colorFor: colorFor,
-    buildList: buildList, dot: dot, drawCells: drawCells, drawIdle: drawIdle,
+    buildList: buildList, dot: dot, drawCells: drawCells, drawLayers: drawLayers, drawIdle: drawIdle,
     makeTimeline: makeTimeline, tlSetMode: tlSetMode, tlAdvance: tlAdvance,
     tlStart: tlStart, tlStop: tlStop, tlTrigger: tlTrigger
   };

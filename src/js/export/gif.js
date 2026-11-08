@@ -275,10 +275,10 @@
 
   /* ---------- Animation -> GIF ---------- */
 
-  // o: { E (engine), list (buildList result), preset, vals, color, T (loop seconds), secs (seconds to render),
+  // o: { E (engine), layers ([{ list, fn, p, color, shape, k }]), T (loop seconds), secs (seconds to render),
   //      art: {w,h}, geo: {ox,oy,cell}, cols, rows, gridVis, transparent, bg, maxSide, fps, colors, tolerance }
   function encodeAnimation(o) {
-    var E = o.E, geo = o.geo, cell = geo.cell, list = o.list, art = o.art;
+    var E = o.E, geo = o.geo, cell = geo.cell, art = o.art;
     var i;
     // the whole artboard, so the GIF is the complete grid size, not just the part you drew on
     var x0 = 0, y0 = 0, x1 = art.w, y1 = art.h;
@@ -311,7 +311,7 @@
           c.fillRect(x0 - 2, y0 - 2, cw + 4, ch + 4);
           if (layer) c.drawImage(layer, x0, y0, cw, ch, x0, y0, cw, ch);
         }
-        E.drawCells(c, list, o.preset.fn, o.vals, o.color, t, t / o.T, geo, false);
+        E.drawLayers(c, o.layers, t, t / o.T, geo, false);
       }
     });
   }

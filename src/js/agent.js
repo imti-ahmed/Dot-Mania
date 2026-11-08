@@ -290,7 +290,7 @@
   function exportFile(kind, o) {
     var kinds = exportKinds(), video = kind === 'webm' || kind === 'mp4', busy = A.busy();
     if (kinds.indexOf(kind) < 0) return fail('Unknown or switched-off export: ' + kind, kinds);
-    if (!A.cells().length) return fail('The canvas is empty: draw something first (the Export buttons are disabled too)');
+    if (!A.anyCells()) return fail('The canvas is empty: draw something first (the Export buttons are disabled too)');
     if ((kind === 'gif' && busy.gif) || (video && busy.video)) return fail('A ' + kind + ' export is still running; check state().exporting');
     if (video && !A.videoMime(kind)) return fail('This browser cannot record ' + kind.toUpperCase(), kinds.filter(function (k) { return k !== kind; }));
     return withExportOpts(o, function () {
@@ -308,7 +308,7 @@
   }
 
   function getDesignHtml(o) {
-    if (!A.cells().length) return fail('The canvas is empty: draw something first');
+    if (!A.anyCells()) return fail('The canvas is empty: draw something first');
     return withExportOpts(o, function () { return ok({ html: A.buildExport().html }); });
   }
 

@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
-  <link rel="stylesheet" href="src/css/style.css?v=0.28.0">
+  <link rel="stylesheet" href="src/css/style.css?v=0.29.0">
 </head>
 <body>
   <p class="agent-note" data-flag="agentTools">For AI agents: this editor has helper tools. Run window.dotMania.help() in the page for a guide to drawing, animating and exporting by script.</p>
@@ -120,12 +120,11 @@
             <span class="status" id="status">Looping</span>
           </div>
         </div>
-        <div class="panel-tabs" id="panelTabs" role="tablist" aria-label="Panel sections">
-          <button class="key" role="tab" data-ptab="animate" aria-pressed="true">Animate</button>
-          <button class="key" role="tab" data-ptab="layers" aria-pressed="false">Layers</button>
-          <button class="key" role="tab" data-ptab="export" aria-pressed="false">Export</button>
+        <div class="panel-header">
+          <span class="panel-title">Properties</span>
+          <span class="panel-sub" id="propLayer"></span>
         </div>
-        <div class="panel-body" data-ptab-body="animate">
+        <div class="panel-body">
           <div class="group-label first">Animations</div>
           <div class="presets" id="presets" role="group" aria-label="Animation presets"></div>
           <div class="group-label" id="trialLabel" hidden>Trying Out</div>
@@ -152,22 +151,6 @@
           <div class="group-label" data-flag="pointerOptions">Pointer</div>
           <div class="group" id="pointerControls" data-flag="pointerOptions"></div>
         </div>
-        <div class="panel-body" data-ptab-body="layers" hidden>
-          <div class="group-label first">Layers</div>
-          <div class="group layer-list" id="layerList"></div>
-          <div class="group-label" id="layerAddLabel">Add a layer</div>
-          <div class="presets" id="layerAdd" role="group" aria-label="Add an animation as a layer"></div>
-        </div>
-        <div class="panel-body" data-ptab-body="export" hidden>
-          <div class="group-label first">Background</div>
-          <div class="group" id="exportBg"></div>
-          <div class="group-label">Quality</div>
-          <div class="group" id="exportQuality"></div>
-          <div class="group-label">Code</div>
-          <div class="group" id="exportCodeGroup"></div>
-          <div class="group-label">Media</div>
-          <div class="group" id="exportMedia"></div>
-        </div>
         <div class="panel-foot">
           <button class="key" id="playBtn" aria-pressed="false" title="Play / pause (Space)">
             <svg id="playIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
@@ -180,10 +163,28 @@
         </div>
       </aside>
 
-      <!-- Second right panel: a top and a bottom card (empty for now) -->
+      <!-- Second right panel: Topend (Layers) and Btmend (Export) -->
       <div class="panel2" aria-label="Secondary panel">
-        <section class="card panel2-top" aria-label="Secondary top"></section>
-        <section class="card panel2-bottom" aria-label="Secondary bottom"></section>
+        <section class="card panel2-top" aria-label="Layers">
+          <div class="panel-header"><span class="panel-title">Layers</span></div>
+          <div class="panel-body">
+            <button class="key primary-add" id="addLayerBtn" title="Add a layer: its own dots and its own animation on the same canvas">+ Add layer</button>
+            <div class="layer-list" id="layerList" role="list" aria-label="Layers"></div>
+          </div>
+        </section>
+        <section class="card panel2-bottom" aria-label="Export">
+          <div class="panel-header"><span class="panel-title">Export</span></div>
+          <div class="panel-body">
+            <div class="group-label first">Background</div>
+            <div class="group" id="exportBg"></div>
+            <div class="group-label">Quality</div>
+            <div class="group" id="exportQuality"></div>
+            <div class="group-label">Code</div>
+            <div class="group" id="exportCodeGroup"></div>
+            <div class="group-label">Media</div>
+            <div class="group" id="exportMedia"></div>
+          </div>
+        </section>
       </div>
 
     </main>
@@ -215,10 +216,10 @@
         <h3 class="how-title" id="howModalTitle">How to use</h3>
         <ol class="how-steps">
           <li><b>Draw something</b><span>Pick the Pen on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
-          <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Turn on Stacking to run up to three together. Press Play to watch it move.</span></li>
+          <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Use Add layer (top right) to give another set of dots its own animation. Press Play to watch it move.</span></li>
           <li><b>Shape the look</b><span>Under Tuning, change the speed, size and glow. Then choose a color, a gradient, or your own.</span></li>
           <li><b>Not sure? Randomize</b><span>The dice on the left makes a whole new piece. Press Ctrl+Z if you want yours back.</span></li>
-          <li><b>Save it</b><span>In the Export tab, pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
+          <li><b>Save it</b><span>In the Export panel (bottom right), pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
         </ol>
         <p class="how-tip"><b>Tips</b> Hold Shift with the pen for a straight line. Press Space to play or pause.</p>
       </div>
@@ -287,7 +288,7 @@
       <h1 class="page-title">Guide</h1>
       <ol class="page-steps">
         <li><b>Draw.</b> Pick a tool on the left and paint cells on the canvas, or upload an image in the right panel.</li>
-        <li><b>Animate.</b> Choose an animation, then tune the sliders and colors. Turn Stacking on to run up to 3 together: the first you click is the base and each next one shapes it.</li>
+        <li><b>Animate.</b> Choose an animation, then tune the sliders and colors. Use Add layer to run different animations on the same canvas: each layer has its own dots and properties.</li>
         <li><b>Export.</b> Download a GIF, PNG, video or HTML file, or copy the code for an LLM.</li>
         <li><b>Come back later.</b> Use Open HTML (bottom right) to load an HTML file you exported before and keep editing it. Close File starts a fresh session.</li>
       </ol>
@@ -333,10 +334,10 @@
       <h3 class="how-title">How to use</h3>
       <ol class="how-steps">
         <li><b>Draw something</b><span>Pick the Pen on the left and drag on the canvas. Use the eraser, or right-click drag, to erase. Or drop in a picture and it turns into dots.</span></li>
-        <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Turn on Stacking to run up to three together. Press Play to watch it move.</span></li>
+        <li><b>Choose an animation</b><span>Pick one under Animations on the right (More shows the rest). Use Add layer (top right) to give another set of dots its own animation. Press Play to watch it move.</span></li>
         <li><b>Shape the look</b><span>Under Tuning, change the speed, size and glow. Then choose a color, a gradient, or your own.</span></li>
         <li><b>Not sure? Randomize</b><span>The dice on the left makes a whole new piece. Press Ctrl+Z if you want yours back.</span></li>
-        <li><b>Save it</b><span>In the Export tab, pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
+        <li><b>Save it</b><span>In the Export panel (bottom right), pick GIF, PNG, WebM, MP4 or an HTML file. Open HTML brings a saved file back for editing.</span></li>
       </ol>
       <p class="how-tip"><b>Tips</b> Hold Shift with the pen for a straight line. Press Space to play or pause.</p>
     </aside>
@@ -346,17 +347,17 @@
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
-  <script src="src/js/core/flags.js?v=0.28.0"></script>
-  <script src="src/js/core/presets.js?v=0.28.0"></script>
-  <script src="src/js/core/shapes.js?v=0.28.0"></script>
-  <script src="src/js/core/engine.js?v=0.28.0"></script>
-  <script src="src/js/core/image.js?v=0.28.0"></script>
-  <script src="src/js/export/export.js?v=0.28.0"></script>
-  <script src="src/js/export/gif.js?v=0.28.0"></script>
-  <script src="src/js/data/library.js?v=0.28.0"></script>
-  <script src="src/js/data/site.js?v=0.28.0"></script>
-  <script src="src/js/data/whatsnew.js?v=0.28.0"></script>
-  <script src="src/js/app.js?v=0.28.0"></script>
-  <script src="src/js/agent.js?v=0.28.0"></script>
+  <script src="src/js/core/flags.js?v=0.29.0"></script>
+  <script src="src/js/core/presets.js?v=0.29.0"></script>
+  <script src="src/js/core/shapes.js?v=0.29.0"></script>
+  <script src="src/js/core/engine.js?v=0.29.0"></script>
+  <script src="src/js/core/image.js?v=0.29.0"></script>
+  <script src="src/js/export/export.js?v=0.29.0"></script>
+  <script src="src/js/export/gif.js?v=0.29.0"></script>
+  <script src="src/js/data/library.js?v=0.29.0"></script>
+  <script src="src/js/data/site.js?v=0.29.0"></script>
+  <script src="src/js/data/whatsnew.js?v=0.29.0"></script>
+  <script src="src/js/app.js?v=0.29.0"></script>
+  <script src="src/js/agent.js?v=0.29.0"></script>
 </body>
 </html>

@@ -97,13 +97,23 @@
     var oldCols = cols, oldRows = rows;
     state.art = { w: width, h: height };
     computeGrid();
-    var dc = Math.floor((cols - oldCols) / 2), dr = Math.floor((rows - oldRows) / 2), next = new Set(), nextColor = new Map();
+    var dc = Math.floor((cols - oldCols) / 2), dr = Math.floor((rows - oldRows) / 2);
     syncColors();
-    cells.forEach(function (k) {
-      var p = k.split(','), c = +p[0] + dc, r = +p[1] + dr;
-      if (c >= 0 && r >= 0 && c < cols && r < rows) { next.add(c + ',' + r); nextColor.set(c + ',' + r, cellColor.get(k)); }
+    function remap(set, colors) {
+      var next = new Set(), nextColor = new Map();
+      set.forEach(function (k) {
+        var p = k.split(','), c = +p[0] + dc, r = +p[1] + dr;
+        if (c >= 0 && r >= 0 && c < cols && r < rows) { next.add(c + ',' + r); if (colors.has(k)) nextColor.set(c + ',' + r, colors.get(k)); }
+      });
+      return { cells: next, colors: nextColor };
+    }
+    var mine = remap(cells, cellColor);
+    cells = mine.cells; cellColor = mine.colors;
+    layers.forEach(function (L, i) {                       // the other layers move with the same grid
+      if (i === activeLayer) return;
+      var m = remap(L.cells, L.colors);
+      L.cells = m.cells; L.colors = m.colors; L.list = null; L.undo = []; L.redo = [];
     });
-    cells = next; cellColor = nextColor;
     undoStack = []; redoStack = [];
     hover = null; drag = null;
     layout();
@@ -222,19 +232,30 @@
     if (isStacked()) { refreshStack(); return STACK; }
     return presetById(state.preset);
   }
-  function currentPeriod() { var p = currentPreset(); return p.period(state.values[p.id]); }
+  function activePeriod() { var p = currentPreset(); return p.period(state.values[p.id]); }
+  function currentPeriod() { return loopPeriod(); }       // all layers loop together, on the longest one
+
+  // A fresh set of animation values (Speed, Size, Glow and each animation's sliders). Every layer has its own.
+  function makeValues() {
+    var vals = {};
+    PRESETS.forEach(function (p) {
+      var v = Object.assign({}, p.defaults);
+      p.params.forEach(function (q) { v[q.key] = q.def; });
+      vals[p.id] = v;
+    });
+    Object.defineProperty(vals, STACK.id, { get: function () { return vals[state.stack[0]]; }, enumerable: false });
+    return vals;
+  }
 
   function render() {
     if (dirty) rebuild();
     ctx.clearRect(0, 0, w(), h());
     ctx.drawImage(idle, 0, 0);
 
-    var preset = currentPreset(), i;
+    var i;
     // While drawing, show every cell at full strength so you can see exactly what you've painted.
-    var vals = state.values[preset.id];
-    state.color.steps = Math.max(2, Math.round(preset.period(vals) * 6));
     // Paused (the default) shows the drawing as it is, at full strength. Play brings the animation in.
-    E.drawCells(ctx, list, preset.fn, vals, state.color, tl.t, tl.ph, geo(), !!drag || (tl.mode === 'auto' && !state.playing));
+    E.drawLayers(ctx, layerItems(), tl.t, tl.ph, geo(), !!drag || (tl.mode === 'auto' && !state.playing));
 
     // live preview for line / rect / ellipse
     if (drag && drag.shapeTool) {
@@ -276,9 +297,142 @@
   function frame(now) {
     var dt = Math.min((now - last) / 1000, 0.1);
     last = now;
-    if (tl.mode !== 'auto' || state.playing) E.tlAdvance(tl, dt, currentPeriod());
+    if (tl.mode !== 'auto' || state.playing) E.tlAdvance(tl, dt, loopPeriod());
     render();
     requestAnimationFrame(frame);
+  }
+
+  /* ---------- Layers ----------
+   * Each layer is its own set of dots with its own colours, animation, values and mark shape (and its own undo history).
+   * The editor works on one layer at a time (the active one): its data lives in the usual variables (cells, state.preset, ...)
+   * and is swapped in and out when you pick another layer. All layers are drawn together, each running its own animation.
+   */
+  var layers = [], activeLayer = 0, LAYER_MAX = 8;
+
+  function layerName() {
+    var n = 1, names = layers.map(function (L) { return L.name; });
+    while (names.indexOf('Layer ' + n) > -1) n++;
+    return 'Layer ' + n;
+  }
+  function newLayer() {
+    return {
+      name: layerName(), cells: new Set(), colors: new Map(), list: null,
+      preset: PRESETS[0].id, stack: [PRESETS[0].id], stacking: false, values: makeValues(),
+      dotShape: state.dotShape, color: { mode: state.color.mode, hex: state.color.hex, cycle: state.color.cycle === undefined ? 1 : state.color.cycle },
+      undo: [], redo: []
+    };
+  }
+  // The very first layer is whatever is on the canvas right now.
+  function initLayers() {
+    layers = [];
+    var L = newLayer();
+    L.values = state.values;
+    layers.push(L);
+    activeLayer = 0;
+    saveActive();
+  }
+  function saveActive() {
+    var L = layers[activeLayer];
+    if (!L) return;
+    syncColors();
+    if (dirty) rebuild();
+    L.cells = cells; L.colors = cellColor; L.list = list;
+    L.preset = state.preset; L.stack = state.stack; L.stacking = state.stacking; L.values = state.values;
+    L.dotShape = state.dotShape; L.color = Object.assign({}, state.color); L.undo = undoStack; L.redo = redoStack;
+  }
+  function loadLayer(i) {
+    activeLayer = i;
+    var L = layers[i];
+    cells = L.cells; cellColor = L.colors; list = L.list || []; dirty = !L.list;
+    state.preset = L.preset; state.stack = L.stack; state.stacking = L.stacking; state.values = L.values;
+    state.dotShape = L.dotShape; Object.assign(state.color, L.color);
+    undoStack = L.undo; redoStack = L.redo;
+    sel = null; drag = null; hover = null;
+    if (imgSrc) { imgSrc = null; imgRaster = null; if (imgUI.opts) setImageActive(false); }
+    refreshLayerUI();
+  }
+  // Everything that shows the active layer's properties.
+  function refreshLayerUI() {
+    if (stackRow) stackRow.repaint();
+    refreshPresets();
+    buildControls();
+    repaintColor(); repaintShapes();
+    updateInfo();
+    buildLayerPanel();
+  }
+  function selectLayer(i) {
+    if (i === activeLayer || !layers[i]) return;
+    saveActive();
+    loadLayer(i);
+  }
+  function addLayer() {
+    if (layers.length >= LAYER_MAX) { notify('Up to ' + LAYER_MAX + ' layers'); return; }
+    saveActive();
+    layers.push(newLayer());
+    loadLayer(layers.length - 1);
+  }
+  function removeLayer(i) {
+    if (layers.length < 2) return;
+    saveActive();
+    layers.splice(i, 1);
+    loadLayer(Math.min(i < activeLayer ? activeLayer - 1 : (i === activeLayer ? i : activeLayer), layers.length - 1));
+  }
+  function anyCells() {
+    return layers.some(function (L, i) { return (i === activeLayer ? cells : L.cells).size > 0; });
+  }
+  function arrayOf(set, colors, fallback) {
+    var a = [], fb = { mode: fallback.mode, hex: fallback.hex, cycle: fallback.cycle === undefined ? 1 : fallback.cycle };
+    set.forEach(function (k) { var p = k.split(','); a.push([+p[0], +p[1], colors.get(k) || fb]); });
+    return a;
+  }
+  function layerPeriod(L, live) {
+    if (live) return activePeriod();
+    var p = presetById(L.preset);
+    return p.period(L.values[p.id]);
+  }
+  // The loop length: the longest animation among the layers that have dots.
+  function loopPeriod() {
+    var T = 0, any = false;
+    layers.forEach(function (L, i) {
+      var live = i === activeLayer;
+      if (!(live ? cells.size : L.cells.size)) return;
+      any = true;
+      T = Math.max(T, layerPeriod(L, live));
+    });
+    return any ? T : activePeriod();
+  }
+  // What to draw, one entry per layer that has dots (hidden-by-emptiness layers cost nothing).
+  function layerItems() {
+    var T = loopPeriod(), out = [];
+    layers.forEach(function (L, i) {
+      var live = i === activeLayer;
+      if (!(live ? cells.size : L.cells.size)) return;
+      var preset = live ? currentPreset() : presetById(L.preset), vals = (live ? state.values : L.values)[preset.id];
+      var per = preset.period(vals), color = live ? state.color : L.color;
+      color.steps = Math.max(2, Math.round(per * 6));
+      var lst = live ? list : (L.list || (L.list = E.buildList(arrayOf(L.cells, L.colors, L.color))));
+      out.push({
+        list: lst, fn: preset.fn, p: vals, color: color, shape: live ? state.dotShape : L.dotShape,
+        k: Math.max(1, Math.round(T / per)) * per / T, period: per, preset: preset, layer: L, live: live
+      });
+    });
+    return out;
+  }
+  // The same, as fresh copies for the exports (own dot lists, nothing shared with the editor).
+  function exportLayers() {
+    return layerItems().map(function (it) {
+      var arr = it.live ? cellArray() : arrayOf(it.layer.cells, it.layer.colors, it.layer.color);
+      return {
+        cells: arr, list: E.buildList(arr), preset: it.preset, fn: it.fn, p: Object.assign({}, it.p),
+        color: Object.assign({}, it.color), shape: it.shape, k: it.k, period: it.period, name: it.layer.name
+      };
+    });
+  }
+  // Does any dot in the exports use a gradient colour (so a GIF needs a richer palette)?
+  function layersAreRich(items) {
+    return items.some(function (it) {
+      return it.cells.some(function (c) { var m = (c[2] || it.color).mode; return m !== 'solid' && m !== 'white'; });
+    });
   }
 
   /* ---------- History ---------- */
@@ -795,7 +949,7 @@
   function buildControls() {
     var el = $('#controls');
     el.innerHTML = '';
-    var layers = state.stack.map(presetById), base = state.values[layers[0].id];
+    var stackPresets = state.stack.map(presetById), base = state.values[stackPresets[0].id];
     function common(key) {
       var c = COMMON[key];
       el.appendChild(sliderRow({
@@ -805,13 +959,13 @@
     }
     common('speed');
     common('size');
-    if (layers.length > 1) {
-      var hint = document.createElement('div');
-      hint.className = 'sub-label'; hint.textContent = 'Each layer’s own sliders are in Layers';
-      el.appendChild(hint);
-    }
-    (layers.length === 1 ? layers : []).forEach(function (preset) {
+    stackPresets.forEach(function (preset) {
       var vals = state.values[preset.id];
+      if (stackPresets.length > 1) {
+        var sub = document.createElement('div');
+        sub.className = 'sub-label'; sub.textContent = preset.name;
+        el.appendChild(sub);
+      }
       preset.params.forEach(function (q) {
         el.appendChild(sliderRow({
           label: q.label, min: q.min, max: q.max, step: q.step, fmt: q.fmt,
@@ -820,7 +974,6 @@
       });
     });
     common('glow');
-    buildLayers();
   }
 
   // Three rows of four. When there are more presets than fit, the last slot is a quiet "More" button
@@ -1033,71 +1186,29 @@
     notify('Randomized');
   }
 
-  /* ---------- Layers tab: the stack as a list (add up to 3, reorder, remove, tune each) ---------- */
-
-  function layersChanged() {
-    state.preset = state.stack[0];
-    state.stacking = state.stack.length > 1;
-    if (stackRow) stackRow.repaint();
-    refreshPresets();
-    buildControls();                                 // also rebuilds the Layers tab
-  }
-  function addLayer(id) {
-    if (state.stack.length >= STACK_MAX || state.stack.indexOf(id) > -1) return;
-    state.stack.push(id);
-    layersChanged();
-  }
-  function removeLayer(i) {
-    if (state.stack.length < 2) return;
-    state.stack.splice(i, 1);
-    layersChanged();
-  }
-  function moveLayer(i, d) {
-    var j = i + d;
-    if (j < 0 || j >= state.stack.length) return;
-    var t = state.stack[i]; state.stack[i] = state.stack[j]; state.stack[j] = t;
-    layersChanged();
-  }
-  function buildLayers() {
-    var list = $('#layerList'), add = $('#layerAdd');
-    if (!list || !add) return;
-    list.innerHTML = ''; add.innerHTML = '';
-    var many = state.stack.length > 1;
-    state.stack.forEach(function (id, i) {
-      var preset = presetById(id), vals = state.values[id], card = document.createElement('div');
-      card.className = 'layer';
-      var head = document.createElement('div');
-      head.className = 'layer-head';
-      head.innerHTML = '<span class="layer-num">' + (i + 1) + '</span><span class="layer-name"></span>' + (i === 0 ? '<span class="layer-tag">Base</span>' : '');
-      head.querySelector('.layer-name').textContent = preset.name;
-      function btn(label, title, on, disabled) {
-        var b = document.createElement('button');
-        b.className = 'key layer-btn'; b.textContent = label; b.title = title; b.setAttribute('aria-label', title);
-        b.disabled = disabled; b.addEventListener('click', on);
-        head.appendChild(b);
-      }
-      btn('↑', 'Move up', function () { moveLayer(i, -1); }, i === 0);
-      btn('↓', 'Move down', function () { moveLayer(i, 1); }, i === state.stack.length - 1);
-      btn('×', 'Remove layer', function () { removeLayer(i); }, !many);
-      card.appendChild(head);
-      if (many) preset.params.forEach(function (q) {
-        card.appendChild(sliderRow({
-          label: q.label, min: q.min, max: q.max, step: q.step, fmt: q.fmt,
-          value: vals[q.key], onChange: function (v) { vals[q.key] = v; }
-        }));
-      });
-      list.appendChild(card);
+  // The Layers list in the Topend panel: pick a layer to edit it, remove one, or add a new one.
+  function buildLayerPanel() {
+    var list = $('#layerList'), add = $('#addLayerBtn'), tag = $('#propLayer');
+    if (!list) return;
+    list.innerHTML = '';
+    layers.forEach(function (L, i) {
+      var row = document.createElement('div');
+      row.className = 'layer-row';
+      var pick = document.createElement('button');
+      pick.className = 'key layer-pick'; pick.textContent = L.name;
+      pick.title = 'Edit ' + L.name + ' (its animation and properties show in the Prop panel)';
+      pick.setAttribute('aria-pressed', String(i === activeLayer));
+      pick.addEventListener('click', function () { selectLayer(i); });
+      row.appendChild(pick);
+      var del = document.createElement('button');
+      del.className = 'key layer-del'; del.textContent = '\u00d7'; del.title = 'Delete ' + L.name; del.setAttribute('aria-label', 'Delete ' + L.name);
+      del.disabled = layers.length < 2;
+      del.addEventListener('click', function () { removeLayer(i); });
+      row.appendChild(del);
+      list.appendChild(row);
     });
-    var full = state.stack.length >= STACK_MAX;
-    $('#layerAddLabel').textContent = full ? 'Layers are full (' + STACK_MAX + ')' : 'Add a layer (up to ' + STACK_MAX + ')';
-    add.hidden = full;
-    MAIN.forEach(function (p) {
-      if (state.stack.indexOf(p.id) > -1) return;
-      var b = document.createElement('button');
-      b.className = 'key'; b.textContent = p.name; b.dataset.id = p.id;
-      b.addEventListener('click', function () { addLayer(p.id); });
-      add.appendChild(b);
-    });
+    if (add) add.disabled = layers.length >= LAYER_MAX;
+    if (tag && layers[activeLayer]) tag.textContent = layers[activeLayer].name;
   }
 
   var stackRow = null;
@@ -1211,9 +1322,9 @@
   /* ---------- Header, status, shortcuts ---------- */
 
   function updateInfo() {
-    var n = cells.size;
-    $('#hint').classList.toggle('hidden', n > 0 || !!drag);
-    setExportEnabled(n > 0);
+    var n = anyCells();
+    $('#hint').classList.toggle('hidden', n || !!drag);
+    setExportEnabled(n);
   }
 
   var ICON_PAUSE = '<path d="M5.5 3.5v9M10.5 3.5v9"/>';
@@ -1482,7 +1593,7 @@
     }
     var data;
     try { data = JSON.parse(text.slice(i, j + 1)); } catch (err) { return null; }
-    if (!data || !data.runs || !data.w || !data.h) return null;
+    if (!data || !(data.runs || data.layers) || !data.w || !data.h) return null;
 
     var squash = function (str) { return str.replace(/\s+/g, ''); };
     var fa = text.indexOf('var presetFn='), fb = text.indexOf(';\nvar DATA=', fa), preset = null, stack = null;
@@ -1499,7 +1610,11 @@
         preset = PRESETS.find(function (p) { return squash(p.fn.toString()) === fn; }) || null;
       }
     }
-    return { data: data, preset: preset, stack: stack };
+    // Normalise: every file is a list of layers (older single-animation files are one layer).
+    var found = data.layers
+      ? data.layers.map(function (l) { return { runs: l.runs, palette: l.palette, p: l.p, color: l.color, shape: l.shape, preset: presetById(l.id) || null, stack: null }; })
+      : [{ runs: data.runs, palette: data.palette, p: data.p, color: data.color, shape: data.geo && data.geo.shape, preset: preset, stack: stack }];
+    return { data: data, layers: found, preset: found[0].preset, stack: found[0].stack };
   }
 
   function importHtml(text, name) {
@@ -1510,43 +1625,44 @@
     resetSession();                         // nothing from the current canvas carries over
     setPlaying(true);                       // an opened file plays, so you see it as it was made
     if (d.geo && d.geo.cell) CELL = d.geo.cell;
-    state.dotShape = (d.geo && d.geo.shape) || 'dot';
-    repaintShapes();
     setArt(d.w, d.h);                       // also clears the canvas and history
 
-    d.runs.forEach(function (row) {
-      row[1].forEach(function (run) {
-        var pc = d.palette && d.palette[run[2] || 0];
-        var own = pc ? { mode: pc.mode, hex: pc.hex, cycle: pc.cycle === undefined ? 1 : pc.cycle } : null;
-        for (var n = 0; n < run[1]; n++) {
-          setCell(run[0] + n, row[0], true);
-          if (own) cellColor.set((run[0] + n) + ',' + row[0], own);
-        }
+    parsed.layers.forEach(function (l, i) {
+      if (i > 0) addLayer();
+      state.dotShape = l.shape || 'dot';
+      l.runs.forEach(function (row) {
+        row[1].forEach(function (run) {
+          var pc = l.palette && l.palette[run[2] || 0];
+          var own = pc ? { mode: pc.mode, hex: pc.hex, cycle: pc.cycle === undefined ? 1 : pc.cycle } : null;
+          for (var n = 0; n < run[1]; n++) {
+            setCell(run[0] + n, row[0], true);
+            if (own) cellColor.set((run[0] + n) + ',' + row[0], own);
+          }
+        });
       });
+      if (l.color) {
+        Object.assign(state.color, { mode: l.color.mode, hex: l.color.hex });
+        if (l.color.cycle !== undefined) state.color.cycle = l.color.cycle;
+      }
+      if (l.stack) {
+        l.stack.forEach(function (s) { Object.assign(state.values[s.id], s.v); });
+        state.stack = l.stack.map(function (s) { return s.id; });
+        state.preset = state.stack[0];
+        state.stacking = state.stack.length > 1;
+      } else if (l.preset) {
+        Object.assign(state.values[l.preset.id], l.p);
+        state.preset = l.preset.id; state.stack = [l.preset.id]; state.stacking = false;
+      }
     });
-
-    if (d.color) {
-      Object.assign(state.color, { mode: d.color.mode, hex: d.color.hex });
-      if (d.color.cycle !== undefined) state.color.cycle = d.color.cycle;
-      repaintColor();
-    }
-    if (parsed.stack) {
-      parsed.stack.forEach(function (l) { Object.assign(state.values[l.id], l.v); });
-      state.stack = parsed.stack.map(function (l) { return l.id; });
-      state.preset = state.stack[0];
-      state.stacking = state.stack.length > 1;
-      stackRow.repaint();
-      refreshPresets(); buildControls();
-    } else if (parsed.preset) {
-      Object.assign(state.values[parsed.preset.id], d.p);
-      selectPreset(parsed.preset.id);
-    }
+    saveActive();
+    if (layers.length > 1) { loadLayer(0); } else { refreshLayerUI(); }
     if (FLAGS.interaction && d.mode) setInteraction(d.mode);
     drawIdle();
     dirty = true;
     updateInfo();
     setFileLoaded(true);
-    notify(parsed.preset || parsed.stack ? 'Opened ' + (name || (parsed.preset ? parsed.preset.name : 'stack')) : 'Opened drawing (animation not recognised)');
+    var first = parsed.layers[0];
+    notify(first.preset || first.stack ? 'Opened ' + (name || (first.preset ? first.preset.name : 'stack')) : 'Opened drawing (animation not recognised)');
   }
 
   var FILE_OPEN = '<path d="M2.5 4.5h4l1.5 1.5h5.5v6.5h-11z"/>', FILE_CLOSE = '<path d="M4 4l8 8M12 4l-8 8"/>';
@@ -1560,13 +1676,11 @@
 
   // Back to a blank first-launch session: empty canvas, default animation, look and size.
   function resetSession() {
-    PRESETS.forEach(function (p) {
-      var v = Object.assign({}, p.defaults);
-      p.params.forEach(function (q) { v[q.key] = q.def; });
-      state.values[p.id] = v;
-    });
+    state.values = makeValues();
     Object.assign(state.color, { mode: 'solid', hex: '#ef282d', cycle: 1 });
     state.dotShape = 'dot';
+    state.stack = [PRESETS[0].id]; state.preset = PRESETS[0].id; state.stacking = false;
+    undoStack = []; redoStack = [];
     CELL = 16;
     imgSrc = null; imgRaster = null;
     if (imgUI.opts) setImageActive(false);
@@ -1579,7 +1693,8 @@
     selectPreset(PRESETS[0].id);
     drawIdle();
     dirty = true;
-    updateInfo();
+    initLayers();                           // back to one empty layer
+    refreshLayerUI();
   }
   function closeFile() {
     resetSession();
@@ -1680,7 +1795,7 @@
       c.fillRect(0, 0, it.cv.width, it.cv.height);
       c.drawImage(it.idle, 0, 0);
       c.setTransform(it.s, 0, 0, it.s, it.ox || 0, it.oy || 0);
-      E.drawCells(c, it.list, it.fn, it.vals, it.color, it.tl.t, it.tl.ph, it.geo, false);
+      E.drawLayers(c, it.layers, it.tl.t, it.tl.ph, it.geo, false);
     });
     libRaf = requestAnimationFrame(libFrame);
   }
@@ -1692,11 +1807,18 @@
 
   function libPreview(box, text, url, name, list, width, zoom) {
     var parsed = parseExport(text);
-    if (!parsed || !parsed.preset) { libIframe(box, url, name); return; }
-    var d = parsed.data, cells = [];
-    d.runs.forEach(function (row) {
-      row[1].forEach(function (run) { for (var n = 0; n < run[1]; n++) cells.push([run[0] + n, row[0], d.palette ? d.palette[run[2] || 0] : undefined]); });
+    var d = parsed && parsed.data, T = d && d.period || 1, items = [];
+    if (parsed) parsed.layers.forEach(function (l) {
+      if (!l.preset) return;
+      var cells = [];
+      l.runs.forEach(function (row) {
+        row[1].forEach(function (run) { for (var n = 0; n < run[1]; n++) cells.push([run[0] + n, row[0], l.palette ? l.palette[run[2] || 0] : undefined]); });
+      });
+      var per = l.preset.period(l.p);
+      items.push({ list: E.buildList(cells), fn: l.preset.fn, p: l.p, color: l.color || d.color, shape: l.shape || (d.geo && d.geo.shape),
+        k: Math.max(1, Math.round(T / per)) * per / T });
     });
+    if (!parsed || !items.length) { libIframe(box, url, name); return; }
     // zoom > 1 shows the middle of the animation bigger (the dots grow), instead of the whole canvas shrunk
     var pw = width || PREVIEW_W, base = pw / d.w, s = base * (zoom || 1), cv = document.createElement('canvas');
     cv.width = pw; cv.height = Math.round(d.h * base);
@@ -1708,8 +1830,8 @@
     ic.setTransform(s, 0, 0, s, ox, oy);
     E.drawIdle(ic, d.gridCols, d.gridRows, d.geo, d.gridVis === undefined ? GRID_VIS : d.gridVis);
     var it = {
-      cv: cv, ctx: cv.getContext('2d'), idle: idle, s: s, ox: ox, oy: oy, geo: d.geo, list: E.buildList(cells),
-      fn: parsed.preset.fn, vals: d.p, color: d.color, T: d.period, tl: E.makeTimeline('auto'), visible: false
+      cv: cv, ctx: cv.getContext('2d'), idle: idle, s: s, ox: ox, oy: oy, geo: d.geo, layers: items,
+      T: d.period, tl: E.makeTimeline('auto'), visible: false
     };
     it.tl.t = d.still || 0;                 // start on a pleasant frame, so a card is never blank
     box.innerHTML = '';
@@ -1826,11 +1948,12 @@
   var gifBusy = false, videoBusy = false;
 
   function buildExport() {
-    var preset = currentPreset(), vals = state.values[preset.id], T = preset.period(vals);
+    var T = loopPeriod();
     return window.DotExport.build({
-      cells: cellArray(), art: state.art, cols: cols, rows: rows, geo: exportGeo(),
-      preset: preset, values: vals,
-      color: Object.assign({}, state.color, { steps: Math.max(2, Math.round(T * 6)) }),
+      layers: exportLayers().map(function (it) {
+        return { cells: it.cells, preset: it.preset, values: it.p, color: it.color, shape: it.shape, k: it.k, name: it.name };
+      }),
+      art: state.art, cols: cols, rows: rows, geo: exportGeo(),
       interaction: state.interaction, period: T, gridVis: GRID_VIS
     }, exportOpts);
   }
@@ -1871,20 +1994,18 @@
   // One seamless cycle of the animation, looping forever, covering the whole artboard.
   // Clear background gives a transparent GIF (1-bit transparency); Dark gives the dark editor look.
   function exportGif() {
-    if (gifBusy || !cells.size) return;
-    var preset = currentPreset(), vals = Object.assign({}, state.values[preset.id]), color = Object.assign({}, state.color);
-    var T = preset.period(vals);
-    color.steps = Math.max(2, Math.round(T * 6));
+    if (gifBusy || !anyCells()) return;
+    var items = exportLayers(), T = loopPeriod();
 
     gifBusy = true;
     notify('Rendering GIF…', { busy: true });
     setExportEnabled(true);
     window.DotGif.encodeAnimation({
-      E: E, list: E.buildList(cellArray()), preset: preset, vals: vals, color: color, T: T, secs: Math.min(T, GIF_MAX_SECONDS),
+      E: E, layers: items, T: T, secs: Math.min(T, GIF_MAX_SECONDS),
       art: state.art, geo: exportGeo(), cols: cols, rows: rows, gridVis: GRID_VIS, grid: exportOpts.grid,
       transparent: exportOpts.bg === 'transparent', bg: '#0b0b0a',
       maxSide: GIF_SIDE[exportOpts.quality], fps: GIF_FPS, tolerance: GIF_TOLERANCE,
-      colors: color.mode === 'solid' || color.mode === 'white' ? GIF_COLORS_SIMPLE : GIF_COLORS_RICH
+      colors: layersAreRich(items) ? GIF_COLORS_RICH : GIF_COLORS_SIMPLE
     }).then(function (blob) {
       download(funkyName('gif'), blob, 'image/gif');
     }).catch(function (err) {
@@ -1892,7 +2013,7 @@
       notify('GIF export failed');
     }).then(function () {
       gifBusy = false;
-      setExportEnabled(cells.size > 0);
+      setExportEnabled(anyCells());
     });
   }
 
@@ -1907,13 +2028,12 @@
     return window.MediaRecorder && VIDEO_KINDS[kind].types.find(function (t) { return MediaRecorder.isTypeSupported(t); });
   }
   function recordVideo(kind) {
-    if (videoBusy || !cells.size) return;
+    if (videoBusy || !anyCells()) return;
     var mime = videoMime(kind);
     if (!mime) { notify('This browser cannot record ' + kind.toUpperCase()); return; }
 
-    var preset = currentPreset(), p = Object.assign({}, state.values[preset.id]), color = Object.assign({}, state.color), T = preset.period(p);
-    color.steps = Math.max(2, Math.round(T * 6));
-    var dur = T * (T < 3 ? 2 : 1), g = exportGeo(), vlist = E.buildList(cellArray());
+    var items = exportLayers(), T = loopPeriod();
+    var dur = T * (T < 3 ? 2 : 1), g = exportGeo();
 
     var vc = document.createElement('canvas');
     vc.width = state.art.w; vc.height = state.art.h;
@@ -1931,13 +2051,13 @@
       vx.fillStyle = '#0b0b0a';
       vx.fillRect(0, 0, state.art.w, state.art.h);
       if (layer) vx.drawImage(layer, 0, 0);
-      E.drawCells(vx, vlist, preset.fn, p, color, t, t / T, g, false);
+      E.drawLayers(vx, items, t, t / T, g, false);
     }
     rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
     rec.onstop = function () {
       videoBusy = false;
       labelEl.textContent = original;
-      setExportEnabled(cells.size > 0);
+      setExportEnabled(anyCells());
       download(funkyName(kind), new Blob(chunks, { type: mime.split(';')[0] }), mime);
     };
     function step(now) {
@@ -1959,21 +2079,18 @@
   }
 
   // The animation as it is on screen right now, for the still-image exports.
-  function currentFrame() {
-    var preset = currentPreset(), vals = state.values[preset.id], T = preset.period(vals);
-    return { preset: preset, vals: vals, color: Object.assign({}, state.color, { steps: Math.max(2, Math.round(T * 6)) }) };
-  }
+  function currentFrame() { return { layers: exportLayers() }; }
 
   // PNG: the frame on screen, full artboard size. Honours the Background choice (Transparent = alpha).
   function exportPng() {
-    if (!cells.size) return;
+    if (!anyCells()) return;
     notify('Rendering PNG…', { busy: true });
     var f = currentFrame(), g = exportGeo(), c = document.createElement('canvas');
     c.width = state.art.w; c.height = state.art.h;
     var x = c.getContext('2d');
     if (exportOpts.bg === 'dark') { x.fillStyle = '#0b0b0a'; x.fillRect(0, 0, c.width, c.height); }
     if (exportOpts.grid) E.drawIdle(x, cols, rows, g, GRID_VIS);
-    E.drawCells(x, E.buildList(cellArray()), f.preset.fn, f.vals, f.color, tl.t, tl.ph, g, !state.playing);
+    E.drawLayers(x, f.layers, tl.t, tl.ph, g, !state.playing);
     c.toBlob(function (blob) { if (blob) download(funkyName('png'), blob, 'image/png'); else notify('PNG export failed'); }, 'image/png');
   }
 
@@ -1989,7 +2106,7 @@
     return '<circle cx="' + n(x) + '" cy="' + n(y) + '" r="' + n(h) + '"' + attrs;
   }
   function buildSvg() {
-    var f = currentFrame(), g = exportGeo(), W = state.art.w, H = state.art.h, p = f.vals, out = [];
+    var f = currentFrame(), g = exportGeo(), W = state.art.w, H = state.art.h, out = [];
     out.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">');
     if (exportOpts.bg === 'dark') out.push('<rect width="' + W + '" height="' + H + '" fill="#0b0b0a"/>');
     if (exportOpts.grid) {
@@ -1997,13 +2114,16 @@
       out.push('<defs><pattern id="grid" x="' + g.ox + '" y="' + g.oy + '" width="' + g.cell + '" height="' + g.cell + '" patternUnits="userSpaceOnUse">' + m + '</pattern></defs>');
       out.push('<rect x="' + g.ox + '" y="' + g.oy + '" width="' + cols * g.cell + '" height="' + rows * g.cell + '" fill="url(#grid)"/>');
     }
-    E.buildList(cellArray()).forEach(function (c) {
-      var v = state.playing ? f.preset.fn(c, tl.t, p) : 1;
-      v = v < 0 ? 0 : v > 1 ? 1 : v;
-      var x = g.ox + (c.col + 0.5) * g.cell, y = g.oy + (c.row + 0.5) * g.cell, sz = g.cell * p.size * (0.4 + 0.6 * v);
-      var fill = E.colorFor(c.color ? Object.assign({}, c.color, { steps: f.color.steps }) : f.color, c, v, tl.ph);
-      if (p.glow > 0.01 && v > 0.05) out.push(svgMark(x, y, sz * 1.9, g.shape, fill, 0.2 * p.glow * v));
-      out.push(svgMark(x, y, sz, g.shape, fill, 0.18 + 0.82 * v));
+    f.layers.forEach(function (L) {
+      var p = L.p;
+      L.list.forEach(function (c) {
+        var v = state.playing ? L.fn(c, tl.t * L.k, p) : 1;
+        v = v < 0 ? 0 : v > 1 ? 1 : v;
+        var x = g.ox + (c.col + 0.5) * g.cell, y = g.oy + (c.row + 0.5) * g.cell, sz = g.cell * p.size * (0.4 + 0.6 * v);
+        var fill = E.colorFor(c.color ? Object.assign({}, c.color, { steps: L.color.steps }) : L.color, c, v, tl.ph);
+        if (p.glow > 0.01 && v > 0.05) out.push(svgMark(x, y, sz * 1.9, L.shape, fill, 0.2 * p.glow * v));
+        out.push(svgMark(x, y, sz, L.shape, fill, 0.18 + 0.82 * v));
+      });
     });
     out.push('</svg>');
     return out.join('\n');
@@ -2164,6 +2284,7 @@
     state: state, presets: PRESETS, colorModes: COLOR_MODES, dotShapes: DOT_SHAPES, interactions: INTERACTIONS,
     stackMax: STACK_MAX, exportOpts: exportOpts,
     grid: function () { return { cols: cols, rows: rows, cell: CELL }; },
+    anyCells: anyCells,
     cells: function () { return cellArray().map(function (c) { return [c[0], c[1]]; }); },   // [col, row] pairs only (colours stay internal)
     history: function () { return { undo: undoStack.length, redo: redoStack.length }; },
     busy: function () { return { gif: gifBusy, video: videoBusy }; },
@@ -2205,7 +2326,10 @@
   buildStatus();
   setupFiles();
   buildPages();
+  initLayers();
+  $('#addLayerBtn').addEventListener('click', addLayer);
   selectPreset(state.preset);
+  buildLayerPanel();
   setTool(state.tool);
   setInteraction(FLAGS.interaction ? state.interaction : 'auto');
   setPlaying(false);                        // opens paused: what you draw shows as drawn until you press Play

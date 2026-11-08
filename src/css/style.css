@@ -1380,15 +1380,31 @@ body[data-view="home"] .app {
 }
 .panel-tabs { grid-template-columns: repeat(3, 1fr); }
 
-/* Layers tab */
-.layer-list { gap: 10px; }
-.layer { display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 10px; background: #101010; box-shadow: inset 0 1px 6px rgba(0, 0, 0, .7); }
-.layer-head { display: flex; align-items: center; gap: 6px; }
-.layer-num { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; color: #fff; background: var(--accent); }
-.layer-name { flex: 1; min-width: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.layer-tag { flex: none; font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.layer-btn { flex: none; width: 30px; height: 28px; padding: 0; border-radius: 8px; justify-content: center; font-size: 14px; letter-spacing: 0; }
 
 /* ---------- Second right panel: two empty cards, top and bottom (content to come) ---------- */
 .panel2 { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 16px; }
 .panel2 > .card { flex: 1 1 0; min-height: 0; }
+
+/* ---------- Panel headers (a title, then the carved divider) ---------- */
+.panel-header {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px 12px;
+  border-bottom: 2px solid #070707;
+  box-shadow: 0 1px 0 #3a3a3a;
+}
+.panel-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--text); }
+.panel-sub { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+
+/* Topend (Layers) and Btmend (Export): same card as the Prop panel, scrolling body under the header */
+.panel2 > .card { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 14px; }
+.panel2 > .card > .panel-body { margin-top: 10px; }
+.primary-add { width: 100%; justify-content: center; flex: none; }
+.layer-list { display: flex; flex-direction: column; gap: 6px; }
+.layer-row { display: flex; gap: 6px; }
+.layer-pick { flex: 1; min-width: 0; justify-content: flex-start; }
+.layer-pick[aria-pressed="true"] { color: #fff; }
+.layer-del { flex: none; width: 36px; padding: 0; justify-content: center; font-size: 16px; letter-spacing: 0; }

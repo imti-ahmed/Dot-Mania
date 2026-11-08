@@ -6,6 +6,11 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.29.0', date: '2026-11-08', items: [
+    'Layers: add as many as 8. Each layer has its own drawing, colours and animation, and they all play together on one canvas.',
+    'Pick a layer to edit it: the Properties panel then shows only the animation and settings of that layer.',
+    'The tabs are gone: Properties, Layers and Export are now three separate panels on the right.'
+  ] },
   { v: '0.28.0', date: '2026-11-08', items: [
     'Use more than one colour on the same canvas: every dot keeps the colour it was drawn with.',
     'Changing the colour only affects what you draw next, not what is already on the canvas.',

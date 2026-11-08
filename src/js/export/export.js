@@ -2,6 +2,7 @@
  * Export: turns the current drawing + animation into a self-contained web component.
  *
  *   DotExport.build(snapshot, opts) -> { tag, script, snippet, html, llm }
+ *   snapshot.layers: one entry per canvas layer, each with its own dots, colours and animation.
  *
  * The output has no dependencies. It reuses the editor's own engine functions (src/js/core/engine.js)
  * and the chosen preset's function, so the exported animation matches the editor.
@@ -11,16 +12,18 @@
 
   // Runs in the exported page. Defines the custom element. E = engine functions (see build()).
   // Must stay self-contained: only DATA, presetFn, E and built-ins.
-  function boot(tag, DATA, presetFn, E) {
+  function boot(tag, DATA, presetFns, E) {
     if (customElements.get(tag)) return;
 
-    var cells = [];
-    DATA.runs.forEach(function (row) {
-      row[1].forEach(function (run) {
-        for (var i = 0; i < run[1]; i++) cells.push([run[0] + i, row[0], DATA.palette ? DATA.palette[run[2] || 0] : undefined]);
+    var layers = DATA.layers.map(function (L, n) {
+      var cells = [];
+      L.runs.forEach(function (row) {
+        row[1].forEach(function (run) {
+          for (var i = 0; i < run[1]; i++) cells.push([run[0] + i, row[0], L.palette[run[2] || 0]]);
+        });
       });
+      return { list: E.buildList(cells), fn: presetFns[n], p: L.p, color: L.color, shape: L.shape, k: L.k };
     });
-    var list = E.buildList(cells);
     var T = DATA.period;
     var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -137,7 +140,7 @@
         if (DATA.bg) { ctx.fillStyle = DATA.bg; ctx.fillRect(0, 0, DATA.w, DATA.h); }
         else ctx.clearRect(0, 0, DATA.w, DATA.h);
         if (this._idle) ctx.drawImage(this._idle, 0, 0);
-        E.drawCells(ctx, list, presetFn, DATA.p, DATA.color, t, ph, DATA.geo, false);
+        E.drawLayers(ctx, layers, t, ph, DATA.geo, false);
       }
     });
   }
@@ -187,32 +190,34 @@
   // snapshot: { cells, art:{w,h}, cols, rows, geo:{ox,oy,cell}, preset, values, color, interaction, period }
   // opts: { bg: 'dark' | 'transparent', grid: boolean }
   function build(snapshot, opts) {
-    var palette = [], baseColor = { mode: snapshot.color.mode, hex: snapshot.color.hex, steps: snapshot.color.steps || 12, cycle: snapshot.color.cycle === undefined ? 1 : snapshot.color.cycle };
-    var runs = encode(snapshot.cells, palette, baseColor);
     var data = {
       w: snapshot.art.w, h: snapshot.art.h,
       gridCols: snapshot.cols, gridRows: snapshot.rows, geo: snapshot.geo,
-      p: snapshot.values,
-      color: { mode: snapshot.color.mode, hex: snapshot.color.hex, steps: snapshot.color.steps || 12, cycle: snapshot.color.cycle === undefined ? 1 : snapshot.color.cycle },
       bg: opts.bg === 'dark' ? '#0b0b0a' : null,
       grid: !!opts.grid, gridVis: snapshot.gridVis === undefined ? 0.35 : snapshot.gridVis,
       period: snapshot.period, mode: snapshot.interaction, still: snapshot.period * 0.35,
-      runs: runs, palette: palette
+      layers: snapshot.layers.map(function (L) {
+        var base = { mode: L.color.mode, hex: L.color.hex, steps: L.color.steps || 12, cycle: L.color.cycle === undefined ? 1 : L.color.cycle };
+        var palette = [], runs = encode(L.cells, palette, base);
+        return { id: L.preset.id, runs: runs, palette: palette, p: L.values, color: base, shape: L.shape || (snapshot.geo && snapshot.geo.shape) || 'dot', k: L.k };
+      })
     };
+    var palette = [];
+    data.layers.forEach(function (L) { L.palette.forEach(function (c) { palette.push(c); }); });
 
     var json = JSON.stringify(data);
     var tag = 'dot-mania-' + shortId(json);
 
-    var fns = ['hash', 'gradient', 'colorFor', 'buildList', 'dot', 'drawCells', 'drawIdle',
+    var fns = ['hash', 'gradient', 'colorFor', 'buildList', 'dot', 'drawCells', 'drawLayers', 'drawIdle',
       'makeTimeline', 'tlSetMode', 'tlAdvance', 'tlStart', 'tlStop', 'tlTrigger'];
     var parts = [
       'var TAU=Math.PI*2;',
       'function frac(x){return x-Math.floor(x);}',
       'var STOPS=' + JSON.stringify(E.STOPS) + ';'
     ].concat(fns.map(function (n) { return E[n].toString(); }), [
-      'var presetFn=' + (snapshot.preset.source || snapshot.preset.fn.toString()) + ';',
+      'var presetFns=[' + snapshot.layers.map(function (L) { return L.preset.source || L.preset.fn.toString(); }).join(',') + '];',
       'var DATA=' + json + ';',
-      '(' + boot.toString() + ')(' + JSON.stringify(tag) + ',DATA,presetFn,{' +
+      '(' + boot.toString() + ')(' + JSON.stringify(tag) + ',DATA,presetFns,{' +
         fns.map(function (n) { return n + ':' + n; }).join(',') + '});'
     ]);
     var script = ('(function(){\n' + parts.join('\n') + '\n})();').replace(/<\//g, '<\\/');
@@ -231,9 +236,10 @@
       '',
       'Design',
       '- Canvas: ' + data.w + ' x ' + data.h + ' (fixed aspect ratio; it scales to its container)',
-      '- Animation: ' + snapshot.preset.name + ', one seamless loop is about ' + snapshot.period.toFixed(1) + 's',
+      '- Layers: ' + snapshot.layers.map(function (L, i) { return (L.name || 'Layer ' + (i + 1)) + ' (' + L.preset.name + ')'; }).join(', ') + '; each layer has its own dots and animation, all on one canvas',
+      '- One seamless loop is about ' + snapshot.period.toFixed(1) + 's',
       '- Mark shape: ' + (snapshot.geo.shape || 'dot'),
-      '- Color: ' + (palette.length > 1 ? palette.length + ' colors, each dot keeps its own (' + palette.map(describeColor).join(', ') + ')' : describeColor(palette[0] || snapshot.color)),
+      '- Color: ' + (palette.length > 1 ? palette.length + ' colors, each dot keeps its own (' + palette.map(describeColor).join(', ') + ')' : describeColor(palette[0])),
       '- Background: ' + (data.bg ? 'solid dark (' + data.bg + ')' : 'transparent'),
       '- Interaction: ' + INTERACTION_TEXT[snapshot.interaction],
       '',
