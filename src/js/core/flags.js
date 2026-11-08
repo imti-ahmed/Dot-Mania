@@ -38,7 +38,7 @@
     guidePage: false,           // Top nav: the Guide page (/tabs/guide)
     libraryPage: false,         // Top nav: the Library page of ready-made templates (/tabs/library)
     whatsNewPage: false,        // Top nav: the What's New page (/tabs/whats-new)
-    holoColor: false,           // Color group: the "Holo" multi-colour gradient
+    holoColor: true,            // Color group: the "Holo" multi-colour gradient
     whiteColor: false,          // Color group: the "White" preset
     extraTools: false,          // Left bar: the Line tool (the Eraser is always in the Clear group)
     imageAdvanced: false,       // Image group: "Level" slider and "Fit / Fill" (default is 50% level, fit)

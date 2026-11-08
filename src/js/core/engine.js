@@ -18,6 +18,11 @@
     aurora: [[30, 200, 120], [45, 226, 230], [143, 123, 255]],
     candy:  [[255, 105, 180], [186, 140, 255], [120, 220, 255], [140, 255, 200]],
     forest: [[8, 92, 52], [34, 197, 94], [190, 242, 60]],
+    ice:    [[20, 40, 120], [90, 170, 255], [225, 245, 255]],
+    lava:   [[40, 0, 20], [180, 20, 40], [255, 90, 20], [255, 190, 60]],
+    dusk:   [[30, 20, 90], [120, 60, 170], [235, 110, 140], [255, 190, 130]],
+    mint:   [[0, 120, 110], [60, 220, 170], [210, 255, 230]],
+    gold:   [[120, 70, 0], [235, 170, 20], [255, 235, 140]],
     holo:   [[0, 255, 200], [0, 170, 255], [130, 90, 255], [255, 80, 200], [255, 190, 120]]
   };
 
@@ -52,6 +57,11 @@
       case 'aurora': return gradient(STOPS.aurora, 0.5 + 0.5 * Math.sin(c.ux * 2.2 + c.uy * 0.8 - ph * TAU));
       case 'candy': return gradient(STOPS.candy, 0.5 + 0.5 * Math.sin((c.ux - c.uy) * Math.PI * 0.6 - ph * TAU));
       case 'forest': return gradient(STOPS.forest, 0.5 + 0.5 * Math.sin((c.uy + c.ux * 0.4) * Math.PI - ph * TAU));
+      case 'ice': return gradient(STOPS.ice, 0.5 + 0.5 * Math.sin((c.uy * 1.2 - c.ux * 0.5) * Math.PI - ph * TAU));
+      case 'lava': return gradient(STOPS.lava, 0.5 + 0.5 * Math.sin((c.uy * 1.4 + c.d) * Math.PI - ph * TAU));
+      case 'dusk': return gradient(STOPS.dusk, 0.5 + c.uy * 0.5 + 0.15 * Math.sin(ph * TAU - c.ux * 2));
+      case 'mint': return gradient(STOPS.mint, 0.5 + 0.5 * Math.sin((c.ux + c.uy * 0.6) * Math.PI * 0.9 - ph * TAU));
+      case 'gold': return gradient(STOPS.gold, 0.5 + 0.5 * Math.sin(c.d * TAU * 0.7 - ph * TAU));
       case 'holo': return gradient(STOPS.holo, 0.5 + 0.25 * Math.sin((c.ux * 1.6 + c.uy * 0.8) * Math.PI - ph * TAU) + 0.25 * Math.sin((c.uy * 2.2 - c.ux * 0.6) * Math.PI + ph * TAU * 2));
     }
     return '#fff';

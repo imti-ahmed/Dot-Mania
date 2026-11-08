@@ -170,6 +170,11 @@
     { id: 'aurora', name: 'Aurora' },
     { id: 'candy', name: 'Candy' },
     { id: 'forest', name: 'Forest', flag: 'forestColor' },
+    { id: 'ice', name: 'Ice' },
+    { id: 'lava', name: 'Lava' },
+    { id: 'dusk', name: 'Dusk' },
+    { id: 'mint', name: 'Mint' },
+    { id: 'gold', name: 'Gold' },
     { id: 'holo', name: 'Holo', flag: 'holoColor' }
   ].filter(function (c) { return !c.flag || FLAGS[c.flag]; });
 
@@ -1121,7 +1126,7 @@
     el.appendChild(spec);
 
     // Cycle (flag): how many times the colours loop per animation loop. Whole numbers, so exports still loop seamlessly.
-    var cycleRow = null, CYCLING = ['rainbow', 'glitter', 'ocean', 'sunset', 'neon', 'aurora', 'candy', 'forest', 'holo'];
+    var cycleRow = null, CYCLING = ['rainbow', 'glitter', 'ocean', 'sunset', 'neon', 'aurora', 'candy', 'forest', 'ice', 'lava', 'dusk', 'mint', 'gold', 'holo'];
     if (FLAGS.colorCycle) {
       cycleRow = sliderRow({
         label: 'Cycle', min: 0, max: 4, step: 1, value: m.cycle,
