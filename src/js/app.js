@@ -44,6 +44,7 @@
   var repaintColor = function () {}, repaintShapes = function () {};   // set once those panels are built
   var cols = 0, rows = 0, ox = 0, oy = 0;
   var hover = null, drag = null, sel = null;   // sel: the Select tool's rectangle {c0,r0,c1,r1}
+  var selMode = 'move';                        // with a selection: 'move' (drag inside) or 'resize' (drag a handle)
   var undoStack = [], redoStack = [];
   var tl = E.makeTimeline('auto');   // what time the animation is at (see engine.js)
 
@@ -277,7 +278,14 @@
       ctx.setLineDash([6, 4]);
       ctx.strokeRect(bx + 1, by + 1, bw - 2, bh - 2);
       ctx.setLineDash([]);
+      if (box === sel && selMode === 'resize') {                 // the eight resize handles
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = 'rgba(94,160,255,1)';
+        ctx.lineWidth = 2;
+        handlePoints(sel).forEach(function (hp) { ctx.fillRect(hp.x - 6, hp.y - 6, 12, 12); ctx.strokeRect(hp.x - 6, hp.y - 6, 12, 12); });
+      }
     }
+    syncSelectionUI();
 
     // hover marker: the brush footprint for pencil / eraser, a single cell otherwise
     if (hover && state.tool !== 'select' && !(drag && drag.shapeTool)) {
@@ -538,11 +546,21 @@
   }
 
   // Cells covered by the line / rectangle / ellipse currently being dragged.
+  // The box a shape fills. Normally corner to corner; with Shift (circle) or Alt (shape, circle) it grows outward from where
+  // you pressed, so the press point is the centre.
+  function shapeBounds(d) {
+    var a = d.start, b = d.cur;
+    if (d.fromCentre) {
+      var dc = Math.abs(b.col - a.col), dr = Math.abs(b.row - a.row);
+      if (d.equal) dc = dr = Math.max(dc, dr);
+      return { c0: a.col - dc, c1: a.col + dc, r0: a.row - dr, r1: a.row + dr };
+    }
+    return { c0: Math.min(a.col, b.col), c1: Math.max(a.col, b.col), r0: Math.min(a.row, b.row), r1: Math.max(a.row, b.row) };
+  }
   function shapeCells(d) {
     var a = d.start, b = d.cur, out = [], r, c;
     if (d.tool === 'line') return expand(lineCells(a, b), state.brush);
-    var c0 = Math.min(a.col, b.col), c1 = Math.max(a.col, b.col);
-    var r0 = Math.min(a.row, b.row), r1 = Math.max(a.row, b.row);
+    var bb = shapeBounds(d), c0 = bb.c0, c1 = bb.c1, r0 = bb.r0, r1 = bb.r1;
     if (d.tool === 'rect') {
       for (r = r0; r <= r1; r++) for (c = c0; c <= c1; c++) {
         if (!state.outline || r === r0 || r === r1 || c === c0 || c === c1) out.push([c, r]);
@@ -662,7 +680,16 @@
     var p = cellAt(e), erase = state.tool === 'eraser' || e.button === 2;
     var before = beginEdit();
     if (state.tool === 'select') {
-      if (sel && p.col >= sel.c0 && p.col <= sel.c1 && p.row >= sel.r0 && p.row <= sel.r1) {
+      var cpt = canvasPoint(e), grip = sel && selMode === 'resize' ? handleAt(cpt.x, cpt.y) : null;
+      if (grip) {
+        // grab a handle: the picked dots are stretched or squeezed to the new box as you drag
+        var pm = new Map(), bcol = before.colors || new Map();
+        before.forEach(function (k) {
+          var q = k.split(','), c = +q[0], r = +q[1];
+          if (c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1) pm.set(k, bcol.get(k));
+        });
+        drag = { tool: 'select', mode: 'resize', handle: grip, start: p, cur: p, before: before, base: { c0: sel.c0, r0: sel.r0, c1: sel.c1, r1: sel.r1 }, picked: pm };
+      } else if (sel && p.col >= sel.c0 && p.col <= sel.c1 && p.row >= sel.r0 && p.row <= sel.r1) {
         // grab the chosen rectangle: its dots move together
         var picked = [];
         before.forEach(function (k) {
@@ -693,6 +720,7 @@
     hover = p;
     if (!drag) return;
     if (drag.mode === 'marquee') { drag.cur = p; return; }
+    if (drag.mode === 'resize') { resizeSelection(p, e.shiftKey, e.altKey); return; }
     if (drag.mode === 'move') {
       var b = drag.base;
       var dc = Math.max(-b.c0, Math.min(cols - 1 - b.c1, p.col - drag.start.col));
@@ -710,7 +738,14 @@
       dirty = true; updateInfo();
       return;
     }
-    if (drag.shapeTool) { drag.cur = constrain(drag, p, e.shiftKey); return; }
+    if (drag.shapeTool) {
+      // Circle + Shift: a circle growing outward from the centre. Shape / Circle + Alt: grow outward from the centre.
+      // Shape + Shift: a square (corner to corner). Shape + Shift + Alt: a square from the centre.
+      drag.fromCentre = (drag.tool === 'ellipse' && e.shiftKey) || (e.altKey && drag.tool !== 'line');
+      drag.equal = (drag.tool === 'ellipse' && e.shiftKey) || (drag.tool === 'rect' && e.shiftKey && e.altKey);
+      drag.cur = drag.fromCentre ? p : constrain(drag, p, e.shiftKey);
+      return;
+    }
     if (e.shiftKey) {
       // Shift: the stroke so far becomes one straight line from where it began (move the pointer to aim it)
       var end = snapLine(drag.start, p);
@@ -736,6 +771,7 @@
         if (c >= m.c0 && c <= m.c1 && r >= m.r0 && r <= m.r1) any = true;
       });
       sel = any ? m : null;                       // an empty rectangle selects nothing
+      if (any) selMode = 'move';
     }
     if (drag.shapeTool) shapeCells(drag).forEach(function (q) { setCell(q[0], q[1], !drag.erase); });
     endEdit(drag.before);
@@ -745,6 +781,102 @@
   cv.addEventListener('pointerup', endDrag);
   cv.addEventListener('pointercancel', endDrag);
   cv.addEventListener('pointerleave', function () { hover = null; });
+
+  /* ---------- Select: resize, delete and the options that replace Eraser / Invert / Clear ---------- */
+
+  function canvasPoint(e) {
+    var r = cv.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (w() / r.width), y: (e.clientY - r.top) * (h() / r.height) };
+  }
+  // The eight handles of a rectangle, in canvas pixels. id says which edge(s) it moves.
+  function handlePoints(b) {
+    var x0 = ox + b.c0 * CELL, y0 = oy + b.r0 * CELL, x1 = ox + (b.c1 + 1) * CELL, y1 = oy + (b.r1 + 1) * CELL, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+    return [
+      { id: 'nw', x: x0, y: y0 }, { id: 'n', x: mx, y: y0 }, { id: 'ne', x: x1, y: y0 }, { id: 'e', x: x1, y: my },
+      { id: 'se', x: x1, y: y1 }, { id: 's', x: mx, y: y1 }, { id: 'sw', x: x0, y: y1 }, { id: 'w', x: x0, y: my }
+    ];
+  }
+  function handleAt(x, y) {
+    var reach = Math.max(10, CELL * 0.8), best = null, bestD = Infinity;
+    handlePoints(sel).forEach(function (hp) {
+      var d = Math.max(Math.abs(hp.x - x), Math.abs(hp.y - y));
+      if (d <= reach && d < bestD) { best = hp.id; bestD = d; }
+    });
+    return best;
+  }
+  // Drag a handle: Shift keeps the proportions, Alt resizes from the centre. The dots are re-sampled into the new box.
+  function resizeSelection(p, shift, alt) {
+    var b = drag.base, hd = drag.handle;
+    var L = b.c0, R = b.c1 + 1, T = b.r0, B = b.r1 + 1, bw = R - L, bh = B - T, nL = L, nR = R, nT = T, nB = B;
+    if (hd.indexOf('e') > -1) nR = Math.max(L + 1, p.col + 1);
+    if (hd.indexOf('w') > -1) nL = Math.min(R - 1, p.col);
+    if (hd.indexOf('s') > -1) nB = Math.max(T + 1, p.row + 1);
+    if (hd.indexOf('n') > -1) nT = Math.min(B - 1, p.row);
+    if (alt) {                                   // from the centre: the opposite side moves the other way
+      if (hd.indexOf('e') > -1) nL = Math.min(nR - 1, L - (nR - R));
+      if (hd.indexOf('w') > -1) nR = Math.max(nL + 1, R + (L - nL));
+      if (hd.indexOf('s') > -1) nT = Math.min(nB - 1, T - (nB - B));
+      if (hd.indexOf('n') > -1) nB = Math.max(nT + 1, B + (T - nT));
+    }
+    if (shift) {                                 // proportional: one scale for both sides
+      var sx = (nR - nL) / bw, sy = (nB - nT) / bh, s;
+      var horiz = hd.indexOf('e') > -1 || hd.indexOf('w') > -1, vert = hd.indexOf('n') > -1 || hd.indexOf('s') > -1;
+      s = horiz && vert ? Math.max(sx, sy) : horiz ? sx : sy;
+      var tw = Math.max(1, Math.round(bw * s)), th = Math.max(1, Math.round(bh * s));
+      var cxm = (L + R) / 2, cym = (T + B) / 2;
+      if (alt) { nL = Math.round(cxm - tw / 2); nR = nL + tw; nT = Math.round(cym - th / 2); nB = nT + th; }
+      else {
+        if (hd.indexOf('w') > -1) { nR = R; nL = R - tw; } else if (hd.indexOf('e') > -1) { nL = L; nR = L + tw; } else { nL = Math.round(cxm - tw / 2); nR = nL + tw; }
+        if (hd.indexOf('n') > -1) { nB = B; nT = B - th; } else if (hd.indexOf('s') > -1) { nT = T; nB = T + th; } else { nT = Math.round(cym - th / 2); nB = nT + th; }
+      }
+    }
+    // stay on the grid
+    var gw = nR - nL, gh = nB - nT;
+    if (nL < 0) { nL = 0; nR = Math.min(cols, nL + gw); }
+    if (nT < 0) { nT = 0; nB = Math.min(rows, nT + gh); }
+    if (nR > cols) { nR = cols; nL = Math.max(0, nR - gw); }
+    if (nB > rows) { nB = rows; nT = Math.max(0, nB - gh); }
+    var nw = Math.max(1, nR - nL), nh = Math.max(1, nB - nT);
+
+    var next = new Set(), nextColor = new Map(), bc = drag.before.colors || new Map();
+    drag.before.forEach(function (k) {
+      var q = k.split(','), c = +q[0], r = +q[1];
+      if (!(c >= b.c0 && c <= b.c1 && r >= b.r0 && r <= b.r1)) { next.add(k); if (bc.has(k)) nextColor.set(k, bc.get(k)); }
+    });
+    for (var r = nT; r < nT + nh; r++) {
+      for (var c = nL; c < nL + nw; c++) {
+        var sk = (b.c0 + Math.floor((c - nL) * bw / nw)) + ',' + (b.r0 + Math.floor((r - nT) * bh / nh));
+        if (drag.picked.has(sk)) { next.add(c + ',' + r); if (drag.picked.get(sk)) nextColor.set(c + ',' + r, drag.picked.get(sk)); }
+      }
+    }
+    cells = next; cellColor = nextColor;
+    sel = { c0: nL, r0: nT, c1: nL + nw - 1, r1: nT + nh - 1 };
+    dirty = true; updateInfo();
+  }
+  function deleteSelection() {
+    if (!sel) return;
+    var before = beginEdit();
+    Array.from(cells).forEach(function (k) {
+      var q = k.split(','), c = +q[0], r = +q[1];
+      if (c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1) cells.delete(k);
+    });
+    sel = null; dirty = true;
+    endEdit(before);
+    updateInfo();
+  }
+  // With something selected the left panel offers Move / Resize / Delete instead of Eraser / Invert / Clear.
+  var lastHasSel = null, lastSelMode = null;
+  function syncSelectionUI() {
+    var has = !!sel;
+    if (has === lastHasSel && selMode === lastSelMode) return;
+    lastHasSel = has; lastSelMode = selMode;
+    var a = $('#editActions'), s = $('#selActions');
+    if (a) a.hidden = has;
+    if (s) s.hidden = !has;
+    var mv = $('#selMove'), rs = $('#selResize');
+    if (mv) mv.setAttribute('aria-pressed', String(selMode === 'move'));
+    if (rs) rs.setAttribute('aria-pressed', String(selMode === 'resize'));
+  }
 
   /* ---------- Tools ---------- */
 
@@ -1400,12 +1532,7 @@
     if (sel && e.key === 'Escape') { sel = null; return; }
     if (sel && (e.key === 'Delete' || e.key === 'Backspace')) {
       e.preventDefault();
-      var bf = beginEdit();
-      Array.from(cells).forEach(function (k) {
-        var q = k.split(','), c = +q[0], r = +q[1];
-        if (c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1) cells.delete(k);
-      });
-      dirty = true; endEdit(bf); updateInfo();
+      deleteSelection();
       return;
     }
     if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); playPressed(); return; }
@@ -2361,6 +2488,9 @@
   buildPages();
   initLayers();
   $('#addLayerBtn').addEventListener('click', addLayer);
+  $('#selMove').addEventListener('click', function () { selMode = 'move'; });
+  $('#selResize').addEventListener('click', function () { selMode = 'resize'; });
+  $('#selDelete').addEventListener('click', deleteSelection);
   selectPreset(state.preset);
   buildLayerPanel();
   setTool(state.tool);

@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
-  <link rel="stylesheet" href="src/css/style.css?v=0.32.0">
+  <link rel="stylesheet" href="src/css/style.css?v=0.33.0">
 </head>
 <body>
   <p class="agent-note" data-flag="agentTools">For AI agents: this editor has helper tools. Run window.dotMania.help() in the page for a guide to drawing, animating and exporting by script.</p>
@@ -71,7 +71,7 @@
       <!-- Left: tool bar (tools, actions, canvas size) -->
       <aside class="card sidebar" aria-label="Tools">
         <div class="toolstrip" id="toolstrip" role="toolbar" aria-label="Drawing tools"></div>
-        <div class="editstrip" role="group" aria-label="Canvas actions">
+        <div class="editstrip" id="editActions" role="group" aria-label="Canvas actions">
           <button class="key" id="eraserBtn" data-tool="eraser" title="Eraser (E)" aria-label="Eraser" aria-pressed="false">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/></svg><span class="lbl">Eraser</span>
           </button>
@@ -80,6 +80,17 @@
           </button>
           <button class="key" id="clearBtn" title="Clear everything" aria-label="Clear everything">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8h5.8l.6-8M7 7v3.5M9 7v3.5"/></svg><span class="lbl">Clear</span>
+          </button>
+        </div>
+        <div class="editstrip" id="selActions" role="group" aria-label="Selection actions" hidden>
+          <button class="key" id="selMove" aria-pressed="true" title="Move: drag inside the selection">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2l-1.8 1.8M8 2l1.8 1.8M8 14l-1.8-1.8M8 14l1.8-1.8M2 8l1.8-1.8M2 8l1.8 1.8M14 8l-1.8-1.8M14 8l-1.8 1.8"/></svg><span class="lbl">Move</span>
+          </button>
+          <button class="key" id="selResize" aria-pressed="false" title="Resize: drag a handle. Shift keeps the proportions, Alt resizes from the centre">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5L9 7M6.5 13.5h-4v-4M2.5 13.5L7 9"/></svg><span class="lbl">Resize</span>
+          </button>
+          <button class="key" id="selDelete" title="Delete the selected dots (Delete)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8h5.8l.6-8"/></svg><span class="lbl">Delete</span>
           </button>
         </div>
         <div class="editstrip" role="group" aria-label="Randomize">
@@ -347,17 +358,17 @@
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
-  <script src="src/js/core/flags.js?v=0.32.0"></script>
-  <script src="src/js/core/presets.js?v=0.32.0"></script>
-  <script src="src/js/core/shapes.js?v=0.32.0"></script>
-  <script src="src/js/core/engine.js?v=0.32.0"></script>
-  <script src="src/js/core/image.js?v=0.32.0"></script>
-  <script src="src/js/export/export.js?v=0.32.0"></script>
-  <script src="src/js/export/gif.js?v=0.32.0"></script>
-  <script src="src/js/data/library.js?v=0.32.0"></script>
-  <script src="src/js/data/site.js?v=0.32.0"></script>
-  <script src="src/js/data/whatsnew.js?v=0.32.0"></script>
-  <script src="src/js/app.js?v=0.32.0"></script>
-  <script src="src/js/agent.js?v=0.32.0"></script>
+  <script src="src/js/core/flags.js?v=0.33.0"></script>
+  <script src="src/js/core/presets.js?v=0.33.0"></script>
+  <script src="src/js/core/shapes.js?v=0.33.0"></script>
+  <script src="src/js/core/engine.js?v=0.33.0"></script>
+  <script src="src/js/core/image.js?v=0.33.0"></script>
+  <script src="src/js/export/export.js?v=0.33.0"></script>
+  <script src="src/js/export/gif.js?v=0.33.0"></script>
+  <script src="src/js/data/library.js?v=0.33.0"></script>
+  <script src="src/js/data/site.js?v=0.33.0"></script>
+  <script src="src/js/data/whatsnew.js?v=0.33.0"></script>
+  <script src="src/js/app.js?v=0.33.0"></script>
+  <script src="src/js/agent.js?v=0.33.0"></script>
 </body>
 </html>

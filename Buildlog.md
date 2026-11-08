@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.33.0 | 2026-11-08 | `v0.33.0` | Select: with a selection the Left panel shows Move / Resize / Delete instead of Eraser / Invert / Clear; Resize uses 8 handles (Shift keeps proportions, Alt from centre, dots re-sampled with colours kept). Circle + Shift draws from the centre outward; Alt = from centre for Shape and Circle. Prop panel: Colour (chips + swatches side by side) and Image (options side by side) made compact |
 | 0.32.0 | 2026-11-08 | `v0.32.0` | New dot shapes Star (five-point) and Hash (#): engine dot(), SVG export, shapes grid and agent setDotShape |
 | 0.31.2 | 2026-11-08 | `v0.31.2` | Open HTML moved into the Randomize group in the Left panel; Play stays in its own group |
 | 0.31.1 | 2026-11-08 | `v0.31.1` | Prop panel: the divider above Tuning is gone (it now shows only with the stackingSwitch flag) |

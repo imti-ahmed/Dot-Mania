@@ -1432,3 +1432,23 @@ body[data-view="home"] .app {
   box-shadow: inset 1px 0 0 #3a3a3a;
 }
 .panel-meta .panel-sub { max-width: 100%; }
+
+/* ---------- Prop panel: compact Colour and Image ---------- */
+/* Colour: the colour styles on the left as small chips, the solid colours on the right, side by side. */
+#colorControls { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 8px 12px; align-items: start; }
+#colorControls > .row:not(.color-row) { grid-column: 1 / -1; }
+#colorControls .keygrid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+#colorControls .keygrid .key { height: 26px; padding: 0 2px; border-radius: 7px; font-size: 9px; letter-spacing: .03em; }
+#colorControls .row.color-row { display: block; min-height: 0; padding: 0; }
+#colorControls .row.color-row .lbl { display: none; }
+#colorControls .swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 4px; justify-items: center; padding: 3px 0 0; }
+
+/* Image: Upload / Remove on one line, the two choices side by side with their label above. */
+#imageControls .pair .key { height: 30px; }
+.img-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+.img-opts .row { grid-template-columns: 1fr; gap: 4px; min-height: 0; padding: 0; }
+.img-opts .row .lbl { font-size: 10px; }
+.img-opts .seg .key { height: 28px; padding: 0 3px; font-size: 9px; letter-spacing: .03em; }
+
+/* Left panel: the Select options sit where Eraser / Invert / Clear were */
+#selActions[hidden], #editActions[hidden] { display: none; }
