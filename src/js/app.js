@@ -577,7 +577,7 @@
       if (t.extra && !FLAGS.extraTools) return;
       if (t.sep) { var s = document.createElement('div'); s.className = 'sep'; el.appendChild(s); return; }
       var b = document.createElement('button');
-      b.className = 'key'; b.dataset.tool = t.id; b.innerHTML = t.icon;
+      b.className = 'key'; b.dataset.tool = t.id; b.innerHTML = t.icon + '<span class="lbl">' + t.name + '</span>';
       b.title = t.name + ' (' + t.key.toUpperCase() + ')';
       b.setAttribute('aria-label', t.name);
       b.addEventListener('click', function () { setTool(t.id); });

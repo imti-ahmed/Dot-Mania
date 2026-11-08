@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.26.0 | 2026-11-08 | `v0.26.0` | Canvas card is a square sized to the screen height; the freed width goes to the side panels (left about a third, right the rest); left bar buttons are icon + text; stacked layout now below 1000px |
 | 0.25.4 | 2026-11-08 | `v0.25.4` | Canvas is 1080x1080 by default; the wide 1920x1080 option and the size buttons are hidden behind the new `canvasSizes` flag (Randomize and agent setCanvas follow it) |
 | 0.25.3 | 2026-11-08 | `v0.25.3` | pages/ folder renamed to tabs/: addresses are now /tabs/about, /tabs/library, /tabs/whats-new, /tabs/guide, /tabs/canvas; stale address comments fixed |
 | 0.25.2 | 2026-11-08 | `v0.25.2` | Assets tidied: icons/ and previews/ folders, clearer names, unused icon-512.png removed |

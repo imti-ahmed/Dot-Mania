@@ -6,7 +6,7 @@
   --text-2: #ece7dd;
   --muted: #a19d94;
   --accent: #ef282d;
-  --panel-w: 360px;
+  --panel-w: 440px;   /* set again below for the canvas view, from the free width */
   --well: #070707;
   --font-display: 'Doto', ui-monospace, monospace;
   --font-body: 'Archivo', system-ui, sans-serif;
@@ -557,7 +557,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* ---------- Small screens ---------- */
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   body { overflow: auto; }
   .app { height: auto; min-height: 100%; }
   .main { grid-template-columns: 1fr; }
@@ -701,7 +701,7 @@ a.stat:hover { color: var(--text); }
 .statusbar .readout b { font-weight: 400; color: var(--text); }
 .status-msg.busy .led { animation: pulse 1s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .25; } }
-@media (max-width: 900px) { .statusbar { width: auto; flex: 1; } }
+@media (max-width: 1000px) { .statusbar { width: auto; flex: 1; } }
 
 /* ---------- Library grid ---------- */
 
@@ -785,7 +785,7 @@ a.stat:hover { color: var(--text); }
 }
 .sizes { margin-top: auto; }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .sidebar > * + * { border-top: 0; border-left: 2px solid #070707; box-shadow: inset 1px 0 0 #3a3a3a; }
   .sizes { margin-top: 0; }
 }
@@ -1174,7 +1174,7 @@ a.stat:hover { color: var(--text); }
 .about-buttons .key svg { flex: none; }
 
 @media (max-width: 1200px) { .feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .about-notes { flex-direction: column; }
   .about-notes > div + div { border-left: 0; border-top: 2px solid #070707; box-shadow: inset 0 1px 0 #3a3a3a; }
 }
@@ -1331,4 +1331,28 @@ body[data-view="home"] .app {
 .sidebar > .sizes { margin-top: 0; }
 .crafted a { color: var(--text); font-weight: 700; text-decoration: none; transition: color .15s; }
 .crafted a:hover { color: var(--accent); }
-@media (max-width: 900px) { .sidebar > .crafted { display: none; } }
+@media (max-width: 1000px) { .sidebar > .crafted { display: none; } }
+
+/* ---------- Canvas view: square card, side panels take the free width ---------- */
+/* The canvas card is a square as tall as the screen allows (header 68 + padding 32 + gap 16 = 116px). The width left over
+   is shared: about a third to the left bar (icons + text), the rest to the right panel. */
+:root {
+  --stage-size: max(360px, min(calc(100vh - 116px), calc(100vw - 64px - 200px - 340px)));
+  --rest-w: calc(100vw - 64px - var(--stage-size));
+  --side-w: max(200px, calc(var(--rest-w) * .34));
+  --panel-w: max(340px, calc(var(--rest-w) - var(--side-w)));
+}
+.main[data-page="canvas"] { grid-template-columns: var(--side-w) var(--stage-size) minmax(0, 1fr); }
+.main[data-page="canvas"] .stage-card { width: var(--stage-size); height: var(--stage-size); align-self: start; }
+
+/* Left bar: icon + text rows */
+.sidebar .key { width: 100%; justify-content: flex-start; padding: 0 12px; }
+.sidebar .key .lbl { white-space: nowrap; }
+.toolstrip, .editstrip { gap: 6px; }
+.toolstrip .key, .editstrip .key, .sizes .key { width: 100%; padding: 0 12px; }
+.sidebar > .crafted span { writing-mode: horizontal-tb; transform: none; }
+.sidebar > .crafted { flex: 1 0 auto; }
+@media (max-width: 1000px) {
+  .sidebar .key { width: auto; }
+  .toolstrip .key, .editstrip .key, .sizes .key { width: auto; }
+}

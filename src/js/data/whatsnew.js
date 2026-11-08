@@ -6,6 +6,10 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.26.0', date: '2026-11-08', items: [
+    'The canvas card is now a square that fits your screen, with wider side panels around it.',
+    'The left panel shows a name next to every tool icon.'
+  ] },
   { v: '0.25.4', date: '2026-11-08', items: [
     'The canvas is now a 1080 x 1080 square by default, and the long wide frame is gone.'
   ] },
