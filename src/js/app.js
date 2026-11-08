@@ -1057,7 +1057,7 @@
   })();
 
   // Preview background for a colour style circle: its gradient, sampled from the real colour function.
-  function modePreview(id) {
+  function modePreview(id, idx) {
     var rgb = function (c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }, st, i, n;
     if (id === 'white') return '#ffffff';
     if (id === 'glitter') {
@@ -1072,14 +1072,15 @@
     }
     var S = E.STOPS[id];
     if (!S) return '#888';
-    // a fluid blend: the palette as a soft diagonal sweep, with the first and last colours bleeding in as glows
+    // a fluid blend: the palette as a soft sweep (each circle at its own angle), with its colours bleeding in as glows
     n = S.length;
     st = S.map(rgb);
-    return 'radial-gradient(circle at 25% 78%, ' + st[0] + ', transparent 58%), ' +
-           'radial-gradient(circle at 78% 22%, ' + st[n - 1] + ', transparent 55%), ' +
-           'radial-gradient(circle at 70% 78%, ' + st[Math.floor(n / 2)] + ', transparent 60%), ' +
-           'linear-gradient(135deg,' + st.join(',') + ')';
+    var ang = (idx * 53 + 20) % 360, rad = ang * Math.PI / 180, gx = 50 + 36 * Math.cos(rad), gy = 50 + 36 * Math.sin(rad);
+    return 'radial-gradient(circle at ' + gx.toFixed(0) + '% ' + gy.toFixed(0) + '%, ' + st[n - 1] + ', transparent 55%), ' +
+           'radial-gradient(circle at ' + (100 - gx).toFixed(0) + '% ' + (100 - gy).toFixed(0) + '%, ' + st[0] + ', transparent 58%), ' +
+           'linear-gradient(' + ang + 'deg,' + st.join(',') + ')';
   }
+
   // The colour spectrum card: left to right is the hue, top is light, middle is pure, bottom is dark.
   function spectrumHex(x, y) {
     var h = x * 360, l = 1 - y, a = Math.min(l, 1 - l), f = function (n) {
@@ -1102,7 +1103,7 @@
     grid.className = 'swatch-grid';
     COLOR_MODES.forEach(function (c) {
       var b = document.createElement('button');
-      b.className = 'swatch'; b.style.background = modePreview(c.id); b.dataset.mode = c.id;
+      b.className = 'swatch'; b.style.background = modePreview(c.id, COLOR_MODES.indexOf(c)); b.dataset.mode = c.id;
       b.title = c.name; b.setAttribute('aria-label', c.name + ' colour');
       b.addEventListener('click', function () { m.mode = c.id; paint(); recolorSelection(); });
       grid.appendChild(b);
