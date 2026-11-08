@@ -1,7 +1,7 @@
 /*
  * Rendering engine shared by the editor and the exported web component.
  *
- * geo = { ox, oy, cell, shape } where shape is 'dot' | 'square' | 'diamond' | 'triangle' | 'star' | 'hash'.
+ * geo = { ox, oy, cell, shape } where shape is 'dot' | 'square' | 'diamond' | 'triangle' | 'star' | 'ascii' ('hash' still draws, for older files).
  *
  * IMPORTANT: the functions below are serialised with Function.prototype.toString()
  * and pasted into exported code, so they must stay self-contained: they may only use
@@ -102,6 +102,12 @@
   function dot(ctx, x, y, s, shape) {
     var h = s / 2, r;
     if (shape === 'square') { ctx.fillRect(x - h, y - h, s, s); return; }
+    if (shape === 'ascii') {                         // a text character, picked by position so it stays put
+      var chars = '@#%&*+=?/<>~$';
+      ctx.font = 'bold ' + Math.round(s * 1.7) + 'px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(chars.charAt(Math.floor(hash(Math.round(x), Math.round(y)) * chars.length)), x, y + s * 0.06);
+      return;
+    }
     if (shape === 'hash') {                          // # : two upright and two flat bars
       var hl = h * 1.15, hb = h * 0.4, th = Math.max(1, s * 0.22);
       ctx.beginPath();                               // one path, so the crossings are not drawn twice (no darker spots)

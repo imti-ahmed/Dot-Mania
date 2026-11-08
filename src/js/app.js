@@ -1452,7 +1452,7 @@
     { id: 'diamond', name: 'Diamond' },
     { id: 'triangle', name: 'Triangle' },
     { id: 'star', name: 'Star' },
-    { id: 'hash', name: 'Hash' }
+    { id: 'ascii', name: 'ASCII' }
   ];
   function buildDotShapes() {
     var grid = document.createElement('div');
@@ -2324,6 +2324,10 @@
       var sp = [];
       for (var q = 0; q < 10; q++) { var an = -Math.PI / 2 + q * Math.PI / 5, rd = q % 2 ? r * 0.45 : r; sp.push([x + Math.cos(an) * rd, y + Math.sin(an) * rd]); }
       return '<polygon points="' + pts(sp) + '"' + attrs;
+    }
+    if (shape === 'ascii') {
+      var chars = '@#%&*+=?/<>~$', ch = chars.charAt(Math.floor(E.hash(Math.round(x), Math.round(y)) * chars.length));
+      return '<text x="' + n(x) + '" y="' + n(y + s * 0.06) + '" font-size="' + n(s * 1.7) + '" font-family="monospace" font-weight="bold" text-anchor="middle" dominant-baseline="central"' + attrs.replace('/>', '>') + ch.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;') + '</text>';
     }
     if (shape === 'hash') {
       var hl = h * 1.15, hb = h * 0.4, th = Math.max(1, s * 0.22);

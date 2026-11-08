@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.36.1', date: '2026-11-08', items: [
+    'The Hash shape is now ASCII: every dot becomes a text character such as @, #, % or *.'
+  ] },
   { v: '0.36.0', date: '2026-11-08', items: [
     'Image upload has a third style, Halftone, which turns tones into a neat, regular pattern of dots.'
   ] },
