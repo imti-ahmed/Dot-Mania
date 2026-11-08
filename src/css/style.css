@@ -1407,7 +1407,7 @@ body[data-view="home"] .app {
 .layer-row { display: flex; gap: 6px; }
 .layer-pick { flex: 1; min-width: 0; justify-content: flex-start; }
 .layer-pick[aria-pressed="true"] { color: #fff; }
-.layer-del { flex: none; width: 36px; padding: 0; justify-content: center; font-size: 16px; letter-spacing: 0; }
+.layer-del { flex: none; width: var(--key-h); padding: 0; justify-content: center; font-size: 16px; letter-spacing: 0; }
 
 /* Btmend (Export) is as tall as its content, so it never scrolls; Topend (Layers) takes the rest and scrolls instead.
    Only on a very short screen does Export shrink (and then scroll) so Layers keeps a usable minimum. */
@@ -1438,17 +1438,22 @@ body[data-view="home"] .app {
 #colorControls { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 8px 12px; align-items: start; }
 #colorControls > .row:not(.color-row) { grid-column: 1 / -1; }
 #colorControls .keygrid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
-#colorControls .keygrid .key { height: 26px; padding: 0 2px; border-radius: 7px; font-size: 9px; letter-spacing: .03em; }
+#colorControls .keygrid .key { height: var(--key-h); padding: 0 2px; border-radius: 7px; font-size: 9px; letter-spacing: .03em; }
 #colorControls .row.color-row { display: block; min-height: 0; padding: 0; }
 #colorControls .row.color-row .lbl { display: none; }
 #colorControls .swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 4px; justify-items: center; padding: 3px 0 0; }
 
 /* Image: Upload / Remove on one line, the two choices side by side with their label above. */
-#imageControls .pair .key { height: 30px; }
+#imageControls .pair .key { height: var(--key-h); }
 .img-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
 .img-opts .row { grid-template-columns: 1fr; gap: 4px; min-height: 0; padding: 0; }
 .img-opts .row .lbl { font-size: 10px; }
-.img-opts .seg .key { height: 28px; padding: 0 3px; font-size: 9px; letter-spacing: .03em; }
+.img-opts .seg .key { height: var(--key-h); padding: 0 3px; font-size: 9px; letter-spacing: .03em; }
 
 /* Left panel: the Select options sit where Eraser / Invert / Clear were */
 #selActions[hidden], #editActions[hidden] { display: none; }
+
+/* ---------- One height for every studio button ---------- */
+:root { --key-h: 32px; }
+.sidebar .key, .toolstrip .key, .editstrip .key, .sizes .key, .presets .key, .keygrid .key, .seg .key, .stack .key,
+.panel-tabs .key, .panel-foot .key, .layer-pick, .layer-del, #addLayerBtn, #selActions .key, #editActions .key { height: var(--key-h); min-height: var(--key-h); }
