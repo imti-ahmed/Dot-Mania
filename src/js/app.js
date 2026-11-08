@@ -1719,9 +1719,11 @@
     var left = document.createElement('div');
     left.className = 'img-left';
     left.innerHTML =
-      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)"><canvas width="160" height="160"></canvas><b>+</b></button>' +
+      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)"><canvas width="160" height="160"></canvas></button>' +
+      '<div class="pair">' +
       '<button class="key" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)"><span>Upload</span></button>' +
-      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" disabled><span>Remove</span></button>';
+      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" disabled><span>Remove</span></button>' +
+      '</div>';
     el.appendChild(left);
 
     // Right: the style at the top, Dots on below.
