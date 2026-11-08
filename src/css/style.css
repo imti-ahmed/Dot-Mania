@@ -1491,10 +1491,93 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 .switch2:not(.right) span:first-of-type, .switch2.right span:last-of-type { color: var(--text); }
 
 /* ---------- Image: preview on the left (like Color), style and Dots on on the right ---------- */
-#imageControls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 10px 12px; align-items: stretch; }
+#imageControls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 14px; align-items: stretch; }
 .img-left { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 /* empty: a little dot grid, like the canvas; with a picture: the picture */
-.img-preview { position: relative; width: 100%; flex: 1 1 auto; min-height: 88px; border-radius: 10px; overflow: hidden; background: radial-gradient(circle, #4a4a4a 1.6px, transparent 2.2px) 0 0 / 14px 14px, var(--well); background-position: 7px 7px, 0 0; box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); }
+.img-preview { position: relative; width: 100%; flex: none; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: radial-gradient(circle, #4a4a4a 1.6px, transparent 2.2px) 0 0 / 14px 14px, var(--well); background-position: 7px 7px, 0 0; box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); }
+.img-preview:hover { filter: brightness(1.25); }
+.img-preview canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: none; background: var(--well); }
+.img-left.has-image .img-preview canvas { display: block; }
+.img-left .pair { gap: 4px; }
+.img-left .key { min-width: 0; padding: 0 4px; font-size: 10px; letter-spacing: .04em; }
+.img-opts { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.style-list { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; gap: 4px; }
+/* radio buttons: a ring with a dot in it, the name beside it */
+.style-radio { display: flex; align-items: center; gap: 10px; min-height: 26px; padding: 0 2px; background: none; box-shadow: none; color: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; text-align: left; }
+.style-radio i { flex: none; position: relative; width: 16px; height: 16px; border-radius: 50%; background: var(--well); box-shadow: inset 0 2px 5px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .08); }
+.style-radio i::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); transform: scale(0); transition: transform .12s; }
+.style-radio:hover { color: var(--text); }
+.style-radio[aria-checked="true"] { color: var(--text); }
+.style-radio[aria-checked="true"] i::after { transform: scale(1); }
+.img-opts .row { grid-template-columns: 74px minmax(0, 1fr); gap: 10px; min-height: 0; padding: 0; }
+.img-opts .row .lbl { font-size: 11px; }
+.img-opts .seg { gap: 6px; }
+.img-opts .seg:has(.key:nth-child(3)) { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 2px; font-size: 10px; }
+.img-opts .seg .key { height: var(--key-h); padding: 0 6px; font-size: 11px; }
+
+/* Left panel: the Select options sit where Eraser / Invert / Clear were */
+#selActions[hidden], #editActions[hidden] { display: none; }
+
+/* ---------- One height for every studio button ---------- */
+:root { --key-h: 32px; }
+.sidebar .key, .toolstrip .key, .editstrip .key, .sizes .key, .presets .key, .keygrid .key, .seg .key, .stack .key,
+.panel-tabs .key, .panel-foot .key, .layer-pick, .layer-del, #addLayerBtn, #selActions .key, #editActions .key { height: var(--key-h); min-height: var(--key-h); }
+
+/* ---------- Prop panel: a carved divider above every option section ---------- */
+aside.panel .group-label:not(.first) { position: relative; margin-top: 8px; padding-top: 14px; }
+aside.panel .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
+
+/* ---------- Colour: circles in two rows, then a spectrum card ---------- */
+#colorControls { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 10px 12px; align-items: stretch; }
+#colorControls > .row, #colorControls > .key { grid-column: 1 / -1; }
+#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px 0; align-content: space-between; justify-items: center; padding: 2px 0; }
+#colorControls .swatch { width: 22px; height: 22px; background: var(--c); }
+.spectrum {
+  position: relative;
+  min-height: 96px;
+  border-radius: 10px;
+  cursor: crosshair;
+  touch-action: none;
+  background:
+    linear-gradient(to bottom, #fff 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0) 50%, #000 100%),
+    linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .6), 0 1px 0 rgba(255, 255, 255, .05);
+}
+.spectrum-knob {
+  position: absolute;
+  width: 14px; height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--c, #fff);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .6), 0 2px 5px rgba(0, 0, 0, .6);
+  pointer-events: none;
+}
+.spectrum-knob[hidden] { display: none; }
+#colorControls .swatch[data-mode][aria-pressed="true"] { box-shadow: 0 0 0 2px #151515, 0 0 0 3px #fff, 0 0 10px rgba(255, 255, 255, .5); }
+
+/* Colour: the circles and the spectrum are two separate cards */
+#colorControls .swatch-grid { padding: 12px 8px; border-radius: 10px; background: var(--well); box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); }
+
+/* Export: the same carved divider above every option section; the card takes all the height it needs from Layers */
+.panel2-bottom .group-label:not(.first) { position: relative; margin-top: 8px; padding-top: 14px; }
+.panel2-bottom .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
+.panel2 > .panel2-bottom { flex: 0 0 auto; }
+@media (min-width: 1151px) { .panel2 > .panel2-top { min-height: 96px; } }
+
+/* Two-way switch (Image: Dots on): a pill, the knob slides to the chosen side */
+.switch2 { position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: center; height: var(--key-h); padding: 0; border-radius: 999px; background: var(--well); box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.switch2 span { position: relative; z-index: 1; text-align: center; transition: color .15s; }
+.switch2 .knob { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 999px; background: #1d1d1d; box-shadow: 0 2px 0 #080808, 0 3px 6px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .12); transition: transform .18s ease; }
+.switch2.right .knob { transform: translateX(100%); }
+.switch2:not(.right) span:first-of-type, .switch2.right span:last-of-type { color: var(--text); }
+
+/* ---------- Image: preview on the left (like Color), style and Dots on on the right ---------- */
+#imageControls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 14px; align-items: stretch; }
+.img-left { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+/* empty: a little dot grid, like the canvas; with a picture: the picture */
+.img-preview { position: relative; width: 100%; flex: none; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: radial-gradient(circle, #4a4a4a 1.6px, transparent 2.2px) 0 0 / 14px 14px, var(--well); background-position: 7px 7px, 0 0; box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); }
 .img-preview:hover { filter: brightness(1.25); }
 .img-preview canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: none; background: var(--well); }
 .img-left.has-image .img-preview canvas { display: block; }

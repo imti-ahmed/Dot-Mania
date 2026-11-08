@@ -1732,15 +1732,15 @@
     var cap = document.createElement('div');
     cap.className = 'sub-label'; cap.textContent = 'Style';
     var list = document.createElement('div');
-    list.className = 'style-list';
+    list.className = 'style-list'; list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-label', 'Image style');
     [['threshold', 'Threshold'], ['dither', 'Dither'], ['outline', 'Outline']].forEach(function (s) {
       var b = document.createElement('button');
-      b.type = 'button'; b.className = 'style-tile'; b.dataset.v = s[0];
-      b.innerHTML = styleIcon(s[0]) + '<span>' + s[1] + '</span>';
+      b.type = 'button'; b.className = 'style-radio'; b.dataset.v = s[0]; b.setAttribute('role', 'radio');
+      b.innerHTML = '<i></i><span>' + s[1] + '</span>';
       b.addEventListener('click', function () { imgOpts.style = s[0]; paintTiles(); applyImage(); });
       list.appendChild(b);
     });
-    function paintTiles() { list.querySelectorAll('.style-tile').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === imgOpts.style)); }); }
+    function paintTiles() { list.querySelectorAll('.style-radio').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.v === imgOpts.style)); }); }
     paintTiles();
     opts.appendChild(cap); opts.appendChild(list);
 
