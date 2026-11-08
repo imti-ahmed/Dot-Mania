@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.3 | 2026-11-08 | `v0.38.3` | Image: both halves are the same height with no empty space (the preview and the style tiles stretch to fill) |
 | 0.38.2 | 2026-11-08 | `v0.38.2` | Image: dot-grid empty preview, Upload and Remove side by side, the three styles side by side |
 | 0.38.1 | 2026-11-08 | `v0.38.1` | Image laid out like Color: a preview box on the left with Upload/Replace and Remove below it, the three styles on top and Dots on below, on the right |
 | 0.38.0 | 2026-11-08 | `v0.38.0` | Image option remade: an upload card with a thumbnail and a small remove button, three style tiles with dot pictures (Threshold, Dither, Outline), and the Dots on switch |
