@@ -1415,3 +1415,7 @@ body[data-view="home"] .app {
 .panel2 > .panel2-bottom { flex: 0 1 auto; min-height: 0; }
 .panel2-bottom > .panel-body { flex: 0 1 auto; }
 @media (max-width: 1150px) { .panel2 > .panel2-top { flex: none; min-height: 0; } }
+
+/* Prop header: the layer name sits at the right end in brackets, after a vertical divider */
+.panel-meta { min-width: 0; display: flex; align-items: center; gap: 10px; }
+.panel-meta .divider { height: 14px; }

@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.29.5 | 2026-11-08 | `v0.29.5` | Prop panel header: the layer name shows at the right end in brackets, after a vertical divider |
 | 0.29.4 | 2026-11-08 | `v0.29.4` | Export card (Btmend) is as tall as its content so it has no scroll bar; the Layers card (Topend) takes the remaining height and scrolls instead |
 | 0.29.3 | 2026-11-08 | `v0.29.3` | Code export button renamed HTML -> HTML File |
 | 0.29.2 | 2026-11-08 | `v0.29.2` | Export: SVG replaces PNG (exportSvg flag on, exportPng off); the SVG is a plain still of the drawing, not animated |
