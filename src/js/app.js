@@ -2143,7 +2143,7 @@
 
     // Code: an HTML file, or text to paste into an AI assistant
     var code = [];
-    if (FLAGS.exportCodeFile) code.push(key('exportCode', 'HTML', 'Download a ready-to-open HTML file with the component'));
+    if (FLAGS.exportCodeFile) code.push(key('exportCode', 'HTML File', 'Download a ready-to-open HTML file with the component'));
     if (FLAGS.exportCopyForLlm) code.push(key('exportLlm', 'Copy LLM', 'Copy instructions plus the code, ready to paste into an AI assistant'));
     if (FLAGS.exportCopyEmbed) code.push(key('exportEmbed', 'Copy embed code', 'Copy just the component snippet'));
     if (FLAGS.exportDownloadJs) code.push(key('exportJs', 'Download .js', 'Download the component script on its own'));
