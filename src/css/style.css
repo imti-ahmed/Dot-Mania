@@ -1335,21 +1335,22 @@ body[data-view="home"] .app {
 
 /* ---------- Canvas view: square card, side panels take the free width ---------- */
 /* The canvas card is a square as tall as the screen allows (header 68 + padding 32 + gap 16 = 116px). The width left over
-   is shared: about a third to the left bar (icons + text), the rest to the right panel. */
+   is shared: a slim fixed 164px to the left bar (icons + text), all the rest to the right panel. */
 :root {
-  --stage-size: max(360px, min(calc(100vh - 116px), calc(100vw - 64px - 200px - 340px)));
+  --stage-size: max(360px, min(calc(100vh - 116px), calc(100vw - 64px - 164px - 340px)));
   --rest-w: calc(100vw - 64px - var(--stage-size));
-  --side-w: max(200px, calc(var(--rest-w) * .34));
+  --side-w: 164px;
   --panel-w: max(340px, calc(var(--rest-w) - var(--side-w)));
 }
 .main[data-page="canvas"] { grid-template-columns: var(--side-w) var(--stage-size) minmax(0, 1fr); }
 .main[data-page="canvas"] .stage-card { width: var(--stage-size); height: var(--stage-size); align-self: start; }
 
 /* Left bar: icon + text rows */
-.sidebar .key { width: 100%; justify-content: flex-start; padding: 0 12px; }
+.sidebar .key { width: 100%; justify-content: flex-start; padding: 0 10px; }
 .sidebar .key .lbl { white-space: nowrap; }
 .toolstrip, .editstrip { gap: 6px; }
-.toolstrip .key, .editstrip .key, .sizes .key { width: 100%; padding: 0 12px; }
+.toolstrip .key, .editstrip .key, .sizes .key { width: 100%; padding: 0 10px; }
+.toolstrip, .editstrip, .sizes { padding-left: 10px; padding-right: 10px; }
 .sidebar > .crafted span { writing-mode: horizontal-tb; transform: none; }
 .sidebar > .crafted { flex: 1 0 auto; }
 @media (max-width: 1000px) {
