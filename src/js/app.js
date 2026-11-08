@@ -1549,7 +1549,7 @@
   // The live animation at the end of the About page (loaded the first time the page is opened).
   var aboutPreviewLoaded = false;
   function loadAboutPreview() {
-    var box = $('#aboutPreview'), url = ROOT + 'assets/home-preview.html';
+    var box = $('#aboutPreview'), url = ROOT + 'assets/previews/home.html';
     fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
       .then(function (text) { libPreview(box, text, url, 'Preview', welcomeItems, 1280); })
       .catch(function () { libIframe(box, url, 'Preview'); });
@@ -1976,7 +1976,7 @@
 
   /* ---------- Welcome popup (closed beta) ---------- */
 
-  // Shown on the first visit, then again after 5 hours (the welcomeOnce flag; off = every visit). The preview is assets/welcome-preview.html drawn with the same light renderer as the
+  // Shown on the first visit, then again after 5 hours (the welcomeOnce flag; off = every visit). The preview is assets/previews/welcome.html drawn with the same light renderer as the
   // Library previews. "How to use" pops a second card in beside the welcome (press it again, or Esc, to close it).
   var WELCOME_TTL = 5 * 60 * 60 * 1000;           // how long before the welcome popup comes back (5 hours)
   function setupWelcome() {
@@ -1994,7 +1994,7 @@
       el.hidden = false; welcomeOpen = true;
       if (!loaded) {
         loaded = true;
-        var url = ROOT + 'assets/welcome-preview.html';
+        var url = ROOT + 'assets/previews/welcome.html';
         fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
           .then(function (text) { libPreview(box, text, url, 'Welcome', welcomeItems, 960, 2); })
           .catch(function () { libIframe(box, url, 'Welcome'); });
@@ -2027,7 +2027,7 @@
 
   function setupHome() {
     if (!HOME_ON) return;                      // the welcome page is switched off
-    var site = window.SITE || {}, box = $('#homePreview'), url = ROOT + 'assets/home-preview.html';
+    var site = window.SITE || {}, box = $('#homePreview'), url = ROOT + 'assets/previews/home.html';
     var modal = $('#howModal');
     if (site.repo) $('#homeFeedback').href = 'https://github.com/' + site.repo + '/issues/new';
     fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })

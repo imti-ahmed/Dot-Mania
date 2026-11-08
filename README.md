@@ -71,7 +71,7 @@ src/
     export/                    HTML component export, GIF encoder
     data/                      site settings, template list, What's New content
 templates/                     Library templates
-assets/                        logo and app icons, social-preview.png (the link share image), welcome-preview.html (the popup animation), home-preview.html (the switched-off welcome page animation)
+assets/                        icons/ (favicon and app icons) and previews/ (welcome.html, home.html, social.png: the link share image)
 Buildlog.md                    the build log
 .github/workflows/             backs up the view count to a `stats` branch
 ```

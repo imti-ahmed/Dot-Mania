@@ -20,9 +20,9 @@ src/
     export/                    export.js (HTML component), gif.js (GIF encoder)
     data/                      site.js (version, repo, views), library.js (template list), whatsnew.js (What's New content)
 templates/                     Library templates, each one a Dot Mania HTML export
-assets/                        logo icons (favicon.svg, favicon.ico, icon-180.png, icon-512.png) and welcome-preview.html (the animation in the welcome popup), home-preview.html (the animation on the switched-off welcome page)
+assets/                        icons/ (favicon.svg, favicon.ico, apple-touch-icon.png) and previews/ (welcome.html: the popup animation, home.html: the switched-off welcome page animation, social.png: the link share image)
 Buildlog.md                    the build log
-.github/workflows/             views-backup.yml (saves the view count to a `stats` branch every 6 hours)
+.github/workflows/             views-backup.yml (saves the view count to a `stats` branch every 6 hours), pr-check.yml (checks on every PR, script in .github/scripts/)
 ```
 - `js/data/whatsnew.js` is plain language for users, NOT a copy of the build log.
 - Disabled pages (About, Library, What's New, Guide) stay in the nav greyed out; the `aboutPage`, `libraryPage`, `whatsNewPage` and `guidePage` flags turn them on.
