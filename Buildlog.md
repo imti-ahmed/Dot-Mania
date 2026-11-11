@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.7 | 2026-11-11 | `v0.38.7` | Twill: lighter blue glow; pressed keys stay close to the key colour but look pushed down (inset top shadow, no drop shadow, 1px lower) instead of going dark |
 | 0.38.6 | 2026-11-11 | `v0.38.6` | Twill: the open top tab is flat (no pressed-in dip) and glows blue; every pressed key, icon and slider glows blue instead of white (`--glow` colour) |
 | 0.38.5 | 2026-11-11 | `v0.38.5` | Twill theme (trial): dark woven-fabric background, flat grey keys with black seams, segmented Edit/Export and option bars, pressed-in keys with a glowing white icon, white glowing sliders and active tab; one block at the end of style.css, delete it to go back |
 | 0.38.4 | 2026-11-08 | `v0.38.4` | Image: the preview is a square again; the style is a set of radio buttons, Dots on stays a switch, and both halves line up in height |
