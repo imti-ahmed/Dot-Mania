@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.45 | 2026-11-11 | `v0.38.45` | Library: heading removed, tagline centred |
 | 0.38.44 | 2026-11-11 | `v0.38.44` | Library: the three old templates removed; Turbo Wizard and Pocket Goblin (1080 x 1080 exports) added |
 | 0.38.43 | 2026-11-11 | `v0.38.43` | Library cards: no name under the preview, just the square preview (the name stays as its accessible label) |
 | 0.38.42 | 2026-11-11 | `v0.38.42` | Library: heading and tagline back to their original inset; only the cards line up with the header edges |
