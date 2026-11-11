@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.14 | 2026-11-11 | `v0.38.14` | Twill: black seam around keys 1.5px (2px was too much) |
 | 0.38.13 | 2026-11-11 | `v0.38.13` | Twill: the black seam around every key is 2px (was 1px); gaps in option bars and panel tabs 8px to match |
 | 0.38.12 | 2026-11-11 | `v0.38.12` | Twill: gaps back between buttons in option bars and panel tabs (no more touching segments); every key has four rounded corners |
 | 0.38.11 | 2026-11-11 | `v0.38.11` | Twill: pressed key redone with layered inner shadows (sharp top edge, soft all-round dish, light bottom edge), no 1px shift |
