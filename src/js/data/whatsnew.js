@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.41.0', date: '2026-11-11', items: [
+    'Library previews are now small looping pictures, so every card moves and the page stays fast. The full template loads only when you press Load File.'
+  ] },
   { v: '0.40.2', date: '2026-11-11', items: [
     'Every Library card plays on its own again, and the page stays light.'
   ] },

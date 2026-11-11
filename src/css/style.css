@@ -731,6 +731,7 @@ a.stat:hover { color: var(--text); }
   overflow: hidden;
   background: #0b0b0a;
 }
+.lib-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; user-select: none; }   /* the looping GIF */
 .lib-preview canvas { object-fit: contain; }   /* an older wide template is fitted inside the square, never stretched */
 .lib-preview canvas, .lib-preview iframe {
   position: absolute;
