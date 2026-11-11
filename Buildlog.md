@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.22 | 2026-11-11 | `v0.38.22` | Twill: main colour darker (page background and panel cards) |
 | 0.38.21 | 2026-11-11 | `v0.38.21` | Twill: parent cards #262627 (a touch darker) |
 | 0.38.20 | 2026-11-11 | `v0.38.20` | Twill: parent cards #2a2a2c (between the first dark and the too-light one) |
 | 0.38.19 | 2026-11-11 | `v0.38.19` | Twill: parent cards lighter (#323234, was #232324) |

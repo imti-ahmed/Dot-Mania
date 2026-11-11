@@ -1601,7 +1601,7 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
    ========================================================================== */
 
 :root {
-  --bg: #1f1f20;
+  --bg: #19191a;
   --text: #f1f1f1;
   --text-2: #e2e2e2;
   --muted: #9b9b9d;
@@ -1614,10 +1614,10 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
     repeating-linear-gradient(58deg, transparent 0 1px, rgba(255, 255, 255, .045) 1px 2px, transparent 2px 3px);
 }
 
-body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-color: var(--bg); }
+body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-color: var(--bg); }
 
 .card, .lib-card, .welcome-card, .how-card, .cpicker {
-  background: var(--twill), linear-gradient(#303031, #29292a);
+  background: var(--twill), linear-gradient(#2a2a2b, #252526);
   border-radius: 12px;
   box-shadow:
     0 0 0 1px #070707,
