@@ -2136,12 +2136,14 @@
       var url = ROOT + 'templates/' + t.file + '?v=' + ((window.SITE || {}).version || ''), card = document.createElement('article');   // the version keeps the browser from showing an old cached template
       card.className = 'lib-card';
       card.innerHTML =
-        '<div class="lib-preview"></div>' +
-        '<div class="lib-name"></div>' +
-        '<div class="lib-actions">' +
-          '<button class="key" data-act="load">Load File</button>' +
-          '<a class="key" data-act="download" download>Download</a>' +
-        '</div>';
+        '<div class="lib-media">' +
+          '<div class="lib-preview"></div>' +
+          '<div class="lib-actions">' +
+            '<button class="key" data-act="load">Load File</button>' +
+            '<a class="key" data-act="download" download>Download</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="lib-name"></div>';
       card.querySelector('.lib-name').textContent = t.name;
       var dl = card.querySelector('[data-act="download"]');
       dl.href = ROOT + 'templates/' + t.file; dl.download = t.file;
