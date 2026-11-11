@@ -1610,8 +1610,8 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
   --glow-rgb: 156, 207, 255;
   /* fine diagonal weave, drawn with gradients only (no image file) */
   --twill:
-    repeating-linear-gradient(58deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(58deg, transparent 0 1px, rgba(255, 255, 255, .045) 1px 2px, transparent 2px 3px);
+    repeating-linear-gradient(58deg, rgba(0, 0, 0, .16) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(58deg, transparent 0 1px, rgba(255, 255, 255, .025) 1px 2px, transparent 2px 3px);
 }
 
 body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-color: var(--bg); }
