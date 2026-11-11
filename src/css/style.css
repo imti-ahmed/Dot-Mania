@@ -612,7 +612,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .page > * { max-width: 760px; }
 .page > .lib-grid { max-width: none; }
-.page.library { padding-top: 8px; }   /* no parent card: the templates sit straight on the page */
+.page.library { padding: 8px 0 0; }   /* no parent card: the templates sit straight on the page */
 .page-title {
   font-family: var(--font-display);
   font-weight: 800;

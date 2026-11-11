@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.41 | 2026-11-11 | `v0.38.41` | Library: title and cards start and end at the same edges as the header card (no extra side padding) |
 | 0.38.40 | 2026-11-11 | `v0.38.40` | Library cards: only the preview and the name; Load File and Download appear on top of the preview on hover (always shown on touch screens) |
 | 0.38.39 | 2026-11-11 | `v0.38.39` | Library: template files are loaded with ?v=<version> so browsers no longer show old cached templates |
 | 0.38.38 | 2026-11-11 | `v0.38.38` | Library: Cyberpunk redrawn to fill the whole 67 x 67 square grid, so nothing is cut off |
