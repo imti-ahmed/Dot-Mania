@@ -1656,7 +1656,6 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
 .key[aria-pressed="true"] {
   background: linear-gradient(#303032, #3b3b3d);
   color: var(--glow);
-  text-shadow: 0 0 8px rgba(var(--glow-rgb), .85);
   transform: translateY(1px);
   box-shadow:
     0 0 0 1px #070707,
@@ -1686,7 +1685,6 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
   padding-left: 12px;
   color: var(--glow);
   background: none;
-  text-shadow: 0 0 8px rgba(var(--glow-rgb), .8);
   box-shadow: none;
 }
 .navbtn[aria-pressed="true"]::before { display: none; }
