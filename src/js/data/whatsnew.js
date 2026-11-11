@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.38.5', date: '2026-11-11', items: [
+    'A new look: a dark woven-fabric background, flat grey buttons with a pressed-in, glowing style for whatever is switched on.'
+  ] },
   { v: '0.38.0', date: '2026-11-08', items: [
     'The Image options have a new look: an upload card that shows a thumbnail of your picture, and style tiles with a small preview of each style.'
   ] },

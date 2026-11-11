@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.5 | 2026-11-11 | `v0.38.5` | Twill theme (trial): dark woven-fabric background, flat grey keys with black seams, segmented Edit/Export and option bars, pressed-in keys with a glowing white icon, white glowing sliders and active tab; one block at the end of style.css, delete it to go back |
 | 0.38.4 | 2026-11-08 | `v0.38.4` | Image: the preview is a square again; the style is a set of radio buttons, Dots on stays a switch, and both halves line up in height |
 | 0.38.3 | 2026-11-08 | `v0.38.3` | Image: both halves are the same height with no empty space (the preview and the style tiles stretch to fill) |
 | 0.38.2 | 2026-11-08 | `v0.38.2` | Image: dot-grid empty preview, Upload and Remove side by side, the three styles side by side |
