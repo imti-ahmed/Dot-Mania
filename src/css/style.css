@@ -1642,7 +1642,7 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
   border-radius: 6px;
   background: linear-gradient(#444446, #38383a);
   box-shadow:
-    0 0 0 1px #070707,
+    0 0 0 2px #070707,
     0 2px 3px rgba(0, 0, 0, .45),
     inset 0 1px 0 rgba(255, 255, 255, .12),
     inset 0 -1px 0 rgba(0, 0, 0, .3);
@@ -1650,14 +1650,14 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
 .key:active {
   transform: none;
   background: linear-gradient(#333335, #2b2b2d);
-  box-shadow: 0 0 0 1px #070707, inset 0 2px 5px rgba(0, 0, 0, .6);
+  box-shadow: 0 0 0 2px #070707, inset 0 2px 5px rgba(0, 0, 0, .6);
 }
 /* Pressed in: darker tile, and the icon or label lights up white */
 .key[aria-pressed="true"] {
   background: linear-gradient(#2a2a2c, #323234);
   color: var(--glow);
   box-shadow:
-    0 0 0 1px #070707,
+    0 0 0 2px #070707,
     inset 0 2px 3px rgba(0, 0, 0, .7),      /* sharp edge shadow under the top lip */
     inset 0 0 9px rgba(0, 0, 0, .4),        /* soft shadow all round, like a dished-in key */
     inset 0 -1px 0 rgba(255, 255, 255, .09);/* light catching the bottom edge */
@@ -1671,9 +1671,9 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
 }
 
 /* Segmented bars: separate keys with a small gap between them, every key keeps all four rounded corners */
-.seg { gap: 6px; }
+.seg { gap: 8px; }
 .seg .key, .panel-tabs .key { border-radius: 6px; }
-.panel-tabs { gap: 6px; }
+.panel-tabs { gap: 8px; }
 .panel-tabs { padding-left: 14px; padding-right: 14px; }
 
 /* Top navigation: the open tab is flat and glows blue instead of getting a red dot */
