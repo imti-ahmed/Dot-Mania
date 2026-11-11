@@ -1637,6 +1637,14 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
   box-shadow: 0 0 0 1px #070707, inset 0 2px 6px rgba(0, 0, 0, .45), 0 1px 0 rgba(255, 255, 255, .05);
 }
 
+/* Animations sit in a parent card like Shapes and the other options */
+.presets {
+  padding: 8px;
+  background: #232324;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px #070707, inset 0 2px 6px rgba(0, 0, 0, .45), 0 1px 0 rgba(255, 255, 255, .05);
+}
+
 /* Keys: flat dark grey tiles with a black outline and a soft top highlight */
 .key {
   border-radius: 6px;
