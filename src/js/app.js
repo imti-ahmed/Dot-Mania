@@ -1365,40 +1365,148 @@
     return out;
   }
 
+  // Mathematically generated art for Randomize. Every kind is a formula on the grid, measured from the centre, so the result is
+  // symmetric and tidy instead of noise. Numbers inside each kind (petals, sides, arms, scale...) are drawn at random, so no
+  // two presses give the same picture. A pattern is kept only if it fills a sensible share of the canvas.
+  //   rose         polar rose: petals r = |cos(k.angle)|, filled or as an outline
+  //   polygons     nested regular polygons (3 to 8 sides), alternating bands
+  //   super        superformula: stars, flowers and rounded polygons from one equation, filled or as a ring
+  //   spiral       logarithmic-style spiral arms, 2 to 6 of them
+  //   interference two or four wave sources: the rings of each cross into a moire
+  //   mandala      rows of petals, each row turned half a petal from the one before
+  //   carpet       Sierpinski carpet: a square with the middle third cut out, again and again
+  //   truchet      quarter-circle tiles chosen by a hash, mirrored in four so they weave into a kaleidoscope
+  //   halftone     a shaded sphere drawn in dots with an ordered (Bayer) dither
+  var MATH_ART = ['rose', 'polygons', 'super', 'spiral', 'interference', 'mandala', 'carpet', 'truchet', 'halftone'];
+  var SUPER_SETS = [      // m (symmetry), n1, n2, n3: a star, a flower, a soft triangle, a rounded square, a 12-point sun
+    [5, 0.3, 0.3, 0.3], [6, 1, 1, 1], [3, 4.5, 10, 10], [4, 12, 15, 15], [8, 0.5, 0.5, 0.5], [12, 0.8, 1.5, 0.5], [7, 0.6, 0.4, 0.4]
+  ];
+  var BAYER4 = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+
+  function mathArt(kind) {
+    var TAU = Math.PI * 2, cx = (cols - 1) / 2, cy = (rows - 1) / 2, R = Math.min(cols, rows) / 2 * 0.97, total = cols * rows;
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function frac(v) { return v - Math.floor(v); }
+    function between(lo, hi) { return lo + Math.random() * (hi - lo); }
+    var out = new Set();
+
+    for (var attempt = 0; attempt < 10; attempt++) {
+      var test = null, k = kind === 'any' || !kind ? pick(MATH_ART) : kind;
+
+      if (k === 'rose') {
+        var petals = pick([2, 3, 4, 5, 6, 8]), hollow = Math.random() < 0.4, thick = between(0.12, 0.2);
+        test = function (p, q, d, a) {
+          var edge = 0.97 * Math.abs(Math.cos(petals * a));
+          return hollow ? Math.abs(d - edge) < thick && d > 0.04 : d <= edge && d > 0.1;
+        };
+      } else if (k === 'polygons') {
+        var sides = pick([3, 4, 5, 6, 8]), band = between(0.1, 0.18), turn = pick([0, Math.PI / 2, Math.PI]);
+        test = function (p, q, d, a) {
+          var s = ((a + turn) % (TAU / sides) + TAU / sides) % (TAU / sides) - Math.PI / sides;
+          var e = d * Math.cos(s) / Math.cos(Math.PI / sides);
+          return e <= 1 && Math.floor(e / band) % 2 === 0;
+        };
+      } else if (k === 'super') {
+        var set = pick(SUPER_SETS), ring = Math.random() < 0.4, rot = pick([0, Math.PI / 2]);
+        var sf = function (a) {
+          return Math.pow(Math.pow(Math.abs(Math.cos(set[0] * a / 4)), set[2]) + Math.pow(Math.abs(Math.sin(set[0] * a / 4)), set[3]), -1 / set[1]);
+        };
+        var top = 0;
+        for (var i = 0; i < 720; i++) top = Math.max(top, sf(i / 720 * TAU));
+        test = function (p, q, d, a) {
+          var e = 0.96 * sf(a + rot) / top;
+          return d <= e && (!ring || d >= e * 0.5);
+        };
+      } else if (k === 'spiral') {
+        var arms = pick([2, 3, 4, 5, 6]), turns = between(1.2, 3), width = between(0.4, 0.6), dir = pick([-1, 1]);
+        test = function (p, q, d, a) { return d <= 0.98 && d > 0.05 && frac(arms * a / TAU * dir + turns * d * arms / 2) < width; };
+      } else if (k === 'interference') {
+        var off = pick([0.2, 0.28, 0.36, 0.45]), freq = pick([9, 12, 15, 18]), cut = between(0.35, 0.85), four = Math.random() < 0.4;
+        test = function (p, q, d) {
+          if (d > 0.98) return false;
+          var v = Math.cos(freq * Math.hypot(Math.abs(p) - off, q)) + Math.cos(freq * Math.hypot(Math.abs(p) + off, q));
+          if (four) v = Math.cos(freq * Math.hypot(Math.abs(p) - off, Math.abs(q) - off)) + Math.cos(freq * Math.hypot(Math.abs(p) + off, Math.abs(q) + off));
+          return v > cut;
+        };
+      } else if (k === 'mandala') {
+        var n = pick([6, 8, 10, 12]), rowsN = pick([4, 5, 6]);
+        test = function (p, q, d, a) {
+          if (d > 0.98) return false;
+          var b = Math.floor(d * rowsN), t = d * rowsN - b;
+          return Math.cos(n * (a + b * Math.PI / n)) > 2 * t - 1.1;
+        };
+      } else if (k === 'carpet') {
+        test = function (p, q, d, a, c, r) {
+          var i = Math.floor((c + 0.5) * 27 / cols), j = Math.floor((r + 0.5) * 27 / rows);
+          for (var s = 0; s < 3; s++) { if (i % 3 === 1 && j % 3 === 1) return false; i = Math.floor(i / 3); j = Math.floor(j / 3); }
+          return true;
+        };
+      } else if (k === 'truchet') {
+        var ts = pick([6, 8, 10]), seed = Math.random() * 1000, lw = ts * 0.14 + 0.5, round = Math.random() < 0.5;
+        test = function (p, q, d) {
+          var x = Math.abs(p) * R, y = Math.abs(q) * R;
+          if (round && d > 0.98) return false;
+          var X = Math.floor(x / ts), Y = Math.floor(y / ts), lx = x - X * ts, ly = y - Y * ts;
+          var h = Math.sin((X * 127.1 + Y * 311.7 + seed) * 12.9898) * 43758.5453;
+          if (frac(h) < 0.5) { lx = ts - lx; }
+          return Math.abs(Math.hypot(lx, ly) - ts / 2) <= lw || Math.abs(Math.hypot(ts - lx, ts - ly) - ts / 2) <= lw;
+        };
+      } else {   // halftone
+        var lx0 = between(-0.6, 0.6), ly0 = -Math.abs(between(0.3, 0.7));
+        test = function (p, q, d, a, c, r) {
+          if (d > 0.97) return false;
+          var z = Math.sqrt(Math.max(0, 1 - d * d)), v = Math.max(0, Math.min(1, 0.15 + 0.95 * Math.max(0, z * 0.6 - 0.5 * (p * lx0 + q * ly0))));
+          return v > (BAYER4[r % 4][c % 4] + 0.5) / 16;
+        };
+      }
+
+      out = new Set();
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var p = (c - cx) / R, q = (r - cy) / R, d = Math.sqrt(p * p + q * q);
+          if (test(p, q, d, Math.atan2(q, p), c, r)) out.add(c + ',' + r);
+        }
+      }
+      var share = out.size / total;
+      if (share > 0.1 && share < 0.75) return out;      // sensible amount of ink
+    }
+    return out;
+  }
+
   // Randomize (left bar): a hand-made starting point, not a dice roll of unrelated settings. Each recipe pairs a drawing with an
   // animation, tuned sliders, a mark shape and colours that are known to look good together. The press picks one at random (never
   // the same twice in a row) and varies it a little: speed, and the colour from the recipe's own short list. One press in six
   // makes a fully random piece instead, so surprises are still possible.
-  //   art    a starter shape id (+ scale), or 'random' for generated art
+  //   art    a starter shape id (+ scale), ['math', kind] for generated art (see mathArt), or ['random'] for any kind
   //   dot    the mark shape        anim   animation id(s), the first is the main one
   //   tune   { speed, size, glow } and per-animation settings, e.g. { ripple: { rings: 3 } }
   //   colors colour modes (a name) or solid hexes (#...), one is picked
   var RECIPES = [
-    { art: ['disc', 0.95],      dot: 'dot',      anim: ['ripple'],    tune: { size: 0.7,  glow: 0.8,  ripple: { rings: 3 } },            colors: ['neon', 'ocean', '#2de2e6'] },
-    { art: ['ring', 0.92],      dot: 'dot',      anim: ['tunnel'],    tune: { size: 0.7,  glow: 0.7,  tunnel: { rings: 3 } },            colors: ['sunset', 'dusk', 'candy'] },
+    { art: ['math', 'polygons'],  dot: 'dot',      anim: ['ripple'],    tune: { size: 0.7,  glow: 0.8,  ripple: { rings: 3 } },            colors: ['neon', 'ocean', '#2de2e6'] },
+    { art: ['math', 'polygons'],  dot: 'dot',      anim: ['tunnel'],    tune: { size: 0.7,  glow: 0.7,  tunnel: { rings: 3 } },            colors: ['sunset', 'dusk', 'candy'] },
     { art: ['heart', 0.88],     dot: 'dot',      anim: ['heartbeat'], tune: { size: 0.8,  glow: 0.8 },                                  colors: ['#ff5fa2', '#ef282d', 'candy'] },
     { art: ['heart', 0.88],     dot: 'heart',    anim: ['pulse'],     tune: { size: 0.75, glow: 0.6,  pulse: { depth: 0.7 } },          colors: ['#ff5fa2', 'candy', 'sunset'] },
     { art: ['star', 0.92],      dot: 'star',     anim: ['twinkle'],   tune: { size: 0.8,  glow: 0.8,  twinkle: { sparkle: 0.7 } },      colors: ['gold', '#ffd23f', 'sunset'] },
     { art: ['snowflake', 0.92], dot: 'dot',      anim: ['shimmer'],   tune: { size: 0.75, glow: 0.7,  shimmer: { trail: 0.5 } },        colors: ['ice', 'ocean', '#2de2e6'] },
-    { art: ['full'],            dot: 'dot',      anim: ['plasma'],    tune: { size: 0.75, glow: 0.7,  plasma: { scale: 1.6 } },         colors: ['aurora', 'holo', 'neon', 'dusk'] },
-    { art: ['disc', 0.95],      dot: 'dot',      anim: ['radar'],     tune: { size: 0.65, glow: 0.8,  radar: { trail: 0.65 } },         colors: ['mint', '#5cf08a', 'forest'] },
-    { art: ['disc', 0.95],      dot: 'dot',      anim: ['spiral'],    tune: { size: 0.7,  glow: 0.7,  spiral: { arms: 3, twist: 1.2 } }, colors: ['dusk', 'rainbow', 'holo'] },
+    { art: ['math', 'interference'], dot: 'dot', anim: ['plasma'],    tune: { size: 0.75, glow: 0.7,  plasma: { scale: 1.6 } },         colors: ['aurora', 'holo', 'neon', 'dusk'] },
+    { art: ['math', 'mandala'],   dot: 'dot',      anim: ['radar'],     tune: { size: 0.65, glow: 0.8,  radar: { trail: 0.65 } },         colors: ['mint', '#5cf08a', 'forest'] },
+    { art: ['math', 'spiral'],    dot: 'dot',      anim: ['spiral'],    tune: { size: 0.7,  glow: 0.7,  spiral: { arms: 3, twist: 1.2 } }, colors: ['dusk', 'rainbow', 'holo'] },
     { art: ['diamond', 0.92],   dot: 'diamond',  anim: ['diamond'],   tune: { size: 0.75, glow: 0.6,  diamond: { rings: 3 } },          colors: ['fire', 'lava', 'gold'] },
-    { art: ['checkers'],        dot: 'square',   anim: ['wave'],      tune: { size: 0.8,  glow: 0.5,  wave: { waves: 2 } },             colors: ['neon', '#8f7bff', 'candy'] },
-    { art: ['full'],            dot: 'dot',      anim: ['rain'],      tune: { speed: 1.2, size: 0.6,  glow: 0.8,  rain: { trail: 0.6 } }, colors: ['mint', '#5cf08a', 'neon'] },
-    { art: ['full'],            dot: 'dot',      anim: ['burst'],     tune: { size: 0.65, glow: 0.9,  burst: { rings: 2 } },            colors: ['sunset', 'rainbow', 'neon'] },
-    { art: ['ring', 0.9],       dot: 'dot',      anim: ['orbit'],     tune: { size: 0.8,  glow: 0.9 },                                  colors: ['#2de2e6', 'ice', 'neon'] },
-    { art: ['disc', 0.9],       dot: 'dot',      anim: ['blob'],      tune: { size: 0.8,  glow: 0.8 },                                  colors: ['lava', 'fire', 'sunset'] },
-    { art: ['full'],            dot: 'square',   anim: ['scan'],      tune: { size: 0.8,  glow: 0.6 },                                  colors: ['#8f7bff', 'dusk', 'holo'] },
+    { art: ['math', 'truchet'],   dot: 'square',   anim: ['wave'],      tune: { size: 0.8,  glow: 0.5,  wave: { waves: 2 } },             colors: ['neon', '#8f7bff', 'candy'] },
+    { art: ['math', 'carpet'],    dot: 'dot',      anim: ['rain'],      tune: { speed: 1.2, size: 0.6,  glow: 0.8,  rain: { trail: 0.6 } }, colors: ['mint', '#5cf08a', 'neon'] },
+    { art: ['math', 'mandala'],   dot: 'dot',      anim: ['burst'],     tune: { size: 0.65, glow: 0.9,  burst: { rings: 2 } },            colors: ['sunset', 'rainbow', 'neon'] },
+    { art: ['math', 'rose'],      dot: 'dot',      anim: ['orbit'],     tune: { size: 0.8,  glow: 0.9 },                                  colors: ['#2de2e6', 'ice', 'neon'] },
+    { art: ['math', 'super'],     dot: 'dot',      anim: ['blob'],      tune: { size: 0.8,  glow: 0.8 },                                  colors: ['lava', 'fire', 'sunset'] },
+    { art: ['math', 'halftone'],  dot: 'square',   anim: ['scan'],      tune: { size: 0.8,  glow: 0.6 },                                  colors: ['#8f7bff', 'dusk', 'holo'] },
     { art: ['heart', 0.88],     dot: 'dot',      anim: ['ripple'],    tune: { size: 0.7,  glow: 0.7,  ripple: { rings: 2 } },           colors: ['candy', '#ff5fa2', 'sunset'] },
-    { art: ['disc', 0.95],      dot: 'triangle', anim: ['breathe'],   tune: { size: 0.8,  glow: 0.6 },                                  colors: ['gold', 'fire', '#ff8a1f'] },
+    { art: ['math', 'halftone'],  dot: 'dot',      anim: ['breathe'],   tune: { size: 0.8,  glow: 0.6 },                                  colors: ['gold', 'fire', '#ff8a1f'] },
     { art: ['star', 0.92],      dot: 'dot',      anim: ['glint'],     tune: { size: 0.75, glow: 0.9 },                                  colors: ['gold', 'ice', 'holo'] },
-    { art: ['disc', 0.95],      dot: 'dot',      anim: ['sweep'],     tune: { size: 0.7,  glow: 0.8,  sweep: { trail: 0.6 } },        colors: ['neon', 'ocean', '#8f7bff'] },
+    { art: ['math', 'rose'],      dot: 'dot',      anim: ['sweep'],     tune: { size: 0.7,  glow: 0.8,  sweep: { trail: 0.6 } },        colors: ['neon', 'ocean', '#8f7bff'] },
     { art: ['star', 0.92],      dot: 'dot',      anim: ['shimmer'],   tune: { size: 0.75, glow: 0.8,  shimmer: { trail: 0.55 } },       colors: ['gold', '#ffd23f', 'sunset'] },
     { art: ['diamond', 0.92],   dot: 'diamond',  anim: ['ripple'],    tune: { size: 0.75, glow: 0.7,  ripple: { rings: 3 } },           colors: ['fire', 'candy', 'dusk'] },
-    { art: ['disc', 0.9],       dot: 'dot',      anim: ['dissolve'],  tune: { size: 0.75, glow: 0.7 },                                  colors: ['ice', 'mint', 'aurora'] },
-    { art: ['full'],            dot: 'square',   anim: ['zigzag'],    tune: { size: 0.8,  glow: 0.6,  zigzag: { waves: 2 } },           colors: ['sunset', 'candy', 'rainbow'] },
-    { art: ['ring', 0.92],      dot: 'dot',      anim: ['pulse'],     tune: { size: 0.8,  glow: 0.8,  pulse: { depth: 0.8 } },          colors: ['ocean', '#2de2e6', 'neon'] },
+    { art: ['math', 'super'],     dot: 'dot',      anim: ['dissolve'],  tune: { size: 0.75, glow: 0.7 },                                  colors: ['ice', 'mint', 'aurora'] },
+    { art: ['math', 'truchet'],   dot: 'square',   anim: ['zigzag'],    tune: { size: 0.8,  glow: 0.6,  zigzag: { waves: 2 } },           colors: ['sunset', 'candy', 'rainbow'] },
+    { art: ['math', 'polygons'],  dot: 'dot',      anim: ['pulse'],     tune: { size: 0.8,  glow: 0.8,  pulse: { depth: 0.8 } },          colors: ['ocean', '#2de2e6', 'neon'] },
     { art: ['random'],          dot: 'dot',      anim: ['twinkle'],   tune: { size: 0.7,  glow: 0.8 },                                  colors: ['neon', 'rainbow', 'holo', 'aurora'] }
   ];
   var lastRecipe = -1;
@@ -1423,11 +1531,12 @@
 
     // canvas art (undoable)
     var before = beginEdit(), next = new Set(), shapes = window.SHAPES || [];
-    if (rec && rec.art[0] !== 'random') {
+    if (rec && rec.art[0] === 'math') next = mathArt(rec.art[1]);
+    else if (rec && rec.art[0] !== 'random') {
       var sh = shapes.filter(function (q) { return q.id === rec.art[0]; })[0];
       if (sh) sh.gen(cols, rows, rec.art[1] || 0.9).forEach(function (q) { next.add(q[0] + ',' + q[1]); });
-    }
-    if (!next.size) next = randomArtCells();
+    } else next = mathArt('any');                // a fully random press or a random recipe: any of the maths patterns
+    if (next.size < 30) next = randomArtCells();
     cells = next; cellColor = new Map(); dirty = true;     // all new dots: they take the new colour
     endEdit(before);
     updateInfo();
