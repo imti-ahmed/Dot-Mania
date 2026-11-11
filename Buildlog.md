@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.12 | 2026-11-11 | `v0.38.12` | Twill: gaps back between buttons in option bars and panel tabs (no more touching segments); every key has four rounded corners |
 | 0.38.11 | 2026-11-11 | `v0.38.11` | Twill: pressed key redone with layered inner shadows (sharp top edge, soft all-round dish, light bottom edge), no 1px shift |
 | 0.38.10 | 2026-11-11 | `v0.38.10` | Twill: active colour tried in yellow (`--glow` #ffd84d) instead of light blue |
 | 0.38.9 | 2026-11-11 | `v0.38.9` | Twill: no glow on active key icons either (sliders keep theirs) |

@@ -1670,12 +1670,10 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
   box-shadow: 0 0 0 1px #3a0507, 0 2px 3px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .28);
 }
 
-/* Segmented bars: neighbouring keys touch, split by a black seam, outer corners rounded (like the reference) */
-.seg, .panel-tabs { gap: 0; }
-.seg .key, .panel-tabs .key { border-radius: 0; }
-.seg .key:first-child, .panel-tabs .key:first-child { border-radius: 6px 0 0 6px; }
-.seg .key:last-child, .panel-tabs .key:last-child { border-radius: 0 6px 6px 0; }
-.seg .key:only-child { border-radius: 6px; }
+/* Segmented bars: separate keys with a small gap between them, every key keeps all four rounded corners */
+.seg { gap: 6px; }
+.seg .key, .panel-tabs .key { border-radius: 6px; }
+.panel-tabs { gap: 6px; }
 .panel-tabs { padding-left: 14px; padding-right: 14px; }
 
 /* Top navigation: the open tab is flat and glows blue instead of getting a red dot */
