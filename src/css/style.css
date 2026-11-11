@@ -1662,7 +1662,6 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
     inset 0 3px 6px rgba(0, 0, 0, .6),
     inset 0 -1px 0 rgba(255, 255, 255, .1);
 }
-.key[aria-pressed="true"] svg { filter: drop-shadow(0 0 3px rgba(var(--glow-rgb), .9)) drop-shadow(0 0 7px rgba(var(--glow-rgb), .45)); }
 .toolstrip .key, .editstrip .key, .sizes .key, .mini-tools .key { border-radius: 6px; }
 .presets .key, .keygrid .key, .seg .key { border-radius: 6px; }
 .key.secondary { background: transparent; box-shadow: inset 0 0 0 1px #3a3a3c; }
