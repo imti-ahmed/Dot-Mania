@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.20 | 2026-11-11 | `v0.38.20` | Twill: parent cards #2a2a2c (between the first dark and the too-light one) |
 | 0.38.19 | 2026-11-11 | `v0.38.19` | Twill: parent cards lighter (#323234, was #232324) |
 | 0.38.18 | 2026-11-11 | `v0.38.18` | Twill: parent cards (option groups and Animations) are flat, no inner dip |
 | 0.38.17 | 2026-11-11 | `v0.38.17` | Animations (and Trying Out) buttons sit in a parent card like Shapes and the other options |
