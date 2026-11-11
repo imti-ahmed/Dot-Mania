@@ -2133,7 +2133,7 @@
     grid.innerHTML = '';
     libItems = [];
     (window.LIBRARY || []).forEach(function (t) {
-      var url = ROOT + 'templates/' + t.file, card = document.createElement('article');
+      var url = ROOT + 'templates/' + t.file + '?v=' + ((window.SITE || {}).version || ''), card = document.createElement('article');   // the version keeps the browser from showing an old cached template
       card.className = 'lib-card';
       card.innerHTML =
         '<div class="lib-preview"></div>' +
@@ -2144,7 +2144,7 @@
         '</div>';
       card.querySelector('.lib-name').textContent = t.name;
       var dl = card.querySelector('[data-act="download"]');
-      dl.href = url; dl.download = t.file;
+      dl.href = ROOT + 'templates/' + t.file; dl.download = t.file;
       var box = card.querySelector('.lib-preview');
       fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
         .then(function (text) { libPreview(box, text, url, t.name); })
