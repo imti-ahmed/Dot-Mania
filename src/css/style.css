@@ -1649,7 +1649,7 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
 /* Keys: flat dark grey tiles with a black outline and a soft top highlight */
 .key {
   border-radius: 6px;
-  background: linear-gradient(#444446, #38383a);
+  background: linear-gradient(#3f3f41, #343436);
   box-shadow:
     0 0 0 1px #070707,
     0 2px 3px rgba(0, 0, 0, .45),
