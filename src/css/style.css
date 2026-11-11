@@ -1596,7 +1596,7 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 
 /* ==========================================================================
    Twill theme (trial): dark woven-fabric background, flat grey segmented keys
-   with black seams, and a pressed-in key with a glowing white icon.
+   with black seams, and a pressed-in key with a glowing blue icon.
    It only restyles surfaces; layout is untouched. Delete this block to go back.
    ========================================================================== */
 
@@ -1606,7 +1606,8 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
   --text-2: #e2e2e2;
   --muted: #9b9b9d;
   --well: #161617;
-  --glow: #ffffff;
+  --glow: #4da3ff;
+  --glow-rgb: 77, 163, 255;
   /* fine diagonal weave, drawn with gradients only (no image file) */
   --twill:
     repeating-linear-gradient(58deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px),
@@ -1655,13 +1656,13 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
 .key[aria-pressed="true"] {
   background: linear-gradient(#1b1b1c, #252526);
   color: var(--glow);
-  text-shadow: 0 0 8px rgba(255, 255, 255, .85);
+  text-shadow: 0 0 8px rgba(var(--glow-rgb), .85);
   box-shadow:
     0 0 0 1px #050505,
     inset 0 3px 8px rgba(0, 0, 0, .85),
     inset 0 0 0 1px rgba(255, 255, 255, .05);
 }
-.key[aria-pressed="true"] svg { filter: drop-shadow(0 0 3px rgba(255, 255, 255, .9)) drop-shadow(0 0 7px rgba(255, 255, 255, .45)); }
+.key[aria-pressed="true"] svg { filter: drop-shadow(0 0 3px rgba(var(--glow-rgb), .9)) drop-shadow(0 0 7px rgba(var(--glow-rgb), .45)); }
 .toolstrip .key, .editstrip .key, .sizes .key, .mini-tools .key { border-radius: 6px; }
 .presets .key, .keygrid .key, .seg .key { border-radius: 6px; }
 .key.secondary { background: transparent; box-shadow: inset 0 0 0 1px #3a3a3c; }
@@ -1678,22 +1679,22 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
 .seg .key:only-child { border-radius: 6px; }
 .panel-tabs { padding-left: 14px; padding-right: 14px; }
 
-/* Top navigation: the open tab is pressed in and glows instead of getting a red dot */
+/* Top navigation: the open tab is flat and glows blue instead of getting a red dot */
 .navbtn { border-radius: 6px; }
 .navbtn[aria-pressed="true"] {
   padding-left: 12px;
   color: var(--glow);
-  background: linear-gradient(#1b1b1c, #252526);
-  text-shadow: 0 0 8px rgba(255, 255, 255, .8);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, .8), 0 0 0 1px #050505;
+  background: none;
+  text-shadow: 0 0 8px rgba(var(--glow-rgb), .8);
+  box-shadow: none;
 }
 .navbtn[aria-pressed="true"]::before { display: none; }
 
 /* Sliders: white glowing bar and knob centre (the red stays for status lights and links) */
 .slider { box-shadow: inset 0 2px 6px rgba(0, 0, 0, .85), inset 0 0 0 1px #000, 0 1px 0 rgba(255, 255, 255, .07); }
-.slider .fill { background: var(--glow); box-shadow: 0 0 6px rgba(255, 255, 255, .7); }
+.slider .fill { background: var(--glow); box-shadow: 0 0 6px rgba(var(--glow-rgb), .7); }
 .slider .thumb { background: radial-gradient(circle at 50% 30%, #55555a, #38383a 55%, #29292b); }
-.slider .thumb::after { background: var(--glow); box-shadow: 0 0 6px rgba(255, 255, 255, .9); }
+.slider .thumb::after { background: var(--glow); box-shadow: 0 0 6px rgba(var(--glow-rgb), .9); }
 
 .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px #232324, 0 0 0 3px var(--c), 0 0 10px var(--c); }
 .stage { box-shadow: 0 0 0 10px #09090a, 0 0 0 11px #3b3b3d, 0 0 0 12px #060607, 0 30px 60px rgba(0, 0, 0, .6); }
