@@ -1654,13 +1654,13 @@ body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-c
 }
 /* Pressed in: darker tile, and the icon or label lights up white */
 .key[aria-pressed="true"] {
-  background: linear-gradient(#303032, #3b3b3d);
+  background: linear-gradient(#2a2a2c, #323234);
   color: var(--glow);
-  transform: translateY(1px);
   box-shadow:
     0 0 0 1px #070707,
-    inset 0 3px 6px rgba(0, 0, 0, .6),
-    inset 0 -1px 0 rgba(255, 255, 255, .1);
+    inset 0 2px 3px rgba(0, 0, 0, .7),      /* sharp edge shadow under the top lip */
+    inset 0 0 9px rgba(0, 0, 0, .4),        /* soft shadow all round, like a dished-in key */
+    inset 0 -1px 0 rgba(255, 255, 255, .09);/* light catching the bottom edge */
 }
 .toolstrip .key, .editstrip .key, .sizes .key, .mini-tools .key { border-radius: 6px; }
 .presets .key, .keygrid .key, .seg .key { border-radius: 6px; }
