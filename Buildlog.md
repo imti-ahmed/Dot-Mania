@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.25 | 2026-11-11 | `v0.38.25` | Twill: version, views and stars in the top right are light blue |
 | 0.38.24 | 2026-11-11 | `v0.38.24` | Twill: woven texture reduced (fainter dark and light threads) |
 | 0.38.23 | 2026-11-11 | `v0.38.23` | Twill: black seam around keys back to 1px |
 | 0.38.22 | 2026-11-11 | `v0.38.22` | Twill: main colour darker (page background and panel cards) |
