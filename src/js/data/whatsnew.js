@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.38.34', date: '2026-11-11', items: [
+    'The Library is open: browse ready-made animations from the top bar.'
+  ] },
   { v: '0.38.7', date: '2026-11-11', items: [
     'Switched-on buttons now look pushed down instead of dark, and the glow is a lighter blue.'
   ] },

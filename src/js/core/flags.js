@@ -36,7 +36,7 @@
     homePage: false,            // A welcome page at / in front of the tool (off: the tool opens straight away at /)
     aboutPage: false,           // Top nav: the About page (/tabs/about)
     guidePage: false,           // Top nav: the Guide page (/tabs/guide)
-    libraryPage: false,         // Top nav: the Library page of ready-made templates (/tabs/library)
+    libraryPage: true,          // Top nav: the Library page of ready-made templates (/tabs/library)
     whatsNewPage: false,        // Top nav: the What's New page (/tabs/whats-new)
     holoColor: true,            // Color group: the "Holo" multi-colour gradient
     whiteColor: false,          // Color group: the "White" preset
