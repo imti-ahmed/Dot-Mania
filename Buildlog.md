@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.38 | 2026-11-11 | `v0.38.38` | Library: Cyberpunk redrawn to fill the whole 67 x 67 square grid, so nothing is cut off |
 | 0.38.37 | 2026-11-11 | `v0.38.37` | Library templates remade at 1080 x 1080 (67 x 67 dots), same way as switching the canvas size: the middle of the old wide grid is kept; Cyberpunk loses its outer edges, the other two are untouched |
 | 0.38.36 | 2026-11-11 | `v0.38.36` | Library: card previews are square (1080 x 1080 frame); older wide templates are fitted inside, not stretched |
 | 0.38.35 | 2026-11-11 | `v0.38.35` | Library: no main parent card, the title and template cards sit straight on the page |
