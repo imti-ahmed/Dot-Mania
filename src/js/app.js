@@ -2463,7 +2463,7 @@
     var vids = [];
     if (FLAGS.exportWebm) vids.push(key('exportWebm', 'WebM', 'Download a video of the full loop (1-2 cycles, dark background)').replace('data-export', 'data-export data-video="webm"'));
     if (FLAGS.exportMp4) vids.push(key('exportMp4', 'MP4', 'Download a video of the full loop (1-2 cycles, dark background)').replace('data-export', 'data-export data-video="mp4"'));
-    if (vids.length) mhtml += '<div class="pair" style="grid-template-columns:repeat(' + vids.length + ',1fr);margin-top:6px">' + vids.join('') + '</div>';
+    if (vids.length) mhtml += '<div class="pair" style="grid-template-columns:repeat(' + vids.length + ',1fr)">' + vids.join('') + '</div>';
     var wrap = document.createElement('div');
     wrap.innerHTML = mhtml;
     while (wrap.firstChild) mel.appendChild(wrap.firstChild);

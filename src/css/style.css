@@ -1694,6 +1694,9 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
 }
 .navbtn[aria-pressed="true"]::before { display: none; }
 
+/* Export media: the rows of buttons sit as close as the buttons inside a row */
+#exportMedia { gap: 6px; }
+
 /* Status bar (version, views, stars): same blue as the active controls */
 .statusbar .stat, .statusbar .readout b { color: var(--glow); }
 
