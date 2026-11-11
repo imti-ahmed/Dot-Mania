@@ -1332,3 +1332,109 @@ body[data-view="home"] .app {
 .crafted a { color: var(--text); font-weight: 700; text-decoration: none; transition: color .15s; }
 .crafted a:hover { color: var(--accent); }
 @media (max-width: 900px) { .sidebar > .crafted { display: none; } }
+
+/* ==========================================================================
+   Twill theme (trial): dark woven-fabric background, flat grey segmented keys
+   with black seams, and a pressed-in key with a glowing white icon.
+   It only restyles surfaces; layout is untouched. Delete this block to go back.
+   ========================================================================== */
+
+:root {
+  --bg: #1f1f20;
+  --text: #f1f1f1;
+  --text-2: #e2e2e2;
+  --muted: #9b9b9d;
+  --well: #161617;
+  --glow: #ffffff;
+  /* fine diagonal weave, drawn with gradients only (no image file) */
+  --twill:
+    repeating-linear-gradient(58deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(58deg, transparent 0 1px, rgba(255, 255, 255, .045) 1px 2px, transparent 2px 3px);
+}
+
+body { background: var(--twill), linear-gradient(#262627, #1c1c1d); background-color: var(--bg); }
+
+.card, .lib-card, .welcome-card, .how-card, .cpicker {
+  background: var(--twill), linear-gradient(#303031, #29292a);
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px #070707,
+    0 12px 26px rgba(0, 0, 0, .5),
+    inset 0 1px 0 rgba(255, 255, 255, .07),
+    inset 0 -1px 0 rgba(0, 0, 0, .5);
+}
+
+.well {
+  background: var(--well);
+  border-radius: 8px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, .8), 0 1px 0 rgba(255, 255, 255, .06);
+}
+.group {
+  background: #232324;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px #070707, inset 0 2px 6px rgba(0, 0, 0, .45), 0 1px 0 rgba(255, 255, 255, .05);
+}
+
+/* Keys: flat dark grey tiles with a black outline and a soft top highlight */
+.key {
+  border-radius: 6px;
+  background: linear-gradient(#444446, #38383a);
+  box-shadow:
+    0 0 0 1px #070707,
+    0 2px 3px rgba(0, 0, 0, .45),
+    inset 0 1px 0 rgba(255, 255, 255, .12),
+    inset 0 -1px 0 rgba(0, 0, 0, .3);
+}
+.key:active {
+  transform: none;
+  background: linear-gradient(#333335, #2b2b2d);
+  box-shadow: 0 0 0 1px #070707, inset 0 2px 5px rgba(0, 0, 0, .6);
+}
+/* Pressed in: darker tile, and the icon or label lights up white */
+.key[aria-pressed="true"] {
+  background: linear-gradient(#1b1b1c, #252526);
+  color: var(--glow);
+  text-shadow: 0 0 8px rgba(255, 255, 255, .85);
+  box-shadow:
+    0 0 0 1px #050505,
+    inset 0 3px 8px rgba(0, 0, 0, .85),
+    inset 0 0 0 1px rgba(255, 255, 255, .05);
+}
+.key[aria-pressed="true"] svg { filter: drop-shadow(0 0 3px rgba(255, 255, 255, .9)) drop-shadow(0 0 7px rgba(255, 255, 255, .45)); }
+.toolstrip .key, .editstrip .key, .sizes .key, .mini-tools .key { border-radius: 6px; }
+.presets .key, .keygrid .key, .seg .key { border-radius: 6px; }
+.key.secondary { background: transparent; box-shadow: inset 0 0 0 1px #3a3a3c; }
+.key.primary {
+  background: linear-gradient(#f5343a, #d61d23);
+  box-shadow: 0 0 0 1px #3a0507, 0 2px 3px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+/* Segmented bars: neighbouring keys touch, split by a black seam, outer corners rounded (like the reference) */
+.seg, .panel-tabs { gap: 0; }
+.seg .key, .panel-tabs .key { border-radius: 0; }
+.seg .key:first-child, .panel-tabs .key:first-child { border-radius: 6px 0 0 6px; }
+.seg .key:last-child, .panel-tabs .key:last-child { border-radius: 0 6px 6px 0; }
+.seg .key:only-child { border-radius: 6px; }
+.panel-tabs { padding-left: 14px; padding-right: 14px; }
+
+/* Top navigation: the open tab is pressed in and glows instead of getting a red dot */
+.navbtn { border-radius: 6px; }
+.navbtn[aria-pressed="true"] {
+  padding-left: 12px;
+  color: var(--glow);
+  background: linear-gradient(#1b1b1c, #252526);
+  text-shadow: 0 0 8px rgba(255, 255, 255, .8);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, .8), 0 0 0 1px #050505;
+}
+.navbtn[aria-pressed="true"]::before { display: none; }
+
+/* Sliders: white glowing bar and knob centre (the red stays for status lights and links) */
+.slider { box-shadow: inset 0 2px 6px rgba(0, 0, 0, .85), inset 0 0 0 1px #000, 0 1px 0 rgba(255, 255, 255, .07); }
+.slider .fill { background: var(--glow); box-shadow: 0 0 6px rgba(255, 255, 255, .7); }
+.slider .thumb { background: radial-gradient(circle at 50% 30%, #55555a, #38383a 55%, #29292b); }
+.slider .thumb::after { background: var(--glow); box-shadow: 0 0 6px rgba(255, 255, 255, .9); }
+
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px #232324, 0 0 0 3px var(--c), 0 0 10px var(--c); }
+.stage { box-shadow: 0 0 0 10px #09090a, 0 0 0 11px #3b3b3d, 0 0 0 12px #060607, 0 30px 60px rgba(0, 0, 0, .6); }
+.page-table th, .page-table td { border-bottom-color: #3a3a3c; }
+kbd { background: #3a3a3c; }

@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.26.0', date: '2026-11-11', items: [
+    'A new look: a dark woven-fabric background, flat grey buttons with a pressed-in, glowing style for whatever is switched on.'
+  ] },
   { v: '0.24.0', date: '2026-11-07', items: [
     'New Select tool: drag a rectangle over any dots, then drag inside it to move them around.',
     'GIF export now includes the whole grid, not just the part you drew on.'

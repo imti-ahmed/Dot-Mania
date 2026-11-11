@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.26.0 | 2026-11-11 | `v0.26.0` | Twill theme (trial): dark woven-fabric background, flat grey keys with black seams, segmented Edit/Export and option bars, pressed-in keys with a glowing white icon, white glowing sliders and active tab; one block at the end of style.css, delete it to go back |
 | 0.25.3 | 2026-11-08 | `v0.25.3` | pages/ folder renamed to tabs/: addresses are now /tabs/about, /tabs/library, /tabs/whats-new, /tabs/guide, /tabs/canvas; stale address comments fixed |
 | 0.25.2 | 2026-11-08 | `v0.25.2` | Assets tidied: icons/ and previews/ folders, clearer names, unused icon-512.png removed |
 | 0.25.1 | 2026-11-08 | `v0.25.1` | Added PR check (GitHub Action): syntax, version match, linked files, build log row, no external scripts, templates in sync, flags unchanged, core files need owner review |
