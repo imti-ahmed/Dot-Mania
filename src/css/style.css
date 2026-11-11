@@ -724,12 +724,13 @@ a.stat:hover { color: var(--text); }
 }
 .lib-preview {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1 / 1;                     /* the 1080 x 1080 frame */
   margin: 12px 12px 0;
   border-radius: 8px;
   overflow: hidden;
   background: #0b0b0a;
 }
+.lib-preview canvas { object-fit: contain; }   /* an older wide template is fitted inside the square, never stretched */
 .lib-preview canvas, .lib-preview iframe {
   position: absolute;
   inset: 0;
