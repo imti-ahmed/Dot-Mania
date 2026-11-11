@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.39.0', date: '2026-11-11', items: [
+    'Randomize now gives you better starting points: a heart that beats, a twinkling star, a radar, a snowflake and more, each with matching colours and settings. You still get a fully random piece now and then.'
+  ] },
   { v: '0.38.44', date: '2026-11-11', items: [
     'The Library has two new square templates: Turbo Wizard and Pocket Goblin.'
   ] },

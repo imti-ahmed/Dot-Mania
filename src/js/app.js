@@ -1365,11 +1365,47 @@
     return out;
   }
 
-  // Randomize (left bar): a whole new piece. It picks a fresh canvas (everything filled, a starter shape or random
-  // art), a mark shape, new animation(s) with random sliders, and a color, then plays it.
-  // With Stacking on it fills the stack with the same number of different animations.
+  // Randomize (left bar): a hand-made starting point, not a dice roll of unrelated settings. Each recipe pairs a drawing with an
+  // animation, tuned sliders, a mark shape and colours that are known to look good together. The press picks one at random (never
+  // the same twice in a row) and varies it a little: speed, and the colour from the recipe's own short list. One press in six
+  // makes a fully random piece instead, so surprises are still possible.
+  //   art    a starter shape id (+ scale), or 'random' for generated art
+  //   dot    the mark shape        anim   animation id(s), the first is the main one
+  //   tune   { speed, size, glow } and per-animation settings, e.g. { ripple: { rings: 3 } }
+  //   colors colour modes (a name) or solid hexes (#...), one is picked
+  var RECIPES = [
+    { art: ['disc', 0.95],      dot: 'dot',      anim: ['ripple'],    tune: { size: 0.7,  glow: 0.8,  ripple: { rings: 3 } },            colors: ['neon', 'ocean', '#2de2e6'] },
+    { art: ['ring', 0.92],      dot: 'dot',      anim: ['tunnel'],    tune: { size: 0.7,  glow: 0.7,  tunnel: { rings: 3 } },            colors: ['sunset', 'dusk', 'candy'] },
+    { art: ['heart', 0.88],     dot: 'dot',      anim: ['heartbeat'], tune: { size: 0.8,  glow: 0.8 },                                  colors: ['#ff5fa2', '#ef282d', 'candy'] },
+    { art: ['heart', 0.88],     dot: 'heart',    anim: ['pulse'],     tune: { size: 0.75, glow: 0.6,  pulse: { depth: 0.7 } },          colors: ['#ff5fa2', 'candy', 'sunset'] },
+    { art: ['star', 0.92],      dot: 'star',     anim: ['twinkle'],   tune: { size: 0.8,  glow: 0.8,  twinkle: { sparkle: 0.7 } },      colors: ['gold', '#ffd23f', 'sunset'] },
+    { art: ['snowflake', 0.92], dot: 'dot',      anim: ['shimmer'],   tune: { size: 0.75, glow: 0.7,  shimmer: { trail: 0.5 } },        colors: ['ice', 'ocean', '#2de2e6'] },
+    { art: ['full'],            dot: 'dot',      anim: ['plasma'],    tune: { size: 0.75, glow: 0.7,  plasma: { scale: 1.6 } },         colors: ['aurora', 'holo', 'neon', 'dusk'] },
+    { art: ['disc', 0.95],      dot: 'dot',      anim: ['radar'],     tune: { size: 0.65, glow: 0.8,  radar: { trail: 0.65 } },         colors: ['mint', '#5cf08a', 'forest'] },
+    { art: ['disc', 0.95],      dot: 'dot',      anim: ['spiral'],    tune: { size: 0.7,  glow: 0.7,  spiral: { arms: 3, twist: 1.2 } }, colors: ['dusk', 'rainbow', 'holo'] },
+    { art: ['diamond', 0.92],   dot: 'diamond',  anim: ['diamond'],   tune: { size: 0.75, glow: 0.6,  diamond: { rings: 3 } },          colors: ['fire', 'lava', 'gold'] },
+    { art: ['checkers'],        dot: 'square',   anim: ['wave'],      tune: { size: 0.8,  glow: 0.5,  wave: { waves: 2 } },             colors: ['neon', '#8f7bff', 'candy'] },
+    { art: ['full'],            dot: 'dot',      anim: ['rain'],      tune: { speed: 1.2, size: 0.6,  glow: 0.8,  rain: { trail: 0.6 } }, colors: ['mint', '#5cf08a', 'neon'] },
+    { art: ['full'],            dot: 'dot',      anim: ['burst'],     tune: { size: 0.65, glow: 0.9,  burst: { rings: 2 } },            colors: ['sunset', 'rainbow', 'neon'] },
+    { art: ['ring', 0.9],       dot: 'dot',      anim: ['orbit'],     tune: { size: 0.8,  glow: 0.9 },                                  colors: ['#2de2e6', 'ice', 'neon'] },
+    { art: ['disc', 0.9],       dot: 'dot',      anim: ['blob'],      tune: { size: 0.8,  glow: 0.8 },                                  colors: ['lava', 'fire', 'sunset'] },
+    { art: ['full'],            dot: 'square',   anim: ['scan'],      tune: { size: 0.8,  glow: 0.6 },                                  colors: ['#8f7bff', 'dusk', 'holo'] },
+    { art: ['heart', 0.88],     dot: 'dot',      anim: ['ripple'],    tune: { size: 0.7,  glow: 0.7,  ripple: { rings: 2 } },           colors: ['candy', '#ff5fa2', 'sunset'] },
+    { art: ['disc', 0.95],      dot: 'triangle', anim: ['breathe'],   tune: { size: 0.8,  glow: 0.6 },                                  colors: ['gold', 'fire', '#ff8a1f'] },
+    { art: ['star', 0.92],      dot: 'dot',      anim: ['glint'],     tune: { size: 0.75, glow: 0.9 },                                  colors: ['gold', 'ice', 'holo'] },
+    { art: ['disc', 0.95],      dot: 'dot',      anim: ['sweep'],     tune: { size: 0.7,  glow: 0.8,  sweep: { trail: 0.6 } },        colors: ['neon', 'ocean', '#8f7bff'] },
+    { art: ['star', 0.92],      dot: 'dot',      anim: ['shimmer'],   tune: { size: 0.75, glow: 0.8,  shimmer: { trail: 0.55 } },       colors: ['gold', '#ffd23f', 'sunset'] },
+    { art: ['diamond', 0.92],   dot: 'diamond',  anim: ['ripple'],    tune: { size: 0.75, glow: 0.7,  ripple: { rings: 3 } },           colors: ['fire', 'candy', 'dusk'] },
+    { art: ['disc', 0.9],       dot: 'dot',      anim: ['dissolve'],  tune: { size: 0.75, glow: 0.7 },                                  colors: ['ice', 'mint', 'aurora'] },
+    { art: ['full'],            dot: 'square',   anim: ['zigzag'],    tune: { size: 0.8,  glow: 0.6,  zigzag: { waves: 2 } },           colors: ['sunset', 'candy', 'rainbow'] },
+    { art: ['ring', 0.92],      dot: 'dot',      anim: ['pulse'],     tune: { size: 0.8,  glow: 0.8,  pulse: { depth: 0.8 } },          colors: ['ocean', '#2de2e6', 'neon'] },
+    { art: ['random'],          dot: 'dot',      anim: ['twinkle'],   tune: { size: 0.7,  glow: 0.8 },                                  colors: ['neon', 'rainbow', 'holo', 'aurora'] }
+  ];
+  var lastRecipe = -1;
+
   function randomize() {
     function rnd(min, max, step) { return +(min + Math.round(Math.random() * (max - min) / step) * step).toFixed(4); }
+    function clampTo(q, v) { return Math.max(q.min, Math.min(q.max, v)); }
 
     // canvas size first (the art below is made for it). Changing size clears the undo history, as it does by hand.
     imgSrc = null; imgRaster = null;
@@ -1377,16 +1413,19 @@
     var size = FLAGS.canvasSizes && Math.random() < 0.5 ? [1920, 1080] : [1080, 1080];
     if (size[0] !== state.art.w || size[1] !== state.art.h) setArt(size[0], size[1]);
 
+    // a recipe whose animations all exist; one press in six is fully random instead
+    var usable = RECIPES.map(function (r, i) { return i; }).filter(function (i) {
+      return i !== lastRecipe && RECIPES[i].anim.every(function (id) { return MAIN.some(function (p) { return p.id === id; }); });
+    });
+    var fully = Math.random() < 1 / 6 || !usable.length;
+    var rec = fully ? null : RECIPES[lastRecipe = usable[Math.floor(Math.random() * usable.length)]];
+    if (fully) lastRecipe = -1;
+
     // canvas art (undoable)
-    var before = beginEdit(), roll = Math.random(), next = new Set(), shapes = window.SHAPES || [];
-    if (roll < 0.25) {
-      for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) next.add(c + ',' + r);
-    } else if (roll < 0.65 && shapes.length) {
-      var starters = shapes.filter(function (s) { return s.id !== 'full'; });
-      var sh = starters[Math.floor(Math.random() * starters.length)];
-      sh.gen(cols, rows, 0.55 + Math.random() * 0.35).forEach(function (q) { next.add(q[0] + ',' + q[1]); });
-    } else {
-      next = randomArtCells();
+    var before = beginEdit(), next = new Set(), shapes = window.SHAPES || [];
+    if (rec && rec.art[0] !== 'random') {
+      var sh = shapes.filter(function (q) { return q.id === rec.art[0]; })[0];
+      if (sh) sh.gen(cols, rows, rec.art[1] || 0.9).forEach(function (q) { next.add(q[0] + ',' + q[1]); });
     }
     if (!next.size) next = randomArtCells();
     cells = next; cellColor = new Map(); dirty = true;     // all new dots: they take the new colour
@@ -1394,21 +1433,38 @@
     updateInfo();
 
     // mark shape
-    state.dotShape = DOT_SHAPES[Math.floor(Math.random() * DOT_SHAPES.length)].id;
+    state.dotShape = rec ? rec.dot : DOT_SHAPES[Math.floor(Math.random() * DOT_SHAPES.length)].id;
     repaintShapes();
     drawIdle();
 
-    var pool = PRESETS.slice(), ids = [];
-    for (var n = state.stacking ? state.stack.length : 1; n > 0; n--) ids.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0].id);
+    // animation(s): a recipe's own, padded with random ones when Stacking has more layers open than the recipe has
+    var want = state.stacking ? state.stack.length : 1, ids = rec ? rec.anim.slice(0, want) : [];
+    var pool = MAIN.filter(function (p) { return ids.indexOf(p.id) === -1; });
+    while (ids.length < want && pool.length) ids.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0].id);
 
     ids.forEach(function (id) {
-      var v = state.values[id];
-      presetById(id).params.forEach(function (q) { v[q.key] = rnd(q.min, q.max, q.step); });
+      var v = state.values[id], tuned = rec && rec.tune[id];
+      presetById(id).params.forEach(function (q) {
+        v[q.key] = tuned && tuned[q.key] !== undefined ? clampTo(q, tuned[q.key]) : (rec ? q.def : rnd(q.min, q.max, q.step));
+      });
     });
     var base = state.values[ids[0]];            // Speed, Size and Glow are the base animation's
-    base.speed = rnd(0.6, 1.6, 0.05); base.size = rnd(0.5, 1, 0.01); base.glow = rnd(0.2, 0.9, 0.01);
+    if (rec) {
+      var t = rec.tune, cp = window.COMMON_PARAMS;
+      base.speed = clampTo(cp.speed, +(((t.speed || 1) * (0.85 + Math.random() * 0.3)).toFixed(2)));
+      base.size = clampTo(cp.size, t.size || 0.7); base.glow = clampTo(cp.glow, t.glow === undefined ? 0.6 : t.glow);
+    } else {
+      base.speed = rnd(0.6, 1.6, 0.05); base.size = rnd(0.5, 1, 0.01); base.glow = rnd(0.2, 0.9, 0.01);
+    }
 
-    randomColor();
+    if (rec) {
+      var have = COLOR_MODES.map(function (q) { return q.id; });
+      var colours = rec.colors.filter(function (q) { return q.charAt(0) === '#' || have.indexOf(q) !== -1; });
+      var pickC = colours[Math.floor(Math.random() * colours.length)];
+      if (!pickC) randomColor();
+      else if (pickC.charAt(0) === '#') { state.color.mode = 'solid'; state.color.hex = pickC; repaintColor(); }
+      else { state.color.mode = pickC; repaintColor(); }
+    } else randomColor();
 
     state.stack = ids; state.preset = ids[0];
     if (MAIN.length > PRESET_SLOTS && !presetsOpen && ids.some(function (id) { return MAIN.findIndex(function (p) { return p.id === id; }) >= PRESET_SLOTS - 1; })) {
