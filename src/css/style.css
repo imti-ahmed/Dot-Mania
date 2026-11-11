@@ -1650,7 +1650,7 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
   border-radius: 6px;
   background: linear-gradient(#444446, #38383a);
   box-shadow:
-    0 0 0 1.5px #070707,
+    0 0 0 1px #070707,
     0 2px 3px rgba(0, 0, 0, .45),
     inset 0 1px 0 rgba(255, 255, 255, .12),
     inset 0 -1px 0 rgba(0, 0, 0, .3);
@@ -1658,14 +1658,14 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
 .key:active {
   transform: none;
   background: linear-gradient(#333335, #2b2b2d);
-  box-shadow: 0 0 0 1.5px #070707, inset 0 2px 5px rgba(0, 0, 0, .6);
+  box-shadow: 0 0 0 1px #070707, inset 0 2px 5px rgba(0, 0, 0, .6);
 }
 /* Pressed in: darker tile, and the icon or label lights up white */
 .key[aria-pressed="true"] {
   background: linear-gradient(#2a2a2c, #323234);
   color: var(--glow);
   box-shadow:
-    0 0 0 1.5px #070707,
+    0 0 0 1px #070707,
     inset 0 1px 2px rgba(0, 0, 0, .45),      /* light edge shadow under the top lip */
     inset 0 0 8px rgba(0, 0, 0, .38),        /* soft shadow all round, like a dished-in key */
     inset 0 -1px 0 rgba(255, 255, 255, .09);/* light catching the bottom edge */
