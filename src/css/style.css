@@ -1606,8 +1606,8 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
   --text-2: #e2e2e2;
   --muted: #9b9b9d;
   --well: #161617;
-  --glow: #ffd84d;
-  --glow-rgb: 255, 216, 77;
+  --glow: #9ccfff;
+  --glow-rgb: 156, 207, 255;
   /* fine diagonal weave, drawn with gradients only (no image file) */
   --twill:
     repeating-linear-gradient(58deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px),
