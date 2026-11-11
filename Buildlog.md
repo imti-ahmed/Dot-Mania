@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.10 | 2026-11-11 | `v0.38.10` | Twill: active colour tried in yellow (`--glow` #ffd84d) instead of light blue |
 | 0.38.9 | 2026-11-11 | `v0.38.9` | Twill: no glow on active key icons either (sliders keep theirs) |
 | 0.38.8 | 2026-11-11 | `v0.38.8` | Twill: active key and nav tab text is light blue with no glow (icons and sliders keep theirs) |
 | 0.38.7 | 2026-11-11 | `v0.38.7` | Twill: lighter blue glow; pressed keys stay close to the key colour but look pushed down (inset top shadow, no drop shadow, 1px lower) instead of going dark |
