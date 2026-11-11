@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.32 | 2026-11-11 | `v0.38.32` | Colour: the spectrum knob shows whenever a single colour is used (the default blue was hidden); default dot blue is #1a79ff, a point exactly on the spectrum |
 | 0.38.31 | 2026-11-11 | `v0.38.31` | Blue a little darker everywhere: active controls and status readouts #6fb1ff, logo gradient and default dot colour #2f78e6 |
 | 0.38.30 | 2026-11-11 | `v0.38.30` | Header: a vertical divider after the DOT-MANIA name, same carved line as before the status bar |
 | 0.38.29 | 2026-11-11 | `v0.38.29` | Header wordmark reads DOT-MANIA (with a hyphen) |

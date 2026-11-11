@@ -27,7 +27,7 @@
     stack: [PRESETS[0].id],        // animation ids in the order they were clicked
     interaction: 'auto',           // auto | hover | click
     values: {},
-    color: { mode: 'solid', hex: '#2f78e6', cycle: 1 },
+    color: { mode: 'solid', hex: '#1a79ff', cycle: 1 },
     brush: 1,                      // pencil / eraser / line size (Draw options flag)
     outline: false                 // rectangle / ellipse drawn as an outline (Draw options flag)
   };
@@ -1168,9 +1168,8 @@
       grid.querySelectorAll('.swatch[data-color]').forEach(function (s) {
         s.setAttribute('aria-pressed', String(solid && s.dataset.color === m.hex));
       });
-      var isCustom = solid && SWATCHES.indexOf(m.hex) === -1;
-      knob.hidden = !isCustom;
-      if (isCustom) {
+      knob.hidden = !solid;                       // any single colour, the default blue included, is shown on the spectrum
+      if (solid) {
         var pos = last && last.hex === m.hex ? last : hexToSpectrum(m.hex);
         knob.style.left = pos.x * 100 + '%'; knob.style.top = pos.y * 100 + '%';
         knob.style.setProperty('--c', m.hex);
@@ -1953,7 +1952,7 @@
   // Back to a blank first-launch session: empty canvas, default animation, look and size.
   function resetSession() {
     state.values = makeValues();
-    Object.assign(state.color, { mode: 'solid', hex: '#2f78e6', cycle: 1 });
+    Object.assign(state.color, { mode: 'solid', hex: '#1a79ff', cycle: 1 });
     state.dotShape = 'dot';
     state.stack = [PRESETS[0].id]; state.preset = PRESETS[0].id; state.stacking = false;
     undoStack = []; redoStack = [];

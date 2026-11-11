@@ -548,5 +548,5 @@
     glow:  { label: 'Glow',  min: 0,   max: 1,   step: 0.01, fmt: pct }
   };
 
-  window.SWATCHES = ['#2f78e6', '#ff8a1f', '#ffd23f', '#5cf08a', '#2de2e6', '#8f7bff', '#ff5fa2'];
+  window.SWATCHES = ['#1a79ff', '#ff8a1f', '#ffd23f', '#5cf08a', '#2de2e6', '#8f7bff', '#ff5fa2'];
 })();
