@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.35 | 2026-11-11 | `v0.38.35` | Library: no main parent card, the title and template cards sit straight on the page |
 | 0.38.34 | 2026-11-11 | `v0.38.34` | Library page switched on (`libraryPage` flag) |
 | 0.38.33 | 2026-11-11 | `v0.38.33` | Twill: inactive keys very slightly darker (#3f3f41 to #343436, was #444446 to #38383a) |
 | 0.38.32 | 2026-11-11 | `v0.38.32` | Colour: the spectrum knob shows whenever a single colour is used (the default blue was hidden); default dot blue is #1a79ff, a point exactly on the spectrum |
