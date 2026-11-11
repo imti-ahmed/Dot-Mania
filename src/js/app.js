@@ -2221,23 +2221,27 @@
   var libItems = [], libRaf = 0, libLast = 0;
   var welcomeItems = [], welcomeOpen = false;      // the welcome popup's preview uses the same loop
 
-  // Every item is drawn once as a still frame when it is made. Library cards (hoverOnly) then stay still until the pointer or
-  // keyboard focus is on them; only the items that are really moving are drawn, at most about 30 times a second, and the loop
-  // stops by itself when nothing is moving.
-  function libDraw(it) {
-    var c = it.ctx;
+  // Two ways to play a preview:
+  //  - live (the welcome popup, Home, About): drawn every frame, only while on screen, about 30 times a second;
+  //  - sprite (the Library cards): the loop is drawn ONCE into a short strip of small frames, and from then on playing a card is
+  //    just copying one ready-made frame, so every card on screen can move at the same time at almost no cost. Frames are built a
+  //    few milliseconds at a time, only for cards on (or just below) the screen, and are thrown away when a card scrolls off.
+  var SPRITE_W = 256, SPRITE_MAX = 30, SPRITE_FPS = 14, libBuildQ = [], libTickRaf = 0;
+
+  function libDraw(it, ctx, t, ph) {
+    var c = ctx || it.ctx;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.fillStyle = '#0b0b0a';
     c.fillRect(0, 0, it.cv.width, it.cv.height);
     c.drawImage(it.idle, 0, 0);
     c.setTransform(it.s, 0, 0, it.s, it.ox || 0, it.oy || 0);
-    E.drawLayers(c, it.layers, it.tl.t, it.tl.ph, it.geo, false);
+    E.drawLayers(c, it.layers, t === undefined ? it.tl.t : t, ph === undefined ? it.tl.ph : ph, it.geo, false);
   }
-  function libMoving(it) { return it.hoverOnly ? it.hot : it.visible; }
+  function libMoving(it) { return !it.sprite && it.visible; }
   function libFrame(now) {
     libRaf = 0;
     if (view !== 'library' && view !== 'home' && view !== 'about' && !welcomeOpen) return;
-    var all = libItems.concat(welcomeItems), moving = all.filter(libMoving);
+    var moving = libItems.concat(welcomeItems).filter(libMoving);
     if (!moving.length) return;                      // nothing to animate: stop until something wakes the loop
     if (now - libLast < 30) { libRaf = requestAnimationFrame(libFrame); return; }
     var dt = Math.min((now - libLast) / 1000, 0.1);
@@ -2251,7 +2255,46 @@
     libRaf = requestAnimationFrame(libFrame);
   }
 
-  function libPreview(box, text, url, name, list, width, zoom, hoverOnly) {
+  function spriteWake(it) {
+    it.visible = true;
+    if (!it.frames) {
+      it.frames = []; it.ready = false; it.shown = -1;
+      it.n = Math.max(2, Math.min(SPRITE_MAX, Math.round(it.T * SPRITE_FPS)));
+      if (libBuildQ.indexOf(it) < 0) libBuildQ.push(it);
+    }
+    spriteStart();
+  }
+  function spriteSleep(it) {
+    it.visible = false; it.frames = null; it.ready = false;      // free the frames
+    var i = libBuildQ.indexOf(it);
+    if (i >= 0) libBuildQ.splice(i, 1);
+    if (it.still) { it.ctx.setTransform(1, 0, 0, 1, 0, 0); it.ctx.drawImage(it.still, 0, 0); }
+  }
+  function spriteStart() { if (!libTickRaf) libTickRaf = requestAnimationFrame(spriteTick); }
+  function spriteTick(now) {
+    libTickRaf = 0;
+    if (view !== 'library') return;
+    var t0 = performance.now(), live = false;
+    while (libBuildQ.length && performance.now() - t0 < 6) {          // build a few frames, then let the page breathe
+      var b = libBuildQ[0];
+      if (!b.frames) { libBuildQ.shift(); continue; }
+      var f = document.createElement('canvas'), i = b.frames.length;
+      f.width = b.cv.width; f.height = b.cv.height;
+      libDraw(b, f.getContext('2d'), i / b.n * b.T, i / b.n);
+      b.frames.push(f);
+      if (b.frames.length >= b.n) { b.ready = true; libBuildQ.shift(); }
+    }
+    libItems.forEach(function (it) {
+      if (!it.sprite || !it.visible) return;
+      live = true;
+      if (!it.ready) return;
+      var idx = Math.floor((now / 1000 % it.T) / it.T * it.n) % it.n;
+      if (idx !== it.shown) { it.shown = idx; it.ctx.setTransform(1, 0, 0, 1, 0, 0); it.ctx.drawImage(it.frames[idx], 0, 0); }
+    });
+    if (live || libBuildQ.length) libTickRaf = requestAnimationFrame(spriteTick);
+  }
+
+  function libPreview(box, text, url, name, list, width, zoom, sprite) {
     var parsed = parseExport(text);
     var d = parsed && parsed.data, T = d && d.period || 1, items = [];
     if (parsed) parsed.layers.forEach(function (l) {
@@ -2277,21 +2320,23 @@
     E.drawIdle(ic, d.gridCols, d.gridRows, d.geo, d.gridVis === undefined ? GRID_VIS : d.gridVis);
     var it = {
       cv: cv, ctx: cv.getContext('2d'), idle: idle, s: s, ox: ox, oy: oy, geo: d.geo, layers: items,
-      T: d.period, tl: E.makeTimeline('auto'), visible: false, hoverOnly: !!hoverOnly, hot: false
+      T: d.period, tl: E.makeTimeline('auto'), visible: false, sprite: !!sprite
     };
     it.tl.t = d.still || 0;                 // start on a pleasant frame, so a card is never blank
     box.innerHTML = '';
     box.appendChild(cv);
     (list || libItems).push(it);
     libDraw(it);                            // the still frame
-    if (hoverOnly) { /* woken by the card's hover or focus, see buildLibrary */ }
-    else if ('IntersectionObserver' in window) {
+    if (sprite) {
+      it.still = document.createElement('canvas'); it.still.width = cv.width; it.still.height = cv.height;
+      it.still.getContext('2d').drawImage(cv, 0, 0);           // kept, to show again when the frames are thrown away
+    } else if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         it.visible = entries[entries.length - 1].isIntersecting;
         if (it.visible) libStart();
       }).observe(cv);
     } else { it.visible = true; }
-    if (!hoverOnly && (view === 'library' || view === 'home' || view === 'about' || welcomeOpen)) libStart();
+    if (!sprite && (view === 'library' || view === 'home' || view === 'about' || welcomeOpen)) libStart();
     return it;
   }
 
@@ -2321,26 +2366,21 @@
       dl.href = ROOT + 'templates/' + t.file; dl.download = t.file;
       var box = card.querySelector('.lib-preview');
       // Nothing is fetched or drawn until the card is about to scroll into view (the page is hidden at start, so opening the
-      // editor costs nothing). The card is then a still picture; it moves only while hovered or focused.
-      var woken = false, item = null;
-      function wake() {
-        if (woken) return;
-        woken = true;
+      // editor costs nothing). A card on screen plays its strip of frames; one that scrolls away drops them.
+      var item = null, onScreen = false, fetched = false;
+      function load() {
+        if (fetched) return;
+        fetched = true;
         fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
-          .then(function (text) { item = libPreview(box, text, url, t.name, null, null, null, true); })
+          .then(function (text) { item = libPreview(box, text, url, t.name, null, SPRITE_W, null, true); if (item && onScreen) spriteWake(item); })
           .catch(function () { libIframe(box, url, t.name); });
       }
       if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-          if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); wake(); }
-        }, { rootMargin: '150px' });
-        io.observe(card);
-      } else wake();
-      function hot(on) { if (!item) return; item.hot = on; if (on) libStart(); }
-      card.addEventListener('mouseenter', function () { hot(true); });
-      card.addEventListener('mouseleave', function () { hot(false); });
-      card.addEventListener('focusin', function () { hot(true); });
-      card.addEventListener('focusout', function () { hot(false); });
+        new IntersectionObserver(function (entries) {
+          onScreen = entries[entries.length - 1].isIntersecting;
+          if (onScreen) { load(); if (item) spriteWake(item); } else if (item) spriteSleep(item);
+        }, { rootMargin: '120px' }).observe(card);
+      } else { onScreen = true; load(); }
       card.querySelector('[data-act="load"]').addEventListener('click', function () {
         notify('Loading ' + t.name + '…', { busy: true });
         fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (text) {

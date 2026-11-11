@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.40.2', date: '2026-11-11', items: [
+    'Every Library card plays on its own again, and the page stays light.'
+  ] },
   { v: '0.40.1', date: '2026-11-11', items: [
     'The Library opens much faster and runs lighter: previews load as you scroll and move only while you hover over them.'
   ] },
