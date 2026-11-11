@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.38.44', date: '2026-11-11', items: [
+    'The Library has two new square templates: Turbo Wizard and Pocket Goblin.'
+  ] },
   { v: '0.38.34', date: '2026-11-11', items: [
     'The Library is open: browse ready-made animations from the top bar.'
   ] },

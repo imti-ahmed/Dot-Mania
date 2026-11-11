@@ -3,7 +3,6 @@
  * To add one: drop the file in templates/ and add a row here.
  */
 window.LIBRARY = [
-  { file: 'heartbeats.html', name: 'Heartbeats' },
-  { file: 'snowflake-loader.html', name: 'Snowflake Loader' },
-  { file: 'cyberpunk.html', name: 'Cyberpunk' }
+  { file: 'turbo-wizard-24.html', name: 'Turbo Wizard' },
+  { file: 'pocket-goblin-66.html', name: 'Pocket Goblin' }
 ];
