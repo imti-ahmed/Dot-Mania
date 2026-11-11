@@ -1378,12 +1378,12 @@
   //   truchet      quarter-circle tiles chosen by a hash, mirrored in four so they weave into a kaleidoscope
   //   halftone     a shaded sphere drawn in dots with an ordered (Bayer) dither
   var MATH_ART = ['rose', 'polygons', 'super', 'spiral', 'interference', 'mandala', 'carpet', 'truchet', 'halftone'];
-  var SUPER_SETS = [      // m (symmetry), n1, n2, n3: a star, a flower, a soft triangle, a rounded square, a 12-point sun
-    [5, 0.3, 0.3, 0.3], [6, 1, 1, 1], [3, 4.5, 10, 10], [4, 12, 15, 15], [8, 0.5, 0.5, 0.5], [12, 0.8, 1.5, 0.5], [7, 0.6, 0.4, 0.4]
+  var SUPER_SETS = [      // m (symmetry), n1, n2, n3: a five-point star, a six-petal flower, a soft triangle, an eight-point star, a ten-point sun, a seven-point star
+    [5, 2, 7, 7], [6, 1, 1, 1], [3, 4.5, 10, 10], [8, 2, 5, 5], [10, 2, 6, 6], [7, 3, 5, 5]
   ];
   var BAYER4 = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
 
-  function mathArt(kind) {
+  function mathArt(kind, opt) {       // opt (optional): { set: n } picks one of the SUPER_SETS
     var TAU = Math.PI * 2, cx = (cols - 1) / 2, cy = (rows - 1) / 2, R = Math.min(cols, rows) / 2 * 0.97, total = cols * rows;
     function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     function frac(v) { return v - Math.floor(v); }
@@ -1407,7 +1407,7 @@
           return e <= 1 && Math.floor(e / band) % 2 === 0;
         };
       } else if (k === 'super') {
-        var set = pick(SUPER_SETS), ring = Math.random() < 0.4, rot = pick([0, Math.PI / 2]);
+        var set = opt && opt.set !== undefined ? SUPER_SETS[opt.set] : pick(SUPER_SETS), ring = Math.random() < 0.4, rot = pick([0, Math.PI / 2]);
         var sf = function (a) {
           return Math.pow(Math.pow(Math.abs(Math.cos(set[0] * a / 4)), set[2]) + Math.pow(Math.abs(Math.sin(set[0] * a / 4)), set[3]), -1 / set[1]);
         };
@@ -1442,7 +1442,7 @@
           return true;
         };
       } else if (k === 'truchet') {
-        var ts = pick([6, 8, 10]), seed = Math.random() * 1000, lw = ts * 0.14 + 0.5, round = Math.random() < 0.5;
+        var ts = pick([8, 10, 12]), seed = Math.random() * 1000, lw = ts * 0.1 + 0.35, round = Math.random() < 0.5;
         test = function (p, q, d) {
           var x = Math.abs(p) * R, y = Math.abs(q) * R;
           if (round && d > 0.98) return false;

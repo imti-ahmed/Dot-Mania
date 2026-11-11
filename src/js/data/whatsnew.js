@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.40.0', date: '2026-11-11', items: [
+    'The Library has 18 new templates: spirals, mandalas, roses, tile weaves, a glowing orb and more. Load any of them into the editor to remix it.'
+  ] },
   { v: '0.39.1', date: '2026-11-11', items: [
     'Randomize now draws real patterns made from maths: roses, nested shapes, spirals, mandalas, wave rings, tile weaves and a shaded sphere, each picked to suit its animation.'
   ] },
