@@ -697,6 +697,7 @@ kbd {
 .stat .unit { margin-left: -1px; }
 a.stat:hover { color: var(--text); }
 /* The bar is a dark well, so the divider is cut in: a black groove with a grey lip beside it. */
+.branddiv { width: 2px; height: 26px; background: #000; box-shadow: 1px 0 0 #3a3a3a; }   /* same carved line as before the status bar */
 .statusdiv { width: 2px; height: 26px; background: #000; box-shadow: 1px 0 0 #3a3a3a; }
 .statusbar .readout b { font-weight: 400; color: var(--text); }
 .status-msg.busy .led { animation: pulse 1s ease-in-out infinite; }

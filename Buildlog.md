@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.30 | 2026-11-11 | `v0.38.30` | Header: a vertical divider after the DOT-MANIA name, same carved line as before the status bar |
 | 0.38.29 | 2026-11-11 | `v0.38.29` | Header wordmark reads DOT-MANIA (with a hyphen) |
 | 0.38.28 | 2026-11-11 | `v0.38.28` | Logo: the leftover red under-edge and inner shadow are now dark blue |
 | 0.38.27 | 2026-11-11 | `v0.38.27` | Logo (header, icon boxes, loader) is blue instead of red; the default drawing colour and first swatch are blue (#3d8bff) |
