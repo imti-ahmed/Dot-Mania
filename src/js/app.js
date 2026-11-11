@@ -2142,9 +2142,7 @@
             '<button class="key" data-act="load">Load File</button>' +
             '<a class="key" data-act="download" download>Download</a>' +
           '</div>' +
-        '</div>' +
-        '<div class="lib-name"></div>';
-      card.querySelector('.lib-name').textContent = t.name;
+        '</div>';
       var dl = card.querySelector('[data-act="download"]');
       dl.href = ROOT + 'templates/' + t.file; dl.download = t.file;
       var box = card.querySelector('.lib-preview');

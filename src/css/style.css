@@ -753,7 +753,7 @@ a.stat:hover { color: var(--text); }
 .lib-media {
   position: relative;
   aspect-ratio: 1 / 1;                     /* the 1080 x 1080 frame */
-  margin: 12px 12px 0;
+  margin: 12px;
 }
 .lib-actions {
   position: absolute;

@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.43 | 2026-11-11 | `v0.38.43` | Library cards: no name under the preview, just the square preview (the name stays as its accessible label) |
 | 0.38.42 | 2026-11-11 | `v0.38.42` | Library: heading and tagline back to their original inset; only the cards line up with the header edges |
 | 0.38.41 | 2026-11-11 | `v0.38.41` | Library: title and cards start and end at the same edges as the header card (no extra side padding) |
 | 0.38.40 | 2026-11-11 | `v0.38.40` | Library cards: only the preview and the name; Load File and Download appear on top of the preview on hover (always shown on touch screens) |
