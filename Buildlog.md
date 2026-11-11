@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.38.27 | 2026-11-11 | `v0.38.27` | Logo (header, icon boxes, loader) is blue instead of red; the default drawing colour and first swatch are blue (#3d8bff) |
 | 0.38.26 | 2026-11-11 | `v0.38.26` | Export Media: rows of buttons are 6px apart (was 14px), the same as the gap between buttons in a row |
 | 0.38.25 | 2026-11-11 | `v0.38.25` | Twill: version, views and stars in the top right are light blue |
 | 0.38.24 | 2026-11-11 | `v0.38.24` | Twill: woven texture reduced (fainter dark and light threads) |

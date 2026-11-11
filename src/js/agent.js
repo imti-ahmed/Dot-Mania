@@ -244,7 +244,7 @@
     o = o || {};
     var modes = ids(A.colorModes).concat(['solid']), mode = o.mode || (o.hex ? 'solid' : null);
     if (modes.indexOf(mode) < 0) return fail('Unknown color mode: ' + mode, modes);
-    if (o.hex !== undefined && !/^#[0-9a-f]{6}$/i.test(o.hex)) return fail('hex must look like #ef282d', SWATCHES);
+    if (o.hex !== undefined && !/^#[0-9a-f]{6}$/i.test(o.hex)) return fail('hex must look like #3d8bff', SWATCHES);
     A.state.color.mode = mode;
     if (o.hex) A.state.color.hex = o.hex.toLowerCase();
     A.repaintColor();
@@ -345,7 +345,7 @@
       does: "Pick an animation, or up to 3 to stack (the first is the base; each next one shapes it). values sets sliders, e.g. { speed: 1.4, trail: 0.6 }; with a stack, { ripple: { rings: 3 } } targets one layer. speed, size and glow belong to the first animation.",
       input: schema({ animation: { oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' }, maxItems: 3 }], description: 'an id from options().animations, or an array of up to 3' }, values: { type: 'object' } }, ['animation']),
       fn: setAnimation, run: function (i) { return setAnimation(i.animation, i.values); } },
-    { name: 'setColor', sig: "setColor({ mode, hex })", does: "A colour mode (see options().colors), or { hex: '#ef282d' } for one solid colour.",
+    { name: 'setColor', sig: "setColor({ mode, hex })", does: "A colour mode (see options().colors), or { hex: '#3d8bff' } for one solid colour.",
       input: schema({ mode: { type: 'string' }, hex: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' } }), fn: setColor },
     { name: 'setDotShape', sig: "setDotShape('dot'|'square'|'diamond'|'triangle'|'star'|'heart')", does: 'The shape of every mark.',
       input: schema({ shape: { type: 'string', enum: ids(A.dotShapes) } }, ['shape']), fn: setDotShape, run: function (i) { return setDotShape(i.shape); } },
