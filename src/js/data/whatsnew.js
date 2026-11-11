@@ -6,6 +6,9 @@
  *   items  short sentences, one per visible change
  */
 window.WHATS_NEW = [
+  { v: '0.40.1', date: '2026-11-11', items: [
+    'The Library opens much faster and runs lighter: previews load as you scroll and move only while you hover over them.'
+  ] },
   { v: '0.40.0', date: '2026-11-11', items: [
     'The Library has 18 new templates: spirals, mandalas, roses, tile weaves, a glowing orb and more. Load any of them into the editor to remix it.'
   ] },

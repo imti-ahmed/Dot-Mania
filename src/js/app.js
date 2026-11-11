@@ -2217,26 +2217,32 @@
   // Library: a grid of templates. Previews are drawn here, small and from one shared loop that only
   // animates cards on screen (eight full-size components at once was far too heavy). If a template can't be
   // fetched (page opened as a file) the card falls back to showing the template itself in an iframe.
-  var PREVIEW_W = 640;
+  var PREVIEW_W = 400;                // small canvases: a card is only about 300px wide
   var libItems = [], libRaf = 0, libLast = 0;
   var welcomeItems = [], welcomeOpen = false;      // the welcome popup's preview uses the same loop
 
+  // Every item is drawn once as a still frame when it is made. Library cards (hoverOnly) then stay still until the pointer or
+  // keyboard focus is on them; only the items that are really moving are drawn, at most about 30 times a second, and the loop
+  // stops by itself when nothing is moving.
+  function libDraw(it) {
+    var c = it.ctx;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.fillStyle = '#0b0b0a';
+    c.fillRect(0, 0, it.cv.width, it.cv.height);
+    c.drawImage(it.idle, 0, 0);
+    c.setTransform(it.s, 0, 0, it.s, it.ox || 0, it.oy || 0);
+    E.drawLayers(c, it.layers, it.tl.t, it.tl.ph, it.geo, false);
+  }
+  function libMoving(it) { return it.hoverOnly ? it.hot : it.visible; }
   function libFrame(now) {
     libRaf = 0;
     if (view !== 'library' && view !== 'home' && view !== 'about' && !welcomeOpen) return;
+    var all = libItems.concat(welcomeItems), moving = all.filter(libMoving);
+    if (!moving.length) return;                      // nothing to animate: stop until something wakes the loop
+    if (now - libLast < 30) { libRaf = requestAnimationFrame(libFrame); return; }
     var dt = Math.min((now - libLast) / 1000, 0.1);
     libLast = now;
-    libItems.concat(welcomeItems).forEach(function (it) {
-      if (!it.visible) return;
-      E.tlAdvance(it.tl, dt, it.T);
-      var c = it.ctx;
-      c.setTransform(1, 0, 0, 1, 0, 0);
-      c.fillStyle = '#0b0b0a';
-      c.fillRect(0, 0, it.cv.width, it.cv.height);
-      c.drawImage(it.idle, 0, 0);
-      c.setTransform(it.s, 0, 0, it.s, it.ox || 0, it.oy || 0);
-      E.drawLayers(c, it.layers, it.tl.t, it.tl.ph, it.geo, false);
-    });
+    moving.forEach(function (it) { E.tlAdvance(it.tl, dt, it.T); libDraw(it); });
     libRaf = requestAnimationFrame(libFrame);
   }
   function libStart() {
@@ -2245,7 +2251,7 @@
     libRaf = requestAnimationFrame(libFrame);
   }
 
-  function libPreview(box, text, url, name, list, width, zoom) {
+  function libPreview(box, text, url, name, list, width, zoom, hoverOnly) {
     var parsed = parseExport(text);
     var d = parsed && parsed.data, T = d && d.period || 1, items = [];
     if (parsed) parsed.layers.forEach(function (l) {
@@ -2271,19 +2277,22 @@
     E.drawIdle(ic, d.gridCols, d.gridRows, d.geo, d.gridVis === undefined ? GRID_VIS : d.gridVis);
     var it = {
       cv: cv, ctx: cv.getContext('2d'), idle: idle, s: s, ox: ox, oy: oy, geo: d.geo, layers: items,
-      T: d.period, tl: E.makeTimeline('auto'), visible: false
+      T: d.period, tl: E.makeTimeline('auto'), visible: false, hoverOnly: !!hoverOnly, hot: false
     };
     it.tl.t = d.still || 0;                 // start on a pleasant frame, so a card is never blank
     box.innerHTML = '';
     box.appendChild(cv);
     (list || libItems).push(it);
-    if ('IntersectionObserver' in window) {
+    libDraw(it);                            // the still frame
+    if (hoverOnly) { /* woken by the card's hover or focus, see buildLibrary */ }
+    else if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         it.visible = entries[entries.length - 1].isIntersecting;
         if (it.visible) libStart();
       }).observe(cv);
     } else { it.visible = true; }
-    if (view === 'library' || view === 'home' || view === 'about' || welcomeOpen) libStart();
+    if (!hoverOnly && (view === 'library' || view === 'home' || view === 'about' || welcomeOpen)) libStart();
+    return it;
   }
 
   function libIframe(box, url, name) {
@@ -2311,9 +2320,27 @@
       var dl = card.querySelector('[data-act="download"]');
       dl.href = ROOT + 'templates/' + t.file; dl.download = t.file;
       var box = card.querySelector('.lib-preview');
-      fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
-        .then(function (text) { libPreview(box, text, url, t.name); })
-        .catch(function () { libIframe(box, url, t.name); });
+      // Nothing is fetched or drawn until the card is about to scroll into view (the page is hidden at start, so opening the
+      // editor costs nothing). The card is then a still picture; it moves only while hovered or focused.
+      var woken = false, item = null;
+      function wake() {
+        if (woken) return;
+        woken = true;
+        fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+          .then(function (text) { item = libPreview(box, text, url, t.name, null, null, null, true); })
+          .catch(function () { libIframe(box, url, t.name); });
+      }
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); wake(); }
+        }, { rootMargin: '150px' });
+        io.observe(card);
+      } else wake();
+      function hot(on) { if (!item) return; item.hot = on; if (on) libStart(); }
+      card.addEventListener('mouseenter', function () { hot(true); });
+      card.addEventListener('mouseleave', function () { hot(false); });
+      card.addEventListener('focusin', function () { hot(true); });
+      card.addEventListener('focusout', function () { hot(false); });
       card.querySelector('[data-act="load"]').addEventListener('click', function () {
         notify('Loading ' + t.name + '…', { busy: true });
         fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (text) {
