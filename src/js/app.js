@@ -66,6 +66,7 @@
     oy = (h() - rows * CELL) / 2;
   }
 
+  var fitRef = null;          // {w, h} or null: the size the stage scale is based on (null = the current artboard)
   var canvasSized = false;
   function resizeCanvases() {
     canvasSized = true;
@@ -82,7 +83,8 @@
     var r = area.getBoundingClientRect();
     var availW = r.width - 32, availH = r.height - 32;
     if (availW <= 0 || availH <= 0) { if (!canvasSized) resizeCanvases(); return; }   // card not on screen yet: still give the canvas a size
-    var s = Math.min(availW / state.art.w, availH / state.art.h);   // the artboard fits whole
+    var ref = fitRef || state.art;                                  // fitRef (gridSizes): scale by a fixed reference size so dots keep their size
+    var s = Math.min(availW / ref.w, availH / ref.h);               // the artboard fits whole
     var nw = Math.max(state.art.w, Math.round(availW / s)), nh = Math.max(state.art.h, Math.round(availH / s));
     stage.style.width = Math.floor(availW) + 'px';
     stage.style.height = Math.floor(availH) + 'px';
@@ -2777,7 +2779,7 @@
     // One undoable change, like a hand stroke: fn changes the drawing with setCell / clearCells / floodFill.
     edit: function (fn) { var before = beginEdit(); fn(); sel = null; dirty = true; endEdit(before); updateInfo(); },
     setCell: setCell, clearCells: function () { cells.clear(); }, floodFill: floodFill, lineCells: lineCells, shapeCells: shapeCells,
-    undo: undo, redo: redo, randomize: randomize, setArt: setArt, setGrid: setGrid,
+    undo: undo, redo: redo, randomize: randomize, setArt: setArt, setGrid: setGrid, setFitRef: function (r) { fitRef = r; layout(); },
     selectPreset: selectPreset, onPresetClick: onPresetClick, setStacking: setStacking,
     repaintColor: function () { repaintColor(); }, repaintShapes: function () { repaintShapes(); }, drawIdle: drawIdle,
     setInteraction: setInteraction, setPlaying: setPlaying, playPressed: playPressed,

@@ -1,7 +1,7 @@
 /*
  * Grid sizes (gridSizes flag). Shows the canvas on its own (the other panels are hidden for now) with a Small / Medium / Large picker beside it: 16 x 16, 32 x 32 or 64 x 64 dots.
- * The canvas card keeps its normal size; only the number of dots in it changes. Each size uses a 1024px artboard
- * (dots per side x dot size), so the three sizes fill the canvas the same way.
+ * The canvas card keeps its normal size and the dots keep the same size on every grid: a smaller grid is a smaller
+ * area centred in the card (the scale is fixed to the 64 x 64 artboard, 1024px), it does not blow the dots up.
  * Loaded after app.js. It only adds buttons; the editor does the work through window.DotApp.setGrid.
  */
 (function () {
@@ -13,8 +13,8 @@
   document.body.classList.add('gridonly');          // hides the other panels for now (src/css/gridsizes.css)
 
   var SIZES = [
-    { n: 16, cell: 64, name: 'Small' },
-    { n: 32, cell: 32, name: 'Medium' },
+    { n: 16, cell: 16, name: 'Small' },
+    { n: 32, cell: 16, name: 'Medium' },
     { n: 64, cell: 16, name: 'Large' }
   ];
 
@@ -50,6 +50,7 @@
   }
   setInterval(sync, 600);                           // Randomize and Open HTML can change the grid too
 
+  A.setFitRef({ w: 1024, h: 1024 });                // one scale for every grid size, so dots never grow
   A.setGrid(64, 16);                                // start on Large, close to the old 67 x 67 grid
   sync();
 })();
