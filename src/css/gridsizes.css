@@ -50,3 +50,12 @@ body.gridonly .main > .panel2 { display: none; }
 .ls-del { position: absolute; top: 0; right: 0; width: 28px; height: 28px; padding: 0; display: none; align-items: center; justify-content: center; border-radius: 0; background: #3a3a3a; color: #e6e6e6; font-size: 19px; line-height: 1; }
 .ls-card:hover .ls-del, .ls-card:focus-within .ls-del { display: flex; }
 .ls-del:hover { background: #4a4a4a; color: #fff; }
+
+/* Reorder (reorder flag): on hover each section shows a dark see-through strip with a 6 dot grip; drag it onto another section to swap */
+.grip { position: absolute; top: 0; left: 0; right: 0; height: 32px; z-index: 5; display: none; align-items: center; justify-content: center; border-radius: 16px 16px 0 0; background: rgba(0, 0, 0, .56); color: #d0d0d0; cursor: grab; touch-action: none; user-select: none; }
+.grip svg { transform: rotate(90deg); }
+.main > .card:hover > .grip, .main > .card.dragging > .grip { display: flex; }
+.grip:active { cursor: grabbing; }
+body.reordering, body.reordering * { cursor: grabbing !important; }
+.main > .card.dragging { opacity: .6; }
+.main > .card.drop-slot { box-shadow: 0 0 0 2px var(--accent); }
