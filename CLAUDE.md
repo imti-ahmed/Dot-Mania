@@ -31,6 +31,9 @@ Buildlog.md                    the build log
 
 ## Rules
 
+### Spacing
+- Every panel, card or new element keeps the same 16px spacing around it as the navbar (app padding 16px, gap 16px). No extra margins, and no header or wrapper that adds more space than that.
+
 ### Testing
 - Never open Chrome for testing. Do not call any `mcp__claude-in-chrome__*` tool.
 - No simulated or automated tests, and no auto-running of the app, until the user says so. Offer first; run only after the user agrees.

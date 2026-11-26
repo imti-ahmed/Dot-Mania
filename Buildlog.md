@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.45.4 | 2026-11-26 | `v0.45.4` | Spacing rule: 16px around every panel, like the navbar. Header is 44px tall so the canvas sits 16px under the navbar (was 28px) |
 | 0.45.3 | 2026-11-26 | `v0.45.3` | Layers strip and Play bar switched off (flags), canvas moves to the left edge |
 | 0.45.2 | 2026-11-26 | `v0.45.2` | Layer card delete x box is 28px (bigger x), and the active layer border is lighter |
 | 0.45.1 | 2026-11-26 | `v0.45.1` | Layer cards show a grey x box on hover, flush to the top right corner, to delete the layer; the add button reads + Add; the Play bar has a centred title that reads Playing or Paused |
