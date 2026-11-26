@@ -37,6 +37,7 @@
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
     layersPanel: false,         // Second right panel: the Layers card (Add layer + layer list)
+    collapseTitles: true,       // Normal layout: a caret at the end of every functionality title folds what is under it (src/js/layout/collapse.js)
     craftedBy: false,           // Left bar: the "Crafted By Imtiyaz Ahmed" credit at the bottom
 
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */

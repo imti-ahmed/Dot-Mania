@@ -1,0 +1,46 @@
+/*
+ * Collapsible titles (collapseTitles flag, the normal three-column layout). Every functionality title in the Properties, Image
+ * and Export panels gets a caret (Phosphor, solid) at its end. Click the title or the caret and what is under it folds away,
+ * leaving just the title and the caret; click again to open it. Which ones are folded is remembered in the browser.
+ * (The canvas-only view has its own version of this in panels.js.) Loaded after app.js, which builds the controls.
+ */
+(function () {
+  if (!window.FLAGS || !FLAGS.collapseTitles || FLAGS.gridSizes) return;
+  var CARET = '<svg class="ph" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/></svg>';
+  var KEY = 'dotmania.foldedTitles', folded = {};
+  try { folded = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
+  function remember(id, isFolded) { if (isFolded) folded[id] = 1; else delete folded[id]; try { localStorage.setItem(KEY, JSON.stringify(folded)); } catch (e) {} }
+
+  function make(box, scope) {
+    if (!box) return;
+    var kids = Array.prototype.slice.call(box.children), i = 0;
+    while (i < kids.length) {
+      var label = kids[i];
+      if (!label.classList.contains('group-label')) { i++; continue; }
+      var body = document.createElement('div');
+      body.className = 'acc-body';
+      i++;
+      while (i < kids.length && !kids[i].classList.contains('group-label')) { body.appendChild(kids[i]); i++; }
+      label.parentNode.insertBefore(body, label.nextSibling);
+      var id = scope + '/' + label.textContent.trim();
+      var caret = document.createElement('span');
+      caret.className = 'acc-caret';
+      caret.innerHTML = CARET;
+      label.appendChild(caret);
+      label.classList.add('acc-head');
+      label.setAttribute('role', 'button');
+      label.tabIndex = 0;
+      (function (label, body, id) {
+        function set(open) { label.setAttribute('aria-expanded', String(open)); body.classList.toggle('collapsed', !open); }
+        function toggle() { var open = label.getAttribute('aria-expanded') === 'false'; set(open); remember(id, !open); }
+        label.addEventListener('click', toggle);
+        label.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+        set(!folded[id]);
+      })(label, body, id);
+    }
+  }
+
+  make(document.querySelector('.main > .panel .panel-body'), 'prop');
+  make(document.querySelector('.panel2-image .panel-body'), 'image');
+  make(document.querySelector('.panel2-bottom .panel-body'), 'export');
+})();

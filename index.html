@@ -27,8 +27,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Doto:ROND,wght@0,800&family=Martian+Mono:wght@400&display=swap">
-  <link rel="stylesheet" href="src/css/style.css?v=0.51.4">
-  <link rel="stylesheet" href="src/css/gridsizes.css?v=0.51.4">
+  <link rel="stylesheet" href="src/css/style.css?v=0.52.0">
+  <link rel="stylesheet" href="src/css/gridsizes.css?v=0.52.0">
 </head>
 <body>
   <p class="agent-note" data-flag="agentTools">For AI agents: this editor has helper tools. Run window.dotMania.help() in the page for a guide to drawing, animating and exporting by script.</p>
@@ -75,38 +75,38 @@
         <div class="toolstrip" id="toolstrip" role="toolbar" aria-label="Drawing tools"></div>
         <div class="editstrip" id="editActions" role="group" aria-label="Canvas actions">
           <button class="key" id="eraserBtn" data-tool="eraser" title="Eraser (E)" aria-label="Eraser" aria-pressed="false">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.6 3.4l4 4-5 5H4.4L2.6 10.4l6-7z"/><path d="M5.8 6.2l4 4"/><path d="M7.4 12.4H13.4"/></svg><span class="lbl">Eraser</span>
+            <svg class="ph" viewBox="0 0 256 256" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M225,80.4,183.6,39a24,24,0,0,0-33.94,0L31,157.66a24,24,0,0,0,0,33.94l30.06,30.06A8,8,0,0,0,66.74,224H216a8,8,0,0,0,0-16h-84.7L225,114.34A24,24,0,0,0,225,80.4ZM213.67,103,160,156.69,107.31,104,161,50.34a8,8,0,0,1,11.32,0l41.38,41.38a8,8,0,0,1,0,11.31Z"/></svg><span class="lbl">Eraser</span>
           </button>
           <button class="key" id="invertBtn" title="Invert selection" aria-label="Invert selection">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5a5.5 5.5 0 010 11z" fill="currentColor"/></svg><span class="lbl">Invert</span>
+            <svg class="ph" viewBox="0 0 256 256" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM40,128a88.1,88.1,0,0,1,88-88V216A88.1,88.1,0,0,1,40,128Z"/></svg><span class="lbl">Invert</span>
           </button>
           <button class="key" id="clearBtn" title="Clear everything" aria-label="Clear everything">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8h5.8l.6-8M7 7v3.5M9 7v3.5"/></svg><span class="lbl">Clear</span>
+            <svg class="ph" viewBox="0 0 256 256" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM112,168a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm0-120H96V40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8Z"/></svg><span class="lbl">Clear</span>
           </button>
         </div>
         <div class="editstrip" id="selActions" role="group" aria-label="Selection actions" hidden>
           <button class="key" id="selMove" aria-pressed="true" title="Move: drag inside the selection">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2l-1.8 1.8M8 2l1.8 1.8M8 14l-1.8-1.8M8 14l1.8-1.8M2 8l1.8-1.8M2 8l1.8 1.8M14 8l-1.8-1.8M14 8l-1.8 1.8"/></svg><span class="lbl">Move</span>
+            <svg class="ph" viewBox="0 0 256 256" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M96,136H64v24a8,8,0,0,1-13.66,5.66l-32-32a8,8,0,0,1,0-11.32l32-32A8,8,0,0,1,64,96v24H96a8,8,0,0,1,0,16Zm0-72h24V96a8,8,0,0,0,16,0V64h24a8,8,0,0,0,5.66-13.66l-32-32a8,8,0,0,0-11.32,0l-32,32A8,8,0,0,0,96,64Zm141.66,58.34-32-32A8,8,0,0,0,192,96v24H160a8,8,0,0,0,0,16h32v24a8,8,0,0,0,13.66,5.66l32-32A8,8,0,0,0,237.66,122.34ZM160,192H136V160a8,8,0,0,0-16,0v32H96a8,8,0,0,0-5.66,13.66l32,32a8,8,0,0,0,11.32,0l32-32A8,8,0,0,0,160,192Z"/></svg><span class="lbl">Move</span>
           </button>
           <button class="key" id="selResize" aria-pressed="false" title="Resize: drag a handle. Shift keeps the proportions, Alt resizes from the centre">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5L9 7M6.5 13.5h-4v-4M2.5 13.5L7 9"/></svg><span class="lbl">Resize</span>
+            <svg class="ph" viewBox="0 0 256 256" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M117.66,138.34a8,8,0,0,1,0,11.32L83.31,184l18.35,18.34A8,8,0,0,1,96,216H48a8,8,0,0,1-8-8V160a8,8,0,0,1,13.66-5.66L72,172.69l34.34-34.35A8,8,0,0,1,117.66,138.34ZM208,40H160a8,8,0,0,0-5.66,13.66L172.69,72l-34.35,34.34a8,8,0,0,0,11.32,11.32L184,83.31l18.34,18.35A8,8,0,0,0,216,96V48A8,8,0,0,0,208,40Z"/></svg><span class="lbl">Resize</span>
           </button>
           <button class="key" id="selDelete" title="Delete the selected dots (Delete)">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8h5.8l.6-8"/></svg><span class="lbl">Delete</span>
+            <svg class="ph" viewBox="0 0 256 256" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M224,56a8,8,0,0,1-8,8h-8V208a16,16,0,0,1-16,16H64a16,16,0,0,1-16-16V64H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,56ZM88,32h80a8,8,0,0,0,0-16H88a8,8,0,0,0,0,16Z"/></svg><span class="lbl">Delete</span>
           </button>
         </div>
         <div class="editstrip" role="group" aria-label="Randomize">
           <button class="key" id="randomBtn" title="Randomize: new canvas size and art, animation, sliders and color" aria-label="Randomize">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" rx="2.5"/><circle cx="5.6" cy="5.6" r=".9" fill="currentColor" stroke="none"/><circle cx="10.4" cy="5.6" r=".9" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r=".9" fill="currentColor" stroke="none"/><circle cx="5.6" cy="10.4" r=".9" fill="currentColor" stroke="none"/><circle cx="10.4" cy="10.4" r=".9" fill="currentColor" stroke="none"/></svg><span class="lbl">Randomize</span>
+            <svg class="ph" viewBox="0 0 256 256" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M192,32H64A32,32,0,0,0,32,64V192a32,32,0,0,0,32,32H192a32,32,0,0,0,32-32V64A32,32,0,0,0,192,32ZM92,176a12,12,0,1,1,12-12A12,12,0,0,1,92,176Zm0-72a12,12,0,1,1,12-12A12,12,0,0,1,92,104Zm36,36a12,12,0,1,1,12-12A12,12,0,0,1,128,140Zm36,36a12,12,0,1,1,12-12A12,12,0,0,1,164,176Zm0-72a12,12,0,1,1,12-12A12,12,0,0,1,164,104Z"/></svg><span class="lbl">Randomize</span>
           </button>
           <button class="key" id="importBtn" title="Open an HTML file exported from Dot Mania (or drop it on the canvas)">
-            <svg id="fileIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+            <svg id="fileIcon" class="ph" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"></svg>
             <span id="fileLabel">Open HTML</span>
           </button>
         </div>
         <div class="editstrip" role="group" aria-label="Playback">
             <button class="key" id="playBtn" aria-pressed="false" title="Play / pause (Space)">
-              <svg id="playIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+              <svg id="playIcon" class="ph" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"></svg>
               <span id="playLabel">Pause</span>
             </button>
         </div>
@@ -362,23 +362,24 @@
   <input type="file" id="imageFile" accept="image/*" hidden>
   <input type="file" id="htmlFile" accept=".html,.htm,text/html" hidden>
 
-  <script src="src/js/core/flags.js?v=0.51.4"></script>
-  <script src="src/js/layout/scale.js?v=0.51.4"></script>
-  <script src="src/js/core/presets.js?v=0.51.4"></script>
-  <script src="src/js/core/shapes.js?v=0.51.4"></script>
-  <script src="src/js/core/engine.js?v=0.51.4"></script>
-  <script src="src/js/core/image.js?v=0.51.4"></script>
-  <script src="src/js/export/export.js?v=0.51.4"></script>
-  <script src="src/js/export/gif.js?v=0.51.4"></script>
-  <script src="src/js/data/library.js?v=0.51.4"></script>
-  <script src="src/js/data/site.js?v=0.51.4"></script>
-  <script src="src/js/data/whatsnew.js?v=0.51.4"></script>
-  <script src="src/js/app.js?v=0.51.4"></script>
-  <script src="src/js/agent.js?v=0.51.4"></script>
-  <script src="src/js/layout/gridsizes.js?v=0.51.4"></script>
-  <script src="src/js/layout/panels.js?v=0.51.4"></script>
-  <script src="src/js/layout/reorder.js?v=0.51.4"></script>
-  <script src="src/js/layout/layerstrip.js?v=0.51.4"></script>
-  <script src="src/js/layout/playbar.js?v=0.51.4"></script>
+  <script src="src/js/core/flags.js?v=0.52.0"></script>
+  <script src="src/js/layout/scale.js?v=0.52.0"></script>
+  <script src="src/js/core/presets.js?v=0.52.0"></script>
+  <script src="src/js/core/shapes.js?v=0.52.0"></script>
+  <script src="src/js/core/engine.js?v=0.52.0"></script>
+  <script src="src/js/core/image.js?v=0.52.0"></script>
+  <script src="src/js/export/export.js?v=0.52.0"></script>
+  <script src="src/js/export/gif.js?v=0.52.0"></script>
+  <script src="src/js/data/library.js?v=0.52.0"></script>
+  <script src="src/js/data/site.js?v=0.52.0"></script>
+  <script src="src/js/data/whatsnew.js?v=0.52.0"></script>
+  <script src="src/js/app.js?v=0.52.0"></script>
+  <script src="src/js/agent.js?v=0.52.0"></script>
+  <script src="src/js/layout/gridsizes.js?v=0.52.0"></script>
+  <script src="src/js/layout/collapse.js?v=0.52.0"></script>
+  <script src="src/js/layout/panels.js?v=0.52.0"></script>
+  <script src="src/js/layout/reorder.js?v=0.52.0"></script>
+  <script src="src/js/layout/layerstrip.js?v=0.52.0"></script>
+  <script src="src/js/layout/playbar.js?v=0.52.0"></script>
 </body>
 </html>

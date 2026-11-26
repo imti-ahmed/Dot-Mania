@@ -1824,3 +1824,13 @@ aside.panel .group-label:not(.first)::before,
 /* Image card: the functionality divider between the picture and its Tuning section (same as the other panels) */
 .panel2-image .group-label:not(.first) { position: relative; margin-top: 8px; padding-top: 16px; }
 .panel2-image .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 0; border-top: 2px solid #070707; box-shadow: 0 1px 0 #3a3a3a; }
+
+/* Collapsible titles (collapse.js): the title on the left, a caret at the end; folded = only the title and the caret */
+.acc-head { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+.acc-head:hover { color: var(--text); }
+.acc-caret { flex: none; display: inline-flex; margin-right: 4px; transition: transform .15s; }
+.acc-head[aria-expanded="false"] .acc-caret { transform: rotate(-90deg); }
+.acc-body { display: flex; flex-direction: column; gap: 16px; }
+.acc-body.collapsed, .acc-body:not(:has(> :not([hidden]))) { display: none; }
+/* Left panel: the solid icons are 20px in the 40px keys */
+.main > .sidebar .key svg.ph { flex: none; }
