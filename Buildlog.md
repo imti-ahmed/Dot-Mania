@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.49.4 | 2026-11-26 | `v0.49.4` | Crafted By credit removed from the left bar (craftedBy flag, off) |
 | 0.49.3 | 2026-11-26 | `v0.49.3` | Left bar: icon-only 40px buttons, two in a row, bar narrowed from 164px to 104px |
 | 0.49.2 | 2026-11-26 | `v0.49.2` | Back to the old three-column layout (gridSizes flag off); the 1600 x 732 scaling (fitScreen) carries over unchanged |
 | 0.49.1 | 2026-11-26 | `v0.49.1` | Tools card: compact 40px icon buttons in rows with carved dividers between groups (were full-width strips); carved divider above every section title |

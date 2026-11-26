@@ -36,6 +36,8 @@
     screenSize: true,           // Top of the page: a small always-visible label with the window size (width x height), live
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
+    craftedBy: false,           // Left bar: the "Crafted By Imtiyaz Ahmed" credit at the bottom
+
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */
 
     exportPng: false,           // Export > Media: "PNG" (the frame on screen, at full size; replaced by SVG)
