@@ -1970,8 +1970,8 @@
     // Spread (the shape from filled to just its outline) and Tone (which tones get the dots, dark to light) are real sliders, all in percent
     function pct(v) { return Math.round(v * 100) + '%'; }
     var styleRow = sliderRow({
-      label: 'Spread', min: 0, max: 1, step: 0.01, value: imgOpts.edge,      // 0% = the whole shape, 100% = just its outline
-      fmt: pct, onChange: function (v) { imgOpts.edge = v; applyImage(); }
+      label: 'Spread', min: 0, max: 1, step: 0.01, value: 1 - imgOpts.edge,      // 100% = the whole shape, 0% = just its outline
+      fmt: pct, onChange: function (v) { imgOpts.edge = 1 - v; applyImage(); }
     });
     var onRow = sliderRow({
       label: 'Tone', min: 0, max: 1, step: 0.01, value: imgOpts.tone,

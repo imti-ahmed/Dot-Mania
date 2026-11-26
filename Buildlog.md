@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.53.11 | 2026-11-26 | `v0.53.11` | Image Spread slider flipped: 100% = the whole shape, 0% = only the outline |
 | 0.53.10 | 2026-11-26 | `v0.53.10` | Image card: Upload and Remove stretch to fill the width beside the preview, half each |
 | 0.53.9 | 2026-11-26 | `v0.53.9` | Image card: Remove sits beside Upload; Upload reads Replace once a picture is loaded |
 | 0.53.8 | 2026-11-26 | `v0.53.8` | The image Tuning group starts open; the grid starts at 64 x 64 |
