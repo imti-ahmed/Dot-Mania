@@ -148,7 +148,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   letter-spacing: 1.6px;
   white-space: nowrap;
 }
-.tabs { display: flex; gap: 4px; }
+.tabs { display: flex; gap: 2px; }
 
 .navbtn {
   position: relative;
