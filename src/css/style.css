@@ -1869,3 +1869,9 @@ aside.panel .group-label:not(.first), .panel2-bottom .group-label:not(.first) { 
 
 /* Upload / Replace and Remove share the whole width beside the preview, half each */
 #imageControls .img-right > .pair { grid-template-columns: 1fr 1fr; grid-auto-flow: row; justify-content: stretch; width: 100%; }
+
+/* Image card: Colored, a title and two radios (On / Off) under Upload and Remove; greyed until there is a picture */
+.colored-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 4px; margin-top: 8px; transition: opacity .15s; }
+.colored-row .group-label { margin: 0; }
+.colored-row.is-empty { opacity: .38; pointer-events: none; }
+.colored-row .style-radio { min-height: 24px; }

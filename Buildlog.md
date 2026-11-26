@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.55.0 | 2026-11-26 | `v0.55.0` | Image: Smooth replaced by a Contrast slider; new Colored On / Off radios under Replace and Remove turn the picture into a pixel grid in its own colours (toColoredCells in image.js) |
 | 0.54.0 | 2026-11-26 | `v0.54.0` | Image: Level renamed Tone, the old Dark-to-Light Tone slider hidden, new Smooth slider blurs the brightness before the cut (smooth option in image.js) |
 | 0.53.11 | 2026-11-26 | `v0.53.11` | Image Spread slider flipped: 100% = the whole shape, 0% = only the outline |
 | 0.53.10 | 2026-11-26 | `v0.53.10` | Image card: Upload and Remove stretch to fill the width beside the preview, half each |

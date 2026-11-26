@@ -9,7 +9,8 @@
  *
  * opts: { style: 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light',
  *         tone: 0..1 (the tone the dots sit on: 0 = dark, 1 = light, between = that band of mid tones; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style),
- *         smooth: 0..1 (blur the brightness before the cut: 0 = none) }
+ *         smooth: 0..1 (blur the brightness before the cut: 0 = none), contrast: 0..1 (0.5 = unchanged) }
+ *   DotImage.toColoredCells(px, cols, rows, opts)  [[col,row,'#rrggbb'], ...]  every visible cell in its own colour (opts.level, contrast, edge apply)
  *   level is the amount of "ink": higher means more dots.
  *   Transparent pixels (alpha < 50%) never become dots, so logos with transparent backgrounds just work.
  */
@@ -57,6 +58,49 @@
     return out;
   }
 
+  // Contrast slider 0..1 -> a multiplier: 0.5 = 1 (unchanged), 0 = nearly flat, 1 = 5x.
+  function contrastK(c) { return c === undefined ? 1 : Math.max(0.1, c < 0.5 ? c * 2 : 1 + (c - 0.5) * 8); }
+
+  // edge 0..1: 0 keeps the whole shape, 1 keeps only its outline, between keeps a border that gets thinner the higher it goes.
+  // cells: [[col,row,...], ...]; returns the cells that stay.
+  function erode(cells, cols, rows, edge) {
+    if (!(edge > 0) || !cells.length) return cells;
+    var n = cols * rows, mask = new Uint8Array(n), dist = new Int32Array(n), big = 1 << 20, maxD = 0, x, y, p;
+    cells.forEach(function (c) { mask[c[1] * cols + c[0]] = 1; });
+    // distance (in cells, up and down / left and right) from each cell to the nearest cell that is not ink; the picture's border counts as outside
+    for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) {
+      p = y * cols + x;
+      if (!mask[p]) { dist[p] = 0; continue; }
+      dist[p] = Math.min(x === 0 || y === 0 ? 1 : big, (x > 0 ? dist[p - 1] : 0) + 1, (y > 0 ? dist[p - cols] : 0) + 1);
+    }
+    for (y = rows - 1; y >= 0; y--) for (x = cols - 1; x >= 0; x--) {
+      p = y * cols + x;
+      if (!mask[p]) continue;
+      dist[p] = Math.min(dist[p], x === cols - 1 || y === rows - 1 ? 1 : big, (x < cols - 1 ? dist[p + 1] : 0) + 1, (y < rows - 1 ? dist[p + cols] : 0) + 1);
+      if (dist[p] > maxD) maxD = dist[p];
+    }
+    var keep = Math.max(1, Math.ceil((1 - edge) * maxD));
+    return cells.filter(function (c) { return dist[c[1] * cols + c[0]] <= keep; });
+  }
+
+  // Colour mode: every visible cell becomes a dot in its own colour from the picture, so it is a pixel version of the photo.
+  // o.level (tone) lightens / darkens the colours, o.contrast stretches them, o.edge keeps just a border. Returns [[col, row, '#rrggbb'], ...]
+  function toColoredCells(px, cols, rows, o) {
+    var n = cols * rows, out = [], gain = 1 + ((o.level === undefined ? 0.5 : o.level) - 0.5) * 1.6, kc = contrastK(o.contrast), p, i, ch, hex, v;
+    for (p = 0; p < n; p++) {
+      i = p * 4;
+      if (px[i + 3] < 128) continue;
+      hex = '#';
+      for (ch = 0; ch < 3; ch++) {
+        v = ((px[i + ch] / 255 * gain) - 0.5) * kc + 0.5;
+        v = Math.round(Math.max(0, Math.min(1, v)) * 255);
+        hex += (v < 16 ? '0' : '') + v.toString(16);
+      }
+      out.push([p % cols, (p / cols) | 0, hex]);
+    }
+    return erode(out, cols, rows, o.edge);
+  }
+
   function toCells(px, cols, rows, o) {
     var n = cols * rows, i, p;
     var l = new Float32Array(n), solid = new Uint8Array(n), hist = new Uint32Array(256), count = 0;
@@ -85,9 +129,11 @@
 
     // "ink" = how much a pixel wants to be a dot (1 = definitely), shifted by the level control.
     var tone = o.tone !== undefined ? o.tone : (o.on === 'light' ? 1 : 0);
+    var kc = contrastK(o.contrast);
     var bias = (o.level === undefined ? 0.5 : o.level) - 0.5, v = new Float32Array(n);
     for (p = 0; p < n; p++) {
       var t = stretch ? Math.max(0, Math.min(1, (l[p] - base) / span)) : l[p];
+      t = Math.max(0, Math.min(1, (t - 0.5) * kc + 0.5));      // contrast around the middle grey (kc 1 = unchanged)
       var ink = 1 - Math.abs(t - tone) / Math.max(tone, 1 - tone);   // dots gather around the chosen tone: 0 = the dark tones, 1 = the light ones, between = the mid tones in that band
       v[p] = Math.max(0, Math.min(1, ink + bias));
     }
@@ -134,28 +180,10 @@
       }
     } else {
       for (p = 0; p < n; p++) if (solid[p] && v[p] > 0.5) out.push([p % cols, (p / cols) | 0]);
-      // edge 0..1: 0 keeps the whole shape, 1 keeps only its outline, between keeps a border that gets thinner the higher it goes.
-      if (o.edge > 0 && out.length) {
-        var mask = new Uint8Array(n), dist = new Int32Array(n), big = 1 << 20, maxD = 0;
-        out.forEach(function (c) { mask[c[1] * cols + c[0]] = 1; });
-        // distance (in cells, up and down / left and right) from each cell to the nearest cell that is not ink; the picture's border counts as outside
-        for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) {
-          p = y * cols + x;
-          if (!mask[p]) { dist[p] = 0; continue; }
-          dist[p] = Math.min(x === 0 || y === 0 ? 1 : big, (x > 0 ? dist[p - 1] : 0) + 1, (y > 0 ? dist[p - cols] : 0) + 1);
-        }
-        for (y = rows - 1; y >= 0; y--) for (x = cols - 1; x >= 0; x--) {
-          p = y * cols + x;
-          if (!mask[p]) continue;
-          dist[p] = Math.min(dist[p], x === cols - 1 || y === rows - 1 ? 1 : big, (x < cols - 1 ? dist[p + 1] : 0) + 1, (y < rows - 1 ? dist[p + cols] : 0) + 1);
-          if (dist[p] > maxD) maxD = dist[p];
-        }
-        var keep = Math.max(1, Math.ceil((1 - o.edge) * maxD));
-        out = out.filter(function (c) { return dist[c[1] * cols + c[0]] <= keep; });
-      }
+      out = erode(out, cols, rows, o.edge);
     }
     return out;
   }
 
-  window.DotImage = { suggestOn: suggestOn, toCells: toCells };
+  window.DotImage = { suggestOn: suggestOn, toCells: toCells, toColoredCells: toColoredCells };
 })();

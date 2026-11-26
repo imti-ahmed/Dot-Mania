@@ -1848,7 +1848,7 @@
 
   var imgSrc = null;          // { el, w, h } the uploaded picture
   var imgRaster = null;       // that picture drawn at one pixel per grid cell (cached)
-  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', tone: 0, edge: 0, smooth: 0, fit: 'fit' };
+  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', tone: 0, edge: 0, smooth: 0, contrast: 0.5, colored: false, fit: 'fit' };
   var imgUI = {};
 
   // Halve repeatedly until close to the target size; one big jump would alias badly.
@@ -1884,9 +1884,20 @@
   // The picture becomes the drawing: every animation then runs on it.
   function applyImage() {
     if (!imgSrc) return;
-    var arr = window.DotImage.toCells(getRaster(), cols, rows, imgOpts), next = new Set();
-    for (var i = 0; i < arr.length; i++) next.add(arr[i][0] + ',' + arr[i][1]);
-    cells = next; cellColor = new Map();
+    var next = new Set(), nextColor = new Map(), i;
+    if (imgOpts.colored) {
+      // Colored: every dot keeps its own colour from the picture
+      var arr = window.DotImage.toColoredCells(getRaster(), cols, rows, imgOpts), snaps = {};
+      for (i = 0; i < arr.length; i++) {
+        var k = arr[i][0] + ',' + arr[i][1];
+        next.add(k);
+        nextColor.set(k, snaps[arr[i][2]] || (snaps[arr[i][2]] = { mode: 'solid', hex: arr[i][2], cycle: 1 }));
+      }
+    } else {
+      var arr2 = window.DotImage.toCells(getRaster(), cols, rows, imgOpts);
+      for (i = 0; i < arr2.length; i++) next.add(arr2[i][0] + ',' + arr2[i][1]);       // the dots take the colour that is selected
+    }
+    cells = next; cellColor = nextColor;
     dirty = true;
     updateInfo();
   }
@@ -1894,6 +1905,7 @@
   function setImageActive(on) {
     imgUI.opts.classList.toggle('is-empty', !on);
     if (imgUI.tune) imgUI.tune.classList.toggle('is-empty', !on);
+    if (imgUI.colorRow) imgUI.colorRow.classList.toggle('is-empty', !on);
     imgUI.remove.disabled = !on;
     if (imgUI.drop) {
       imgUI.drop.classList.toggle('has-image', !!on);
@@ -1983,24 +1995,39 @@
       label: 'Tone', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
       fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.level = v; applyImage(); }
     });
-    var smoothRow = sliderRow({
-      label: 'Smooth', min: 0, max: 1, step: 0.01, value: imgOpts.smooth,
-      fmt: pct, onChange: function (v) { imgOpts.smooth = v; applyImage(); }
+    var contrastRow = sliderRow({
+      label: 'Contrast', min: 0, max: 1, step: 0.01, value: imgOpts.contrast,      // 50% = as it is
+      fmt: pct, onChange: function (v) { imgOpts.contrast = v; applyImage(); }
     });
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
       function () { return imgOpts.fit; }, function (v) { imgOpts.fit = v; imgRaster = null; applyImage(); });
     if (FLAGS.imageAdvanced) { opts.appendChild(levelRow); opts.appendChild(fitRow); }
-    right.appendChild(btns);                              // Upload / Remove: stacked beside the preview
+    right.appendChild(btns);                              // Upload / Remove beside the preview
+    var colorRow = document.createElement('div');          // Colored: On / Off radios, under the buttons
+    colorRow.className = 'colored-row is-empty';
+    colorRow.setAttribute('role', 'radiogroup'); colorRow.setAttribute('aria-label', 'Colored');
+    colorRow.innerHTML = '<span class="group-label">Colored</span>';
+    [[true, 'On'], [false, 'Off']].forEach(function (o) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'style-radio'; b.setAttribute('role', 'radio');
+      b.innerHTML = '<i></i><span>' + o[1] + '</span>';
+      b.addEventListener('click', function () { imgOpts.colored = o[0]; paintColored(); applyImage(); });
+      b.dataset.on = String(o[0]);
+      colorRow.appendChild(b);
+    });
+    function paintColored() { colorRow.querySelectorAll('.style-radio').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.on === String(imgOpts.colored))); }); }
+    paintColored();
+    right.appendChild(colorRow);
     if (FLAGS.imageOptions) right.appendChild(opts);      // Style and Dots on: switched off for now
     el.appendChild(right);
 
-    // Image tuning, in their own group under the image: Spread, Tone and Smooth, all sliders (the old Dark / Light band slider and Fit / Fill are not shown)
+    // Image tuning, in their own group under the image: Spread, Tone and Contrast, all sliders (the old Dark / Light band slider and Fit / Fill are not shown)
     var tune = document.createElement('div');
     tune.className = 'group img-tune is-empty';
     if (FLAGS.imageTuning) {
       var tl = document.createElement('div');
       tl.className = 'group-label'; tl.textContent = 'Tuning';
-      [styleRow, levelRow, smoothRow].forEach(function (r) { tune.appendChild(r); });
+      [styleRow, levelRow, contrastRow].forEach(function (r) { tune.appendChild(r); });
       el.insertAdjacentElement('afterend', tune);
       tune.insertAdjacentElement('beforebegin', tl);
     }
@@ -2013,7 +2040,7 @@
       var sc = Math.min(288 / imgSrc.w, 162 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
       pctx.drawImage(imgSrc.el, (288 - w) / 2, (162 - h) / 2, w, h);
     }
-    imgUI = { tune: tune, opts: opts, onRow: onRow, remove: btns.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
+    imgUI = { colorRow: colorRow, tune: tune, opts: opts, onRow: onRow, remove: btns.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
 
     var input = $('#imageFile');
     function pick() { input.click(); }
