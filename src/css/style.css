@@ -1859,3 +1859,6 @@ aside.panel .group-label:not(.first)::before,
 aside.panel .group-label:not(.first), .panel2-bottom .group-label:not(.first) { margin-top: 0; padding-top: 8px; }
 .main[data-page="canvas"] > .panel { max-height: none; overflow: visible; }
 .main > .panel > .panel-body { flex: none; overflow: visible; }
+
+/* Left panel: the card is only as tall as its buttons, not the full height */
+.main[data-page="canvas"] > .sidebar { align-self: start; }

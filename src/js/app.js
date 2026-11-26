@@ -938,7 +938,7 @@
     'pause': '<path d="M216,48V208a16,16,0,0,1-16,16H160a16,16,0,0,1-16-16V48a16,16,0,0,1,16-16h40A16,16,0,0,1,216,48ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Z"/>',
     'caret-down': '<path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/>'
   };
-  function PH(name, size) { return '<svg class="ph" viewBox="0 0 256 256" width="' + (size || 16) + '" height="' + (size || 16) + '" fill="currentColor" aria-hidden="true">' + PHI[name] + '</svg>'; }
+  function PH(name, size) { return '<svg class="ph" viewBox="0 0 256 256" width="' + (size || 14) + '" height="' + (size || 14) + '" fill="currentColor" aria-hidden="true">' + PHI[name] + '</svg>'; }
   var TOOLS = [
     { id: 'pencil',  name: 'Draw',   key: 'p', icon: PH('pencil-simple') },
     { id: 'eraser',  group: 'edit', name: 'Eraser', key: 'e', icon: PH('eraser') },
