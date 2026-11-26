@@ -1866,3 +1866,6 @@ aside.panel .group-label:not(.first), .panel2-bottom .group-label:not(.first) { 
 #imageControls .img-right { justify-content: center; }
 #imageControls .img-right > .pair { grid-template-columns: none; grid-auto-flow: column; gap: 8px; justify-content: start; }
 #imageControls .img-right > .pair .key { padding: 0 8px; gap: 4px; }
+
+/* Upload / Replace and Remove share the whole width beside the preview, half each */
+#imageControls .img-right > .pair { grid-template-columns: 1fr 1fr; grid-auto-flow: row; justify-content: stretch; width: 100%; }
