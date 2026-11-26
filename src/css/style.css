@@ -1811,3 +1811,12 @@ kbd { background: #3a3a3c; }
 /* Image tuning sliders: the title column is exactly as wide as the longest title (Threshold), the slider gets the rest; the three rows share the columns */
 .img-tune { display: grid; grid-template-columns: max-content minmax(0, 1fr) 40px; column-gap: 8px; row-gap: 8px; }
 .img-tune > .row { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; padding: 0; }
+
+/* Divider styles swapped. The between-functionalities dividers used to be a 2px filled bar (drawn smooth, so it looks thicker when the page is scaled);
+   the title dividers were a 2px border (drawn crisp). Now: between functionalities = the crisp border, under the titles = the filled bar. */
+aside.panel .group-label:not(.first)::before,
+.panel2-bottom .group-label:not(.first)::before,
+.slot .acc-head:not(:first-child)::before { height: 0; background: none; border-top: 2px solid #070707; box-shadow: 0 1px 0 #3a3a3a; }
+.panel-divider { height: 0; background: none; border-top: 2px solid #070707; box-shadow: 0 1px 0 #3a3a3a; }
+.panel-header { position: relative; border-bottom: 0; box-shadow: none; }
+.panel-header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }

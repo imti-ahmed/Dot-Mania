@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.51.3 | 2026-11-26 | `v0.51.3` | Dividers flipped: lines between functionalities are now the crisp 2px border style, lines under the panel titles are the filled 2px bar style |
 | 0.51.2 | 2026-11-26 | `v0.51.2` | Animations: 18 presets (3 rows of 6); Twinkle, Radar, Orbit, Bounce, Fireworks and Tide go back to the hidden set |
 | 0.51.1 | 2026-11-26 | `v0.51.1` | No drop shadow under the dot grid screen; Animations show 24 presets (4 rows of 6) with no More / Less button: 9 animations (Glint, Helix, Plasma, Twinkle, Radar, Orbit, Bounce, Fireworks, Tide) moved into the main list |
 | 0.51.0 | 2026-11-26 | `v0.51.0` | Every animation has 5 sliders (Speed, Size, Glow + 2): 27 animations that had 4 got a fifth, each defaulting to the old look |
