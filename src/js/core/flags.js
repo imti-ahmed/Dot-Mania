@@ -52,6 +52,7 @@
     holoColor: true,            // Color group: the "Holo" multi-colour gradient
     whiteColor: false,          // Color group: the "White" preset
     extraTools: false,          // Left bar: the Line tool (the Eraser is always in the Clear group)
+    imageDither: false,         // Image group: the "Dither" style (Threshold and Outline stay)
     imageAdvanced: false,       // Image group: "Level" slider and "Fit / Fill" (default is 50% level, fit)
     interaction: false,         // Interaction group: Auto / Hover / Click playback (exported component too)
     extraPresets: false,        // 24 more animations: Diamond, Burst, Blink, Twinkle, Blob, Tunnel, Plasma, Stripes, Blinds, Cross, Fireworks, Tide, Glint, Helix, Carousel, Streaks, Chess, Swing, Bounce, Strobe, Glitch, Checker, Orbit, Radar

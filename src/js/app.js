@@ -1845,7 +1845,7 @@
     imgUI.remove.disabled = !on;
     if (imgUI.drop) {
       imgUI.drop.classList.toggle('has-image', !!on);
-      $('#imgUpload span').textContent = on ? 'Replace' : 'Upload';
+      $('#imgUpload').title = on ? 'Replace the picture (or drop one on the canvas)' : 'Upload a picture (or drop one on the canvas)';
       imgUI.thumb();
     }
   }
@@ -1896,50 +1896,61 @@
     };
     function ph(name, size) { return '<svg class="ph" viewBox="0 0 256 256" width="' + size + '" height="' + size + '" fill="currentColor" aria-hidden="true">' + PH[name] + '</svg>'; }
     left.innerHTML =
-      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture"><canvas width="160" height="160"></canvas>' + ph('image', 32) + '</button>' +
-      '<div class="pair">' +
+      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture"><canvas width="288" height="288"></canvas>' + ph('image', 40) + '</button>';
+    var btns = document.createElement('div');
+    btns.className = 'pair';
+    btns.innerHTML =
       '<button class="key" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture">' + ph('upload', 16) + '</button>' +
-      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" aria-label="Remove the picture" disabled>' + ph('trash', 16) + '</button>' +
-      '</div>';
+      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" aria-label="Remove the picture" disabled>' + ph('trash', 16) + '</button>';
     el.appendChild(left);
 
-    // Right: the style at the top, Dots on below.
+    // Right: Upload / Remove, then Style and Dots on as radio buttons.
+    var right = document.createElement('div');
+    right.className = 'img-right';
     var opts = document.createElement('div');
     opts.className = 'img-opts is-empty';
-    var cap = document.createElement('div');
-    cap.className = 'sub-label'; cap.textContent = 'Style';
-    var list = document.createElement('div');
-    list.className = 'style-list'; list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-label', 'Image style');
-    [['threshold', 'Threshold'], ['dither', 'Dither'], ['outline', 'Outline']].forEach(function (s) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.className = 'style-radio'; b.dataset.v = s[0]; b.setAttribute('role', 'radio');
-      b.innerHTML = '<i></i><span>' + s[1] + '</span>';
-      b.addEventListener('click', function () { imgOpts.style = s[0]; paintTiles(); applyImage(); });
-      list.appendChild(b);
-    });
-    function paintTiles() { list.querySelectorAll('.style-radio').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.v === imgOpts.style)); }); }
-    paintTiles();
-    opts.appendChild(cap); opts.appendChild(list);
+    function radios(title, label, items, get, set) {
+      var cap = document.createElement('div');
+      cap.className = 'sub-label'; cap.textContent = title;
+      var list = document.createElement('div');
+      list.className = 'style-list'; list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-label', label);
+      items.forEach(function (s) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'style-radio'; b.dataset.v = s[0]; b.setAttribute('role', 'radio');
+        b.innerHTML = '<i></i><span>' + s[1] + '</span>';
+        b.addEventListener('click', function () { set(s[0]); paint(); });
+        list.appendChild(b);
+      });
+      function paint() { list.querySelectorAll('.style-radio').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.v === get())); }); }
+      paint();
+      opts.appendChild(cap); opts.appendChild(list);
+      return { set: paint };
+    }
+    var styles = [['threshold', 'Threshold']];
+    if (FLAGS.imageDither) styles.push(['dither', 'Dither']);
+    styles.push(['outline', 'Outline']);
+    radios('Style', 'Image style', styles, function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); });
+    var onRow = radios('Dots on', 'Dots on', [['dark', 'Dark'], ['light', 'Light']], function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
 
     var levelRow = sliderRow({
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
       fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.level = v; applyImage(); }
     });
-    var onRow = switchRow('Dots on', 'Dark', 'Light', function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
       function () { return imgOpts.fit; }, function (v) { imgOpts.fit = v; imgRaster = null; applyImage(); });
-    (FLAGS.imageAdvanced ? [levelRow, onRow, fitRow] : [onRow]).forEach(function (r) { opts.appendChild(r); });
-    el.appendChild(opts);
+    if (FLAGS.imageAdvanced) { opts.appendChild(levelRow); opts.appendChild(fitRow); }
+    right.appendChild(btns); right.appendChild(opts);
+    el.appendChild(right);
 
     // The preview: the whole picture, fitted into the square (blank again when there is no picture).
     var preview = left.querySelector('#imgPreview'), canvas = preview.querySelector('canvas'), pctx = canvas.getContext('2d');
     function drawThumb() {
-      pctx.clearRect(0, 0, 160, 160);
+      pctx.clearRect(0, 0, 288, 288);
       if (!imgSrc) return;
-      var sc = Math.min(160 / imgSrc.w, 160 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
-      pctx.drawImage(imgSrc.el, (160 - w) / 2, (160 - h) / 2, w, h);
+      var sc = Math.min(288 / imgSrc.w, 288 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
+      pctx.drawImage(imgSrc.el, (288 - w) / 2, (288 - h) / 2, w, h);
     }
-    imgUI = { opts: opts, onRow: onRow, remove: left.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
+    imgUI = { opts: opts, onRow: onRow, remove: btns.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
 
     var input = $('#imageFile');
     function pick() { input.click(); }

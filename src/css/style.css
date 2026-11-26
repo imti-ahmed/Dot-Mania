@@ -1758,3 +1758,14 @@ kbd { background: #3a3a3c; }
 .panel2 > .panel2-bottom { flex: 1 1 0; min-height: 0; }
 .panel2 > .card > .panel-body { overflow-y: auto; scrollbar-width: none; }
 .panel2 > .card > .panel-body::-webkit-scrollbar { display: none; }
+
+/* Image card, round two: a bigger preview on the left; Upload / Remove, Style and Dots on in the right column. The card takes the free height, Export keeps its own. */
+#imageControls { grid-template-columns: 144px minmax(0, 1fr); gap: 16px; align-items: start; }
+#imageControls .img-preview { width: 144px; height: 144px; }
+#imageControls .img-right { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+#imageControls .img-right .pair { grid-template-columns: repeat(2, 40px); gap: 8px; }
+#imageControls .img-right .pair .key { height: 32px; padding: 0; justify-content: center; }
+#imageControls .img-opts { gap: 8px; }
+#imageControls .img-opts .style-list { gap: 4px; margin-bottom: 8px; }
+.panel2 > .panel2-image { flex: 1 1 0; min-height: 0; }
+.panel2 > .panel2-bottom { flex: 0 0 auto; }
