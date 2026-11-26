@@ -33,9 +33,9 @@
     b.type = 'button';
     b.className = 'key';
     b.dataset.n = s.n;
-    b.title = s.n + ' x ' + s.n + ' dots';
+    b.title = s.name + ': ' + s.n + ' x ' + s.n + ' dots';
     b.setAttribute('aria-pressed', 'false');
-    b.innerHTML = '<span class="lbl">' + s.name + ' <span class="dim">' + s.n + '×' + s.n + '</span></span>';
+    b.textContent = s.n + '×' + s.n;
     b.addEventListener('click', function () { A.setGrid(s.n, s.cell); sync(); });
     group.appendChild(b);
   });
