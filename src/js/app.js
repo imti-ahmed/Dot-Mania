@@ -967,6 +967,7 @@
     input.addEventListener('input', function () { o.onChange(sync()); });
     if (o.onCommit) input.addEventListener('change', o.onCommit);
     sync();
+    row.setValue = function (v) { input.value = v; sync(); };      // move the slider without firing onChange
     return row;
   }
 
@@ -1914,12 +1915,19 @@
     var styles = [{ v: 'threshold', label: 'Threshold' }];
     if (FLAGS.imageDither) styles.push({ v: 'dither', label: 'Dither' });
     styles.push({ v: 'outline', label: 'Outline' });
-    var styleRow = segRow('Style', styles, function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); });
-    opts.appendChild(styleRow);
-    var onRow = segRow('Dots on', [{ v: 'dark', label: 'Dark' }, { v: 'light', label: 'Light' }],
-      function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
-    onRow.set = onRow.repaint;
-    opts.appendChild(onRow);
+    // Style and Dots on are sliders too: a stepped slider whose value reads as the chosen name
+    var styleIds = styles.map(function (s) { return s.v; });
+    var styleRow = sliderRow({
+      label: 'Style', min: 0, max: styleIds.length - 1, step: 1, value: Math.max(0, styleIds.indexOf(imgOpts.style)),
+      fmt: function (v) { return styles[Math.round(v)].label; },
+      onChange: function (v) { imgOpts.style = styleIds[Math.round(v)]; applyImage(); }
+    });
+    var onRow = sliderRow({
+      label: 'Dots on', min: 0, max: 1, step: 1, value: imgOpts.on === 'light' ? 1 : 0,
+      fmt: function (v) { return v >= 0.5 ? 'Light' : 'Dark'; },
+      onChange: function (v) { imgOpts.on = v >= 0.5 ? 'light' : 'dark'; applyImage(); }
+    });
+    onRow.set = function (on) { onRow.setValue(on === 'light' ? 1 : 0); };
 
     var levelRow = sliderRow({
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
@@ -1932,13 +1940,13 @@
     if (FLAGS.imageOptions) right.appendChild(opts);      // Style and Dots on: switched off for now
     el.appendChild(right);
 
-    // Image tuning, in their own group under the image: Style, Dots on, Level and Fit (the settings the image engine has so far)
+    // Image tuning, in their own group under the image: Style, Dots on and Level, all sliders (Fit / Fill is switched off)
     var tune = document.createElement('div');
     tune.className = 'group img-tune is-empty';
     if (FLAGS.imageTuning) {
       var tl = document.createElement('div');
       tl.className = 'group-label'; tl.textContent = 'Tuning';
-      [styleRow, onRow, levelRow, fitRow].forEach(function (r) { tune.appendChild(r); });
+      [styleRow, onRow, levelRow].forEach(function (r) { tune.appendChild(r); });
       el.insertAdjacentElement('afterend', tune);
       tune.insertAdjacentElement('beforebegin', tl);
     }

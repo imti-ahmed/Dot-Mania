@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.49.19 | 2026-11-26 | `v0.49.19` | Image Tuning: Style and Dots on are stepped sliders like Level; Fit / Fill no longer shown |
 | 0.49.18 | 2026-11-26 | `v0.49.18` | Image Tuning group now holds all the image settings: Style, Dots on, Level, Fit |
 | 0.49.17 | 2026-11-26 | `v0.49.17` | Image card: a Tuning group under the picture with the Level slider (imageTuning flag), greyed until a picture is loaded |
 | 0.49.16 | 2026-11-26 | `v0.49.16` | Image card: the preview is 16:9 (128 x 72) |
