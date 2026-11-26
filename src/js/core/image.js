@@ -134,8 +134,9 @@
     var tt = new Float32Array(n);
     for (p = 0; p < n; p++) {
       var t = stretch ? Math.max(0, Math.min(1, (l[p] - base) / span)) : l[p];
-      t = Math.max(0, Math.min(1, (t - 0.5) * kc + 0.5));      // contrast around the middle grey (kc 1 = unchanged)
-      tt[p] = t;                                                // remembered: how light that part of the picture is (0..1)
+      // How light that part of the picture is, spread around the middle grey by the contrast setting; it only drives the shades of the dots
+      // (low = flat colour, high = strong light and dark), so the picture itself and the number of dots stay put.
+      tt[p] = Math.max(0, Math.min(1, (t - 0.5) * kc + 0.5));
       var ink = 1 - Math.abs(t - tone) / Math.max(tone, 1 - tone);   // dots gather around the chosen tone: 0 = the dark tones, 1 = the light ones, between = the mid tones in that band
       v[p] = Math.max(0, Math.min(1, ink + bias));
     }
