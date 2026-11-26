@@ -7,7 +7,7 @@
  *   DotImage.suggestOn(px)                      'dark' | 'light'  which tones should become dots
  *   DotImage.toCells(px, cols, rows, opts)      [[col,row], ...]
  *
- * opts: { style: 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light',
+ * opts: { style: 'density' (brightness becomes how many dots, the app's default) | 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light',
  *         tone: 0..1 (the tone the dots sit on: 0 = dark, 1 = light, between = that band of mid tones; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style),
  *         smooth: 0..1 (blur the brightness before the cut: 0 = none), contrast: 0..1 (0.5 = unchanged) }
  *   DotImage.toColoredCells(px, cols, rows, opts)  [[col,row,'#rrggbb'], ...]  every visible cell in its own colour (opts.level, contrast, edge apply)
@@ -142,7 +142,7 @@
     // logos show the difference between them and Threshold; photos keep their tones, just a touch lighter.
     if (o.style === 'dither' || o.style === 'halftone') for (p = 0; p < n; p++) v[p] *= 0.78;
     var out = [], x, y;
-    if (o.style === 'dither') {
+    if (o.style === 'dither' || o.style === 'density') {
       // Floyd-Steinberg, serpentine: smooth tones become a believable density of dots.
       for (y = 0; y < rows; y++) {
         var ltr = (y & 1) === 0;
@@ -182,6 +182,7 @@
       for (p = 0; p < n; p++) if (solid[p] && v[p] > 0.5) out.push([p % cols, (p / cols) | 0]);
       out = erode(out, cols, rows, o.edge);
     }
+    if (o.style === 'density') out = erode(out, cols, rows, o.edge);      // Spread still keeps just a border of the shape
     return out;
   }
 

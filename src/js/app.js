@@ -1848,7 +1848,7 @@
 
   var imgSrc = null;          // { el, w, h } the uploaded picture
   var imgRaster = null;       // that picture drawn at one pixel per grid cell (cached)
-  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', tone: 0, edge: 0, smooth: 0, contrast: 0.5, colored: false, fit: 'fit' };
+  var imgOpts = { style: 'density', level: 0.5, on: 'dark', tone: 0, edge: 0, smooth: 0, contrast: 0.5, colored: false, fit: 'fit' };
   var imgUI = {};
 
   // Halve repeatedly until close to the target size; one big jump would alias badly.
