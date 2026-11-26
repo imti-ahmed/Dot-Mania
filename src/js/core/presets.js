@@ -284,79 +284,86 @@
   // To drop one: delete its block.
   window.TRIAL_PRESETS = [
     {
-      id: 'alternate', name: 'Alternate', defaults: base(0.7, 0.8),
+      id: 'shockwave', name: 'Shockwave', defaults: base(0.75, 0.8),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },
       params: [
-        { key: 'groups', label: 'Groups', min: 2, max: 4, step: 1, def: 2, fmt: num },
+        { key: 'width', label: 'Thickness', min: 0.04, max: 0.3, step: 0.01, def: 0.1, fmt: pct },
+        { key: 'echo', label: 'Echo', min: 0, max: 1, step: 0.01, def: 0.4, fmt: pct }
+      ],
+      // A blast in the middle: one bright flash, then a hard ring races out to the edge, leaving a glow that dies away behind it.
+      fn: function (c, t, p) {
+        var ph = frac(t * p.speed * 0.5), r = ph * 1.3, e = (c.d - r) / p.width;
+        var ring = Math.exp(-e * e) * (1 - ph * 0.6);
+        var glow = c.d < r ? p.echo * Math.exp(-(r - c.d) / 0.45) * (1 - ph) : 0;
+        var flash = ph < 0.1 && c.d < 0.4 ? 1 - ph / 0.1 : 0;
+        var v = Math.max(ring, glow, flash);
+        return v < 0.04 ? 0.04 : v;
+      }
+    },
+    {
+      id: 'spiralin', name: 'Spiral In', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'way', label: 'Way', min: 0, max: 90, step: 90, def: 0, fmt: function (v) { return v < 45 ? 'In' : 'Out'; } },
+        { key: 'hold', label: 'Hold', min: 0, max: 0.4, step: 0.01, def: 0.15, fmt: pct }
+      ],
+      // The shape draws itself in a spiral, starting at the edge and winding in to the middle (or the other way), then holds and fades.
+      fn: function (c, t, p) {
+        var ph = frac(t * p.speed * 0.5), prog = Math.min(1.02, ph / (0.88 - p.hold));
+        var env = ph < 0.88 ? 1 : (1 - ph) / 0.12;
+        var m = Math.max(Math.abs(c.ux), Math.abs(c.uy)), turn = (c.a + Math.PI) / TAU;
+        var idx = (p.way < 45 ? 1 - m : m) * 0.85 + turn * 0.15;
+        var v = (idx <= prog ? 1 : 0.04) * env;
+        return v < 0.04 ? 0.04 : v;
+      }
+    },
+    {
+      id: 'clock', name: 'Clock', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'hand', label: 'Hand', min: 0.005, max: 0.06, step: 0.005, def: 0.02, fmt: pct },
+        { key: 'hold', label: 'Hold', min: 0, max: 0.4, step: 0.01, def: 0.15, fmt: pct }
+      ],
+      // A clock hand sweeps round the middle, and everything it has passed stays lit; then it holds, fades and starts again.
+      fn: function (c, t, p) {
+        var ph = frac(t * p.speed * 0.5), prog = Math.min(1, ph / (0.88 - p.hold)), env = ph < 0.88 ? 1 : (1 - ph) / 0.12;
+        var turn = ((Math.atan2(c.ux, -c.uy) % TAU) + TAU) % TAU / TAU;                    // 0 at the top, clockwise
+        var v = Math.abs(turn - prog) < p.hand && prog < 1 ? 1 : (turn <= prog ? 0.6 : 0.04);
+        v *= env;
+        return v < 0.04 ? 0.04 : v;
+      }
+    },
+    {
+      id: 'glitter', name: 'Glitter', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'band', label: 'Band', min: 0.1, max: 0.8, step: 0.01, def: 0.35, fmt: pct },
+        { key: 'sparkle', label: 'Sparkle', min: 0.2, max: 1, step: 0.01, def: 0.6, fmt: pct }
+      ],
+      // A band of light sweeps across, and inside it the dots glitter, each sparkling on its own beat.
+      fn: function (c, t, p) {
+        var f = frac(t * p.speed * 0.5), pos = f * 2.8 - 1.4, e = ((c.ux + c.uy) * 0.5 - pos) / p.band;
+        var band = Math.exp(-e * e), s = 0.5 + 0.5 * Math.sin((4 * f + c.rnd) * TAU);
+        return 0.04 + 0.96 * band * (0.2 + 0.8 * Math.pow(s, 1 + (1 - p.sparkle) * 8));
+      }
+    },
+    {
+      id: 'chain', name: 'Chain', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'angle', label: 'Angle', min: 0, max: 360, step: 5, def: 0, fmt: deg },
         { key: 'decay', label: 'Decay', min: 0.5, max: 6, step: 0.1, def: 2, fmt: dec1 }
       ],
-      // The dots are shared out at random into groups, and the groups flash one after another and fade away.
+      // A chain reaction: one flash sets off the next across the shape, each dot flashing bright and fading as the front passes.
       fn: function (c, t, p) {
-        var n = Math.round(p.groups), g = Math.floor(hash(c.col, c.row) * n);
-        var ph = frac(t * p.speed * 0.5 - g / n);
+        var a = p.angle * Math.PI / 180, order = ((c.ux * Math.cos(a) + c.uy * Math.sin(a)) / 1.42) * 0.5 + 0.5;
+        var ph = frac(t * p.speed * 0.5 - order * 0.8);
         return 0.05 + 0.95 * Math.pow(1 - ph, p.decay);
-      }
-    },
-    {
-      id: 'insideout', name: 'Inside Out', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'reach', label: 'Reach', min: 0.5, max: 3, step: 0.1, def: 1.5, fmt: dec1 },
-        { key: 'hold', label: 'Hold', min: 0, max: 1, step: 0.01, def: 0.4, fmt: pct }
-      ],
-      // The middle of the shape glows while the edge is dark, then they swap: the edge glows and the middle goes dark.
-      fn: function (c, t, p) {
-        var m = Math.pow(c.d, p.reach), s = Math.sin(t * p.speed * 0.5 * TAU) * (1 + p.hold * 6);
-        s = (s < -1 ? -1 : s > 1 ? 1 : s) * 0.5 + 0.5;
-        var v = Math.max((1 - s) * (1 - m), s * m);
-        return 0.05 + 0.95 * v;
-      }
-    },
-    {
-      id: 'static', name: 'Static', defaults: base(0.7, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'rows', label: 'Rows', min: 4, max: 32, step: 4, def: 16, fmt: num },
-        { key: 'density', label: 'Density', min: 0.1, max: 0.9, step: 0.01, def: 0.4, fmt: pct }
-      ],
-      // Random dots like a screen with no signal, rolling upwards in steps.
-      fn: function (c, t, p) {
-        var h = Math.round(p.rows), step = Math.floor(frac(t * p.speed * 0.5) * h);
-        return hash(c.col, (c.row + step) % h) > 1 - p.density ? 1 : 0.05;
-      }
-    },
-    {
-      id: 'fill', name: 'Fill', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'dir', label: 'Direction', min: 0, max: 270, step: 90, def: 270, fmt: arrow },
-        { key: 'soft', label: 'Softness', min: 0.05, max: 1, step: 0.01, def: 0.2, fmt: pct }
-      ],
-      // The shape fills up like a glass, in the direction you choose, then drains back out.
-      fn: function (c, t, p) {
-        var u = c.ux * 0.5 + 0.5, d = Math.round(p.dir / 90) % 4;
-        var pos = d === 0 ? u : d === 1 ? c.vy : d === 2 ? 1 - u : 1 - c.vy;
-        var level = Math.abs(frac(t * p.speed * 0.5) * 2 - 1), v = (level * (1 + p.soft) - pos) / p.soft;
-        return 0.05 + 0.95 * (v < 0 ? 0 : v > 1 ? 1 : v);
-      }
-    },
-    {
-      id: 'stripes', name: 'Stripes', defaults: base(0.7, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'width', label: 'Width', min: 1, max: 12, step: 1, def: 4, fmt: num },
-        { key: 'angle', label: 'Angle', min: 0, max: 180, step: 5, def: 45, fmt: deg }
-      ],
-      // Bold stripes slide across the shape, on and off, like a barber's pole.
-      fn: function (c, t, p) {
-        var a = p.angle * Math.PI / 180;
-        var x = frac((c.col * Math.cos(a) + c.row * Math.sin(a)) / (2 * p.width) - t * p.speed * 0.5);
-        return x < 0.5 ? 1 : 0.08;
       }
     }
   ];
