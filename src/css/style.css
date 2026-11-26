@@ -1354,8 +1354,8 @@ body[data-view="home"] .app {
 /* The canvas card is a square as tall as the screen allows (header 68 + padding 32 + gap 16 = 116px). The width left over
    is shared: a slim fixed 164px to the left bar (icons + text), all the rest to the right panel. */
 :root {
-  --stage-size: max(360px, min(calc(100vh - 116px), calc(100vw - 80px - 164px - 340px - 220px)));
-  --rest-w: calc(100vw - 80px - var(--stage-size));
+  --stage-size: max(360px, min(calc(var(--vh, 100vh) - 116px), calc(var(--vw, 100vw) - 80px - 164px - 340px - 220px)));
+  --rest-w: calc(var(--vw, 100vw) - 80px - var(--stage-size));
   --side-w: 164px;
   --panel-w: max(340px, calc((var(--rest-w) - var(--side-w)) * .6));   /* the main right panel; the second right panel takes what is left */
 }

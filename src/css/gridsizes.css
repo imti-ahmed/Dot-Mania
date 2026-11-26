@@ -2,22 +2,23 @@
    before, with a small grid size picker beside it. The other panels are hidden for now, not deleted. */
 
 body.gridonly {
-  --stage-size: max(320px, min(calc(100vh - 132px), calc(100vw - 112px - 130px)));
+  --stage-size: max(320px, min(calc(var(--vh, 100vh) - 132px), calc(var(--vw, 100vw) - 112px - 130px)));
 }
 body.gridonly .main[data-page="canvas"] {
-  grid-template-columns: var(--stage-size);      /* just the canvas, flush left, when no left column is built */
+  grid-template-columns: var(--stage-size) 1fr 1fr;      /* the canvas, then what is left on the right split into two equal parts (the 16px gaps come off first) */
   justify-content: start;
   align-content: start;
 }
-body.gridonly .main[data-page="canvas"]:has(> .leftcol) { grid-template-columns: 112px var(--stage-size); }
+body.gridonly .main[data-page="canvas"]:has(> .leftcol) { grid-template-columns: 112px var(--stage-size) 1fr 1fr; }
 /* Canvas card: 8px from the card edge (the navbar's padding), then 16px around the canvas, whose 12px frame ring paints inside it. */
 body.gridonly .stage-card { padding: 8px; }
 body.gridonly .stage-area { padding: 16px; }
+body.gridonly .main > .slot { align-self: start; width: auto; height: var(--stage-size); min-width: 0; }
 body.gridonly .main > .sidebar,
 body.gridonly .main > .panel,
 body.gridonly .main > .panel2 { display: none; }
 
-.leftcol { align-self: start; display: flex; flex-direction: column; gap: 16px; min-height: 0; max-height: calc(100vh - 132px); overflow-y: auto; }
+.leftcol { align-self: start; display: flex; flex-direction: column; gap: 16px; min-height: 0; max-height: calc(var(--vh, 100vh) - 132px); overflow-y: auto; }
 
 .gridpick {
   display: flex;

@@ -18,6 +18,13 @@
     { n: 64, cell: 16, name: 'Large' }
   ];
 
+  // Two empty cards fill the space to the right of the canvas, equal width (the grid columns in gridsizes.css)
+  for (var i = 0; i < 2; i++) {
+    var slot = document.createElement('section');
+    slot.className = 'card slot';
+    main.appendChild(slot);
+  }
+
   A.setFitRef({ w: 1024, h: 1024 });                // one scale for every grid size, so dots never grow
   A.setGrid(64, 16);                                // the grid is 64 x 64 for now
 
