@@ -30,7 +30,7 @@ body.gridonly .main > .panel2 { display: none; }
 .layerstrip { display: flex; flex-direction: column; gap: 6px; padding: 10px; }
 .layerstrip .gp-title { padding: 2px 4px 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: center; }
 .ls-card { position: relative; aspect-ratio: 1 / 1; width: 100%; border-radius: 10px; overflow: hidden; background: #050505; box-shadow: inset 0 0 0 1px #1d1d1d; cursor: pointer; }
-.ls-card[aria-current="true"] { box-shadow: 0 0 0 2px #7a7a7a; }
+.ls-card[aria-current="true"] { box-shadow: 0 0 0 2px #a8a8a8; }
 .ls-card canvas { display: block; width: 100%; height: 100%; }
 .layerstrip .ls-add { width: 100%; justify-content: center; margin-top: 2px; padding: 0 4px; font-size: 12px; }
 .layerstrip .ls-add:disabled { opacity: .45; cursor: not-allowed; }
@@ -42,6 +42,6 @@ body.gridonly .main > .panel2 { display: none; }
 .playbar .key { flex: 1; min-width: 0; justify-content: center; padding: 0; }
 
 /* Delete x: shows on hover, a grey box whose top and right sides touch the card's top right corner */
-.ls-del { position: absolute; top: 0; right: 0; width: 24px; height: 24px; padding: 0; display: none; align-items: center; justify-content: center; border-radius: 0; background: #3a3a3a; color: #e6e6e6; font-size: 16px; line-height: 1; }
+.ls-del { position: absolute; top: 0; right: 0; width: 28px; height: 28px; padding: 0; display: none; align-items: center; justify-content: center; border-radius: 0; background: #3a3a3a; color: #e6e6e6; font-size: 19px; line-height: 1; }
 .ls-card:hover .ls-del, .ls-card:focus-within .ls-del { display: flex; }
 .ls-del:hover { background: #4a4a4a; color: #fff; }
