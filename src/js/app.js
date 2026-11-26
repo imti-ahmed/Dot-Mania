@@ -2745,7 +2745,7 @@
     // Code: an HTML file, or text to paste into an AI assistant
     var code = [];
     if (FLAGS.exportCodeFile) code.push(key('exportCode', 'HTML File', 'Download a ready-to-open HTML file with the component'));
-    if (FLAGS.exportCopyForLlm) code.push(key('exportLlm', 'Copy LLM', 'Copy instructions plus the code, ready to paste into an AI assistant'));
+    if (FLAGS.exportCopyForLlm) code.push(key('exportLlm', 'LLM Prompt', 'Copy instructions plus the code, ready to paste into an AI assistant'));
     if (FLAGS.exportCopyEmbed) code.push(key('exportEmbed', 'Copy embed code', 'Copy just the component snippet'));
     if (FLAGS.exportDownloadJs) code.push(key('exportJs', 'Download .js', 'Download the component script on its own'));
     $('#exportCodeGroup').innerHTML = '<div class="pair">' + code.join('') + '</div>';
@@ -2776,7 +2776,7 @@
     on('#exportGif', exportGif);
     on('#exportPng', exportPng);
     on('#exportSvg', function () { if (anyCells()) { notify('Rendering SVG…', { busy: true }); download(funkyName('svg'), buildSvg(), 'image/svg+xml'); } });
-    on('#exportLlm', function () { copyText(buildExport().llm, $('#exportLlm span'), 'Copy LLM'); });
+    on('#exportLlm', function () { copyText(buildExport().llm, $('#exportLlm span'), 'LLM Prompt'); });
     on('#exportEmbed', function () { copyText(buildExport().snippet, $('#exportEmbed span'), 'Copy embed code'); });
     on('#exportJs', function () { download(funkyName('js'), buildExport().script, 'text/javascript'); });
     on('#exportWebm', function () { recordVideo('webm'); });

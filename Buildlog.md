@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.55.2 | 2026-11-26 | `v0.55.2` | Export: Copy LLM renamed LLM Prompt, the Code group renamed Code Use and moved below Media |
 | 0.55.1 | 2026-11-26 | `v0.55.1` | Image, single colour: brightness becomes dot density (error-diffusion dither, new density style) so Tone and Contrast visibly change the result; flat logos stay solid |
 | 0.55.0 | 2026-11-26 | `v0.55.0` | Image: Smooth replaced by a Contrast slider; new Colored On / Off radios under Replace and Remove turn the picture into a pixel grid in its own colours (toColoredCells in image.js) |
 | 0.54.0 | 2026-11-26 | `v0.54.0` | Image: Level renamed Tone, the old Dark-to-Light Tone slider hidden, new Smooth slider blurs the brightness before the cut (smooth option in image.js) |
