@@ -7,7 +7,8 @@
  *   DotImage.suggestOn(px)                      'dark' | 'light'  which tones should become dots
  *   DotImage.toCells(px, cols, rows, opts)      [[col,row], ...]
  *
- * opts: { style: 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light' }
+ * opts: { style: 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light',
+ *         tone: 0..1 (0 = dots on dark, 1 = on light, between blends; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style) }
  *   level is the amount of "ink": higher means more dots.
  *   Transparent pixels (alpha < 50%) never become dots, so logos with transparent backgrounds just work.
  */
@@ -52,10 +53,11 @@
     var stretch = span > 0.04;                          // a flat image is left alone
 
     // "ink" = how much a pixel wants to be a dot (1 = definitely), shifted by the level control.
+    var tone = o.tone !== undefined ? o.tone : (o.on === 'light' ? 1 : 0);
     var bias = (o.level === undefined ? 0.5 : o.level) - 0.5, v = new Float32Array(n);
     for (p = 0; p < n; p++) {
       var t = stretch ? Math.max(0, Math.min(1, (l[p] - base) / span)) : l[p];
-      var ink = o.on === 'light' ? t : 1 - t;
+      var ink = (1 - tone) * (1 - t) + tone * t;       // tone 0 = dots on the dark tones, 1 = on the light ones, between = a blend
       v[p] = Math.max(0, Math.min(1, ink + bias));
     }
 
@@ -101,6 +103,25 @@
       }
     } else {
       for (p = 0; p < n; p++) if (solid[p] && v[p] > 0.5) out.push([p % cols, (p / cols) | 0]);
+      // edge 0..1: 0 keeps the whole shape, 1 keeps only its outline, between keeps a border that gets thinner the higher it goes.
+      if (o.edge > 0 && out.length) {
+        var mask = new Uint8Array(n), dist = new Int32Array(n), big = 1 << 20, maxD = 0;
+        out.forEach(function (c) { mask[c[1] * cols + c[0]] = 1; });
+        // distance (in cells, up and down / left and right) from each cell to the nearest cell that is not ink; the picture's border counts as outside
+        for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) {
+          p = y * cols + x;
+          if (!mask[p]) { dist[p] = 0; continue; }
+          dist[p] = Math.min(x === 0 || y === 0 ? 1 : big, (x > 0 ? dist[p - 1] : 0) + 1, (y > 0 ? dist[p - cols] : 0) + 1);
+        }
+        for (y = rows - 1; y >= 0; y--) for (x = cols - 1; x >= 0; x--) {
+          p = y * cols + x;
+          if (!mask[p]) continue;
+          dist[p] = Math.min(dist[p], x === cols - 1 || y === rows - 1 ? 1 : big, (x < cols - 1 ? dist[p + 1] : 0) + 1, (y < rows - 1 ? dist[p + cols] : 0) + 1);
+          if (dist[p] > maxD) maxD = dist[p];
+        }
+        var keep = Math.max(1, Math.ceil((1 - o.edge) * maxD));
+        out = out.filter(function (c) { return dist[c[1] * cols + c[0]] <= keep; });
+      }
     }
     return out;
   }

@@ -1798,7 +1798,7 @@
 
   var imgSrc = null;          // { el, w, h } the uploaded picture
   var imgRaster = null;       // that picture drawn at one pixel per grid cell (cached)
-  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', fit: 'fit' };
+  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', tone: 0, edge: 0, fit: 'fit' };
   var imgUI = {};
 
   // Halve repeatedly until close to the target size; one big jump would alias badly.
@@ -1861,7 +1861,8 @@
       imgRaster = null;
       var before = beginEdit();
       imgOpts.on = window.DotImage.suggestOn(getRaster());                           // dots on the minority tone
-      imgUI.onRow.set(imgOpts.on);
+      imgOpts.tone = imgOpts.on === 'light' ? 1 : 0;
+      imgUI.onRow.set(imgOpts.tone);
       applyImage();
       endEdit(before);
       setImageActive(true);
@@ -1915,19 +1916,19 @@
     var styles = [{ v: 'threshold', label: 'Threshold' }];
     if (FLAGS.imageDither) styles.push({ v: 'dither', label: 'Dither' });
     styles.push({ v: 'outline', label: 'Outline' });
-    // Style and Dots on are sliders too: a stepped slider whose value reads as the chosen name
-    var styleIds = styles.map(function (s) { return s.v; });
+    // Style and Dots on are real sliders: Style goes from the filled shape to just its outline, Dots on from the dark tones to the light ones
+    function pct(v) { return Math.round(v * 100) + '%'; }
     var styleRow = sliderRow({
-      label: 'Style', min: 0, max: styleIds.length - 1, step: 1, value: Math.max(0, styleIds.indexOf(imgOpts.style)),
-      fmt: function (v) { return styles[Math.round(v)].label; },
-      onChange: function (v) { imgOpts.style = styleIds[Math.round(v)]; applyImage(); }
+      label: 'Style', min: 0, max: 1, step: 0.01, value: imgOpts.edge,
+      fmt: function (v) { return v < 0.02 ? 'Filled' : v > 0.98 ? 'Outline' : pct(v); },
+      onChange: function (v) { imgOpts.edge = v; applyImage(); }
     });
     var onRow = sliderRow({
-      label: 'Dots on', min: 0, max: 1, step: 1, value: imgOpts.on === 'light' ? 1 : 0,
-      fmt: function (v) { return v >= 0.5 ? 'Light' : 'Dark'; },
-      onChange: function (v) { imgOpts.on = v >= 0.5 ? 'light' : 'dark'; applyImage(); }
+      label: 'Dots on', min: 0, max: 1, step: 0.01, value: imgOpts.tone,
+      fmt: function (v) { return v < 0.02 ? 'Dark' : v > 0.98 ? 'Light' : pct(v); },
+      onChange: function (v) { imgOpts.tone = v; applyImage(); }
     });
-    onRow.set = function (on) { onRow.setValue(on === 'light' ? 1 : 0); };
+    onRow.set = function (v) { onRow.setValue(v); };
 
     var levelRow = sliderRow({
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
