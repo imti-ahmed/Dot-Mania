@@ -1355,9 +1355,9 @@ body[data-view="home"] .app {
 /* The canvas card is a square as tall as the screen allows (header 68 + padding 32 + gap 16 = 116px). The width left over
    is shared: a slim fixed 164px to the left bar (icons + text), all the rest to the right panel. */
 :root {
-  --stage-size: max(360px, min(calc(var(--vh, 100vh) - 116px), calc(var(--vw, 100vw) - 80px - 164px - 340px - 220px)));
+  --stage-size: max(360px, min(calc(var(--vh, 100vh) - 116px), calc(var(--vw, 100vw) - 80px - 104px - 340px - 220px)));
   --rest-w: calc(var(--vw, 100vw) - 80px - var(--stage-size));
-  --side-w: 164px;
+  --side-w: 104px;
   --panel-w: max(340px, calc((var(--rest-w) - var(--side-w)) * .6));   /* the main right panel; the second right panel takes what is left */
 }
 .main[data-page="canvas"] { grid-template-columns: var(--side-w) var(--stage-size) var(--panel-w) minmax(0, 1fr); }
@@ -1731,3 +1731,9 @@ kbd { background: #3a3a3c; }
 
 /* Screen size label: fixed at the top, always visible (flag: screenSize) */
 .screen-size { position: fixed; top: 4px; left: 50%; transform: translateX(-50%); z-index: 50; padding: 4px 8px; border-radius: 999px; background: rgba(0, 0, 0, .55); color: var(--text); font-size: 11px; line-height: 16px; letter-spacing: .04em; pointer-events: none; }
+
+/* Left bar: icon-only buttons, two in a row (the label is the tooltip). 104px = 8 + two 40px keys + 8 gap + 8 */
+.main > .sidebar .toolstrip, .main > .sidebar .editstrip, .main > .sidebar .sizes { display: grid; grid-template-columns: repeat(2, 40px); gap: 8px; justify-content: center; padding: 8px; }
+.main > .sidebar .key { width: 40px; height: 40px; padding: 0; justify-content: center; }
+.main > .sidebar .key .lbl, .main > .sidebar #fileLabel, .main > .sidebar #playLabel { display: none; }
+.main > .sidebar .toolstrip .sep { grid-column: 1 / -1; margin: 0; }
