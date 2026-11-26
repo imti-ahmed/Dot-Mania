@@ -26,6 +26,7 @@
     var x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
     return x - Math.floor(x);
   };
+  var arrow = function (v) { return ['\u2192', '\u2193', '\u2190', '\u2191'][Math.round(v / 90) % 4]; };
   var base = function (size, glow) { return { speed: 1, size: size, glow: glow }; };
 
   // Lava: per blob [x speed, y speed, x offset, y offset]; the speeds are whole numbers of cycles per loop
@@ -205,13 +206,7 @@
         var x = (proj - (frac(t * p.speed * 0.35) * 3.2 - 1.6)) / p.width;
         return 0.28 + 0.72 * Math.exp(-x * x);
       }
-    }
-  ];
-
-  // New animations being tried out. They show in their own "Trying Out" group in the panel.
-  // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
-  // To drop one: delete its block.
-  window.TRIAL_PRESETS = [
+    },
     {
       id: 'lava', name: 'Lava', defaults: base(0.75, 0.8),
       // seconds for one seamless loop
@@ -233,105 +228,122 @@
       }
     },
     {
-      id: 'iris', name: 'Iris', defaults: base(0.7, 0.7),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'blades', label: 'Blades', min: 3, max: 8, step: 1, def: 6, fmt: num },
-        { key: 'width', label: 'Thickness', min: 0.05, max: 0.4, step: 0.01, def: 0.12, fmt: pct }
-      ],
-      // A camera aperture: a polygon ring that opens and closes while it turns by one blade per loop.
-      fn: function (c, t, p) {
-        var n = Math.round(p.blades), f = t * p.speed * 0.5, sector = TAU / n;
-        var a = ((c.a + Math.PI - f * sector) % sector + sector) % sector - sector / 2;      // angle inside one blade, 0 in the middle
-        var edge = Math.cos(Math.PI / n) / Math.cos(a);                                       // radius of the polygon at this angle
-        var dp = c.d / edge, open = 0.2 + 0.7 * (0.5 + 0.5 * Math.sin(f * TAU));
-        var e = (dp - open) / p.width;
-        return 0.04 + 0.96 * Math.exp(-e * e);
-      }
-    },
-    {
-      id: 'drip', name: 'Drip', defaults: base(0.65, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.4); },
-      params: [
-        { key: 'weight', label: 'Weight', min: 1, max: 3, step: 0.1, def: 2, fmt: dec1 },
-        { key: 'splash', label: 'Splash', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct }
-      ],
-      // Drops hang at the top, then fall faster and faster, stretching into streaks, and splash across the bottom row.
-      fn: function (c, t, p) {
-        var ph = frac(t * p.speed * 0.4 + c.colRnd), y = Math.pow(ph, p.weight);
-        var behind = y - c.vy;                                                              // how far above the drop this cell is
-        var v = behind >= 0 ? Math.exp(-behind / (0.04 + 0.3 * ph)) : 0;
-        var s = ph > 0.8 ? Math.sin(Math.PI * (ph - 0.8) / 0.2) : 0;
-        var splash = p.splash * s * Math.exp(-Math.pow((1 - c.vy) / 0.07, 2));
-        v = Math.max(v, splash);
-        return v < 0.04 ? 0.04 : v;
-      }
-    },
-    {
-      id: 'ridge', name: 'Ridge', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'peaks', label: 'Peaks', min: 0.5, max: 3, step: 0.1, def: 1.2, fmt: dec1 },
-        { key: 'depth', label: 'Depth', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
-      ],
-      // Mountain ranges slide past: a bright front range and a dimmer one behind it, each with a glowing crest.
-      fn: function (c, t, p) {
-        var f = t * p.speed * 0.5, k = p.peaks;
-        var front = 0.62 + 0.16 * Math.sin((c.ux * k - 2 * f) * TAU) + 0.07 * Math.sin((c.ux * k * 2.3 - 3 * f) * TAU);
-        var back = 0.42 + 0.14 * Math.sin((c.ux * k * 0.8 - f) * TAU + 1.3) + 0.06 * Math.sin((c.ux * k * 1.9 - 2 * f) * TAU);
-        var sf = (c.vy - front) / 0.06, sb = (c.vy - back) / 0.06;
-        sf = sf < 0 ? 0 : sf > 1 ? 1 : sf; sb = sb < 0 ? 0 : sb > 1 ? 1 : sb;
-        var crestF = Math.exp(-Math.pow((c.vy - front) / 0.04, 2)), crestB = Math.exp(-Math.pow((c.vy - back) / 0.04, 2));
-        var vf = sf * (0.3 + 0.2 * (c.vy - front)) + 0.7 * crestF;
-        var vb = p.depth * (sb * 0.28 + 0.6 * crestB);
-        var v = Math.max(vf, vb);
-        return v < 0.04 ? 0.04 : v > 1 ? 1 : v;
-      }
-    },
-    {
-      id: 'monitor', name: 'Monitor', defaults: base(0.65, 0.8),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'beats', label: 'Beats', min: 1, max: 4, step: 1, def: 2, fmt: num },
-        { key: 'trail', label: 'Trail', min: 0.4, max: 4, step: 0.1, def: 1.4, fmt: dec1 }
-      ],
-      // A heart monitor: a trace with a sharp spike, drawn from left to right by a bright head that leaves a fading trail.
-      fn: function (c, t, p) {
-        var f = t * p.speed * 0.5, hx = -1 + 2 * frac(f);
-        var delta = (((hx - c.ux) % 2) + 2) % 2;                                            // how far behind the head this cell is
-        var trail = Math.exp(-delta * p.trail * 2.5), line = 0;
-        for (var s = -1; s <= 1; s++) {                                                     // three nearby samples so the steep spike stays joined up
-          var ph = frac(c.ux * p.beats * 0.5 + 0.5 + s * 0.012), y = 0.5 * Math.exp(-Math.pow((ph - 0.3) / 0.05, 2)) + 0.25 * Math.exp(-Math.pow((ph - 0.74) / 0.07, 2));
-          y += -0.9 * Math.exp(-Math.pow((ph - 0.5) / 0.018, 2)) + 0.3 * Math.exp(-Math.pow((ph - 0.54) / 0.02, 2));
-          var e = (c.uy + y * 0.9 - 0.15) / 0.11;
-          var l = Math.exp(-e * e);
-          if (l > line) line = l;
-        }
-        var v = line * (0.2 + 0.8 * trail);
-        return v < 0.04 ? 0.04 : v;
-      }
-    },
-    {
       id: 'type', name: 'Type', defaults: base(0.7, 0.5),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },
       params: [
-        { key: 'cursor', label: 'Cursor', min: 0.005, max: 0.08, step: 0.005, def: 0.025, fmt: pct },
+        { key: 'dir', label: 'Direction', min: 0, max: 270, step: 90, def: 0, fmt: arrow },
         { key: 'hold', label: 'Hold', min: 0, max: 0.4, step: 0.01, def: 0.15, fmt: pct }
       ],
-      // The shape is written like a line of text: row by row, left to right, with a bright cursor at the head; then it holds and fades.
+      // The shape is written like text: line after line, one direction (right, down, left or up), then it holds and fades.
       fn: function (c, t, p) {
         var ph = frac(t * p.speed * 0.5), prog = Math.min(1.02, ph / (0.88 - p.hold));
         var env = ph < 0.88 ? 1 : (1 - ph) / 0.12;
-        var idx = c.vy * 0.985 + (c.ux * 0.5 + 0.5) * 0.012;                                // reading order
-        var v = idx <= prog ? 0.65 : 0.04;
-        if (Math.abs(idx - prog) < p.cursor) v = 1;
+        var u = c.ux * 0.5 + 0.5, d = Math.round(p.dir / 90) % 4, idx;                      // reading order, for each of the four directions
+        if (d === 0) idx = c.vy * 0.985 + u * 0.012;
+        else if (d === 1) idx = u * 0.985 + c.vy * 0.012;
+        else if (d === 2) idx = c.vy * 0.985 + (1 - u) * 0.012;
+        else idx = (1 - u) * 0.985 + (1 - c.vy) * 0.012;
+        var v = idx <= prog ? 1 : 0.04;
         v *= env;
         return v < 0.04 ? 0.04 : v;
+      }
+    }
+  ];
+
+  // New animations being tried out. They show in their own "Trying Out" group in the panel.
+  // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
+  // To drop one: delete its block.
+  window.TRIAL_PRESETS = [
+    {
+      id: 'bloom', name: 'Bloom', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'petals', label: 'Petals', min: 3, max: 10, step: 1, def: 5, fmt: num },
+        { key: 'depth', label: 'Depth', min: 0.1, max: 0.8, step: 0.01, def: 0.4, fmt: pct }
+      ],
+      // A flower outline: petals around the centre that slowly turn and breathe in and out.
+      fn: function (c, t, p) {
+        var n = Math.round(p.petals), f = t * p.speed * 0.5;
+        var r = (0.5 + p.depth * 0.5 * Math.cos(n * c.a - f * TAU)) * (0.85 + 0.15 * Math.sin(f * TAU));
+        var e = (c.d - r) / 0.09;
+        return 0.04 + 0.96 * Math.exp(-e * e) + (c.d < r ? 0.1 : 0);
+      }
+    },
+    {
+      id: 'warp', name: 'Warp', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'lines', label: 'Lines', min: 2, max: 10, step: 1, def: 5, fmt: num },
+        { key: 'pull', label: 'Pull', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // A grid of lines that bends and swells around a heavy point drifting across it, like space around a planet.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5, cx = 0.55 * Math.sin(f * TAU), cy = 0.55 * Math.sin(2 * f * TAU);
+        var dx = c.ux - cx, dy = c.uy - cy, g = Math.exp(-(dx * dx + dy * dy) / 0.2);
+        var wx = (c.ux - p.pull * 0.9 * dx * g) * p.lines * 0.5 + 0.5, wy = (c.uy - p.pull * 0.9 * dy * g) * p.lines * 0.5 + 0.5;
+        var lx = Math.abs(frac(wx + 0.5) - 0.5), ly = Math.abs(frac(wy + 0.5) - 0.5);
+        var v = Math.max(Math.exp(-Math.pow(lx / 0.07, 2)), Math.exp(-Math.pow(ly / 0.07, 2)));
+        return 0.04 + 0.96 * v;
+      }
+    },
+    {
+      id: 'moire', name: 'Moire', defaults: base(0.7, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'lines', label: 'Lines', min: 4, max: 20, step: 1, def: 10, fmt: num },
+        { key: 'twist', label: 'Twist', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // Two fine line patterns lie on top of each other and turn against one another, making slow ripples appear and melt away.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5, a = p.twist * 0.3 * Math.sin(f * TAU);
+        var g1 = 0.5 + 0.5 * Math.cos((c.ux * p.lines + f) * TAU);
+        var g2 = 0.5 + 0.5 * Math.cos(((c.ux * Math.cos(a) + c.uy * Math.sin(a)) * p.lines - f) * TAU);
+        return 0.04 + 0.96 * Math.pow(g1 * g2, 0.6);
+      }
+    },
+    {
+      id: 'sparks', name: 'Sparks', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'rays', label: 'Rays', min: 3, max: 16, step: 1, def: 9, fmt: num },
+        { key: 'trail', label: 'Trail', min: 0.1, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // Sparks shoot out of the centre along their own straight lines, each leaving a fading streak.
+      fn: function (c, t, p) {
+        var n = Math.round(p.rays), f = t * p.speed * 0.5, best = 0;
+        for (var i = 0; i < n; i++) {
+          var ai = (i + 0.6 * hash(i, 3)) / n * TAU - Math.PI;
+          var da = Math.abs(((c.a - ai + 3 * Math.PI) % TAU) - Math.PI);
+          var head = frac(f + hash(i, 7)) * 1.15, back = head - c.d;
+          if (back < 0) continue;
+          var v = Math.exp(-Math.pow(da / 0.13, 2)) * Math.exp(-back / (0.05 + p.trail * 0.5));
+          if (v > best) best = v;
+        }
+        return best < 0.04 ? 0.04 : best;
+      }
+    },
+    {
+      id: 'halo', name: 'Halo', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'bars', label: 'Bars', min: 8, max: 48, step: 2, def: 24, fmt: num },
+        { key: 'reach', label: 'Reach', min: 0.2, max: 0.9, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // A ring of bars around the centre, each rising and falling to its own beat, like a round sound meter.
+      fn: function (c, t, p) {
+        var n = Math.round(p.bars), f = t * p.speed * 0.5, pos = (c.a + Math.PI) / TAU * n, b = Math.floor(pos) % n;
+        var within = pos - Math.floor(pos);
+        if (within < 0.12 || within > 0.88) return 0.04;                                     // the gap between bars
+        var h = 0.2 + p.reach * (0.5 + 0.5 * Math.sin((f * (1 + Math.floor(hash(b, 3) * 3)) + hash(b, 9)) * TAU));
+        var v = (0.28 + h - c.d) / 0.07;
+        v = v < 0 ? 0 : v > 1 ? 1 : v;
+        return c.d < 0.26 ? 0.04 : (v < 0.04 ? 0.04 : v);
       }
     }
   ];
