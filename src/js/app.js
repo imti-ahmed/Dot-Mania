@@ -1916,10 +1916,10 @@
     var styles = [{ v: 'threshold', label: 'Threshold' }];
     if (FLAGS.imageDither) styles.push({ v: 'dither', label: 'Dither' });
     styles.push({ v: 'outline', label: 'Outline' });
-    // Threshold (the shape from filled to just its outline) and Tone (which tones get the dots, dark to light) are real sliders, all in percent
+    // Edge (the shape from filled to just its outline) and Tone (which tones get the dots, dark to light) are real sliders, all in percent
     function pct(v) { return Math.round(v * 100) + '%'; }
     var styleRow = sliderRow({
-      label: 'Threshold', min: 0, max: 1, step: 0.01, value: imgOpts.edge,
+      label: 'Edge', min: 0, max: 1, step: 0.01, value: imgOpts.edge,
       fmt: pct, onChange: function (v) { imgOpts.edge = v; applyImage(); }
     });
     var onRow = sliderRow({
