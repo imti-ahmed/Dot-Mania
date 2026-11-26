@@ -5,7 +5,7 @@
   var FLAGS = window.FLAGS;     // feature flags, see flags.js
   var TRIAL = window.TRIAL_PRESETS || [];
   TRIAL.forEach(function (p) { p.trial = true; });
-  var PRESETS = window.PRESETS.concat(FLAGS.extraPresets ? window.EXTRA_PRESETS : [], TRIAL);
+  var PRESETS = window.PRESETS.concat(TRIAL);
   var MAIN = PRESETS.filter(function (p) { return !p.trial; });   // the Animations list (trial ones have their own group)
   var COMMON = window.COMMON_PARAMS, SWATCHES = window.SWATCHES;
   var TAU = Math.PI * 2;
@@ -1520,31 +1520,18 @@
   //   colors colour modes (a name) or solid hexes (#...), one is picked
   var RECIPES = [
     { art: ['math', 'polygons'],  dot: 'dot',      anim: ['ripple'],    tune: { size: 0.7,  glow: 0.8,  ripple: { rings: 3 } },            colors: ['neon', 'ocean', '#2de2e6'] },
-    { art: ['math', 'polygons'],  dot: 'dot',      anim: ['tunnel'],    tune: { size: 0.7,  glow: 0.7,  tunnel: { rings: 3 } },            colors: ['sunset', 'dusk', 'candy'] },
-    { art: ['heart', 0.88],     dot: 'dot',      anim: ['heartbeat'], tune: { size: 0.8,  glow: 0.8 },                                  colors: ['#ff5fa2', '#ef282d', 'candy'] },
     { art: ['heart', 0.88],     dot: 'heart',    anim: ['pulse'],     tune: { size: 0.75, glow: 0.6,  pulse: { depth: 0.7 } },          colors: ['#ff5fa2', 'candy', 'sunset'] },
-    { art: ['star', 0.92],      dot: 'star',     anim: ['twinkle'],   tune: { size: 0.8,  glow: 0.8,  twinkle: { sparkle: 0.7 } },      colors: ['gold', '#ffd23f', 'sunset'] },
     { art: ['snowflake', 0.92], dot: 'dot',      anim: ['shimmer'],   tune: { size: 0.75, glow: 0.7,  shimmer: { trail: 0.5 } },        colors: ['ice', 'ocean', '#2de2e6'] },
-    { art: ['math', 'interference'], dot: 'dot', anim: ['plasma'],    tune: { size: 0.75, glow: 0.7,  plasma: { scale: 1.6 } },         colors: ['aurora', 'holo', 'neon', 'dusk'] },
-    { art: ['math', 'mandala'],   dot: 'dot',      anim: ['radar'],     tune: { size: 0.65, glow: 0.8,  radar: { trail: 0.65 } },         colors: ['mint', '#5cf08a', 'forest'] },
     { art: ['math', 'spiral'],    dot: 'dot',      anim: ['spiral'],    tune: { size: 0.7,  glow: 0.7,  spiral: { arms: 3, twist: 1.2 } }, colors: ['dusk', 'rainbow', 'holo'] },
-    { art: ['diamond', 0.92],   dot: 'diamond',  anim: ['diamond'],   tune: { size: 0.75, glow: 0.6,  diamond: { rings: 3 } },          colors: ['fire', 'lava', 'gold'] },
     { art: ['math', 'truchet'],   dot: 'square',   anim: ['wave'],      tune: { size: 0.8,  glow: 0.5,  wave: { waves: 2 } },             colors: ['neon', '#8f7bff', 'candy'] },
     { art: ['math', 'carpet'],    dot: 'dot',      anim: ['rain'],      tune: { speed: 1.2, size: 0.6,  glow: 0.8,  rain: { trail: 0.6 } }, colors: ['mint', '#5cf08a', 'neon'] },
-    { art: ['math', 'mandala'],   dot: 'dot',      anim: ['burst'],     tune: { size: 0.65, glow: 0.9,  burst: { rings: 2 } },            colors: ['sunset', 'rainbow', 'neon'] },
-    { art: ['math', 'rose'],      dot: 'dot',      anim: ['orbit'],     tune: { size: 0.8,  glow: 0.9 },                                  colors: ['#2de2e6', 'ice', 'neon'] },
-    { art: ['math', 'super'],     dot: 'dot',      anim: ['blob'],      tune: { size: 0.8,  glow: 0.8 },                                  colors: ['lava', 'fire', 'sunset'] },
     { art: ['math', 'halftone'],  dot: 'square',   anim: ['scan'],      tune: { size: 0.8,  glow: 0.6 },                                  colors: ['#8f7bff', 'dusk', 'holo'] },
     { art: ['heart', 0.88],     dot: 'dot',      anim: ['ripple'],    tune: { size: 0.7,  glow: 0.7,  ripple: { rings: 2 } },           colors: ['candy', '#ff5fa2', 'sunset'] },
     { art: ['math', 'halftone'],  dot: 'dot',      anim: ['breathe'],   tune: { size: 0.8,  glow: 0.6 },                                  colors: ['gold', 'fire', '#ff8a1f'] },
     { art: ['star', 0.92],      dot: 'dot',      anim: ['glint'],     tune: { size: 0.75, glow: 0.9 },                                  colors: ['gold', 'ice', 'holo'] },
-    { art: ['math', 'rose'],      dot: 'dot',      anim: ['sweep'],     tune: { size: 0.7,  glow: 0.8,  sweep: { trail: 0.6 } },        colors: ['neon', 'ocean', '#8f7bff'] },
     { art: ['star', 0.92],      dot: 'dot',      anim: ['shimmer'],   tune: { size: 0.75, glow: 0.8,  shimmer: { trail: 0.55 } },       colors: ['gold', '#ffd23f', 'sunset'] },
     { art: ['diamond', 0.92],   dot: 'diamond',  anim: ['ripple'],    tune: { size: 0.75, glow: 0.7,  ripple: { rings: 3 } },           colors: ['fire', 'candy', 'dusk'] },
-    { art: ['math', 'super'],     dot: 'dot',      anim: ['dissolve'],  tune: { size: 0.75, glow: 0.7 },                                  colors: ['ice', 'mint', 'aurora'] },
-    { art: ['math', 'truchet'],   dot: 'square',   anim: ['zigzag'],    tune: { size: 0.8,  glow: 0.6,  zigzag: { waves: 2 } },           colors: ['sunset', 'candy', 'rainbow'] },
     { art: ['math', 'polygons'],  dot: 'dot',      anim: ['pulse'],     tune: { size: 0.8,  glow: 0.8,  pulse: { depth: 0.8 } },          colors: ['ocean', '#2de2e6', 'neon'] },
-    { art: ['random'],          dot: 'dot',      anim: ['twinkle'],   tune: { size: 0.7,  glow: 0.8 },                                  colors: ['neon', 'rainbow', 'holo', 'aurora'] }
   ];
   var lastRecipe = -1;
 

@@ -52,7 +52,6 @@
     imageOptions: false,        // Image group: the Style (Threshold / Outline) and Dots on options (they stay at their defaults while off)
     imageAdvanced: false,       // Image group: "Level" slider and "Fit / Fill" (default is 50% level, fit)
     interaction: false,         // Interaction group: Auto / Hover / Click playback (exported component too)
-    extraPresets: false,        // The animations not in the main 12: Diamond, Burst, Blink, Twinkle, Blob, Tunnel, Plasma, Stripes, Blinds, Cross, Fireworks, Tide, Glint, Helix, Carousel, Streaks, Chess, Swing, Bounce, Strobe, Glitch, Checker, Orbit, Radar
     starterShapes: false,       // Starters group: whole drawings (Full, Checkers, Disc, Ring, Diamond, Star, Heart, Snowflake)
     drawOptions: false,         // Draw group: brush size, and filled / outline rectangles and ellipses
     gridPanel: false,           // Grid group: grid size (8-48 px) and grid visibility

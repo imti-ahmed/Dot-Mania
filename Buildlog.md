@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.59.0 | 2026-11-26 | `v0.59.0` | Unused animations removed (the 27 hidden ones, the extraPresets flag and the random-start recipes that used them); the first trial batch replaced with six fresh ones in Trying Out: Lava, Iris, Drip, Ridge, Monitor, Type |
 | 0.58.0 | 2026-11-26 | `v0.58.0` | Five fresh animations in the Trying Out group: Flame, Weave, Mosaic, Veil, Lattice (5 sliders each, seamless loops) |
 | 0.57.1 | 2026-11-26 | `v0.57.1` | Animations: 12 presets kept (Shimmer, Pulse, Ripple, Wave, Spiral, Scan, Rain, Breathe, Flicker, Reveal, Bars, Glint); Beats, Sweep, Zigzag, Dissolve, Helix and Plasma go back to the hidden set |
 | 0.57.0 | 2026-11-26 | `v0.57.0` | Image sliders: Spread works like Level did (how many dots), Tone = spread of shades, Contrast = how strongly light and dark parts differ in dot density (never flat); the outline behaviour is no longer on a slider |
