@@ -8,7 +8,8 @@
  *   DotImage.toCells(px, cols, rows, opts)      [[col,row], ...]
  *
  * opts: { style: 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light',
- *         tone: 0..1 (the tone the dots sit on: 0 = dark, 1 = light, between = that band of mid tones; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style) }
+ *         tone: 0..1 (the tone the dots sit on: 0 = dark, 1 = light, between = that band of mid tones; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style),
+ *         smooth: 0..1 (blur the brightness before the cut: 0 = none) }
  *   level is the amount of "ink": higher means more dots.
  *   Transparent pixels (alpha < 50%) never become dots, so logos with transparent backgrounds just work.
  */
@@ -31,6 +32,31 @@
     return mean > 0.55 ? 'dark' : 'light';
   }
 
+  // Box blur of the brightness over the solid cells only, radius r in cells (fractions blend two radii so the slider is smooth).
+  function boxBlur(src, solid, cols, rows, r) {
+    if (r < 1) return src;
+    var tmp = new Float32Array(src.length), out = new Float32Array(src.length), x, y, k, s, w, q;
+    for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) {
+      s = 0; w = 0;
+      for (k = -r; k <= r; k++) { q = x + k; if (q >= 0 && q < cols && solid[y * cols + q]) { s += src[y * cols + q]; w++; } }
+      tmp[y * cols + x] = w ? s / w : src[y * cols + x];
+    }
+    for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) {
+      s = 0; w = 0;
+      for (k = -r; k <= r; k++) { q = y + k; if (q >= 0 && q < rows && solid[q * cols + x]) { s += tmp[q * cols + x]; w++; } }
+      out[y * cols + x] = w ? s / w : tmp[y * cols + x];
+    }
+    return out;
+  }
+  function smoothLum(l, solid, cols, rows, radius) {
+    var r0 = Math.floor(radius), f = radius - r0;
+    var a = boxBlur(l, solid, cols, rows, r0);
+    if (f < 0.01) return a;
+    var b = boxBlur(l, solid, cols, rows, r0 + 1), out = new Float32Array(l.length);
+    for (var p = 0; p < l.length; p++) out[p] = a[p] * (1 - f) + b[p] * f;
+    return out;
+  }
+
   function toCells(px, cols, rows, o) {
     var n = cols * rows, i, p;
     var l = new Float32Array(n), solid = new Uint8Array(n), hist = new Uint32Array(256), count = 0;
@@ -39,6 +65,11 @@
       if (px[i + 3] < 128) continue;
       solid[p] = 1;
       l[p] = lum(px, i);
+    }
+    // Smoothing: blur the brightness a little (more with a higher amount) so speckles melt into clean shapes before the cut.
+    if (o.smooth > 0) l = smoothLum(l, solid, cols, rows, o.smooth * 4);
+    for (p = 0; p < n; p++) {
+      if (!solid[p]) continue;
       hist[Math.min(255, (l[p] * 255) | 0)]++;
       count++;
     }

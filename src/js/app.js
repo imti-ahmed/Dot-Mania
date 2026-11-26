@@ -1848,7 +1848,7 @@
 
   var imgSrc = null;          // { el, w, h } the uploaded picture
   var imgRaster = null;       // that picture drawn at one pixel per grid cell (cached)
-  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', tone: 0, edge: 0, fit: 'fit' };
+  var imgOpts = { style: 'threshold', level: 0.5, on: 'dark', tone: 0, edge: 0, smooth: 0, fit: 'fit' };
   var imgUI = {};
 
   // Halve repeatedly until close to the target size; one big jump would alias badly.
@@ -1980,8 +1980,12 @@
     onRow.set = function (v) { onRow.setValue(v); };
 
     var levelRow = sliderRow({
-      label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
+      label: 'Tone', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
       fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.level = v; applyImage(); }
+    });
+    var smoothRow = sliderRow({
+      label: 'Smooth', min: 0, max: 1, step: 0.01, value: imgOpts.smooth,
+      fmt: pct, onChange: function (v) { imgOpts.smooth = v; applyImage(); }
     });
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
       function () { return imgOpts.fit; }, function (v) { imgOpts.fit = v; imgRaster = null; applyImage(); });
@@ -1990,13 +1994,13 @@
     if (FLAGS.imageOptions) right.appendChild(opts);      // Style and Dots on: switched off for now
     el.appendChild(right);
 
-    // Image tuning, in their own group under the image: Style, Dots on and Level, all sliders (Fit / Fill is switched off)
+    // Image tuning, in their own group under the image: Spread, Tone and Smooth, all sliders (the old Dark / Light band slider and Fit / Fill are not shown)
     var tune = document.createElement('div');
     tune.className = 'group img-tune is-empty';
     if (FLAGS.imageTuning) {
       var tl = document.createElement('div');
       tl.className = 'group-label'; tl.textContent = 'Tuning';
-      [styleRow, onRow, levelRow].forEach(function (r) { tune.appendChild(r); });
+      [styleRow, levelRow, smoothRow].forEach(function (r) { tune.appendChild(r); });
       el.insertAdjacentElement('afterend', tune);
       tune.insertAdjacentElement('beforebegin', tl);
     }
