@@ -1800,3 +1800,8 @@ kbd { background: #3a3a3c; }
 #imageControls .img-right { display: flex; flex-direction: column; justify-content: flex-start; gap: 8px; }
 #imageControls .img-right > .pair { display: grid; grid-template-columns: max-content; gap: 8px; justify-content: start; }      /* as wide as the longer label, both the same */
 #imageControls .img-right > .pair .key { height: var(--key-h); padding: 0 16px; }
+
+/* Image card, round seven: the preview is 16:9, 72px tall (as tall as the two buttons) and so 128px wide */
+#imageControls { grid-template-columns: 128px minmax(0, 1fr); }
+#imageControls .img-left { width: 128px; height: 72px; }
+#imageControls .img-preview { width: 100%; height: 100%; aspect-ratio: auto; }

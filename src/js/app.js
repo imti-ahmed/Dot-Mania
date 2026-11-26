@@ -1896,7 +1896,7 @@
     };
     function ph(name, size) { return '<svg class="ph" viewBox="0 0 256 256" width="' + size + '" height="' + size + '" fill="currentColor" aria-hidden="true">' + PH[name] + '</svg>'; }
     left.innerHTML =
-      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture"><canvas width="288" height="288"></canvas>' + ph('image', 40) + '</button>';
+      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture"><canvas width="288" height="162"></canvas>' + ph('image', 40) + '</button>';
     var btns = document.createElement('div');
     btns.className = 'pair';
     btns.innerHTML =
@@ -1933,10 +1933,10 @@
     // The preview: the whole picture, fitted into the square (blank again when there is no picture).
     var preview = left.querySelector('#imgPreview'), canvas = preview.querySelector('canvas'), pctx = canvas.getContext('2d');
     function drawThumb() {
-      pctx.clearRect(0, 0, 288, 288);
+      pctx.clearRect(0, 0, 288, 162);
       if (!imgSrc) return;
-      var sc = Math.min(288 / imgSrc.w, 288 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
-      pctx.drawImage(imgSrc.el, (288 - w) / 2, (288 - h) / 2, w, h);
+      var sc = Math.min(288 / imgSrc.w, 162 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
+      pctx.drawImage(imgSrc.el, (288 - w) / 2, (162 - h) / 2, w, h);
     }
     imgUI = { opts: opts, onRow: onRow, remove: btns.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
 
