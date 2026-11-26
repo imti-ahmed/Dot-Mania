@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.51.0 | 2026-11-26 | `v0.51.0` | Every animation has 5 sliders (Speed, Size, Glow + 2): 27 animations that had 4 got a fifth, each defaulting to the old look |
 | 0.50.7 | 2026-11-26 | `v0.50.7` | Colour changes reach the dots instantly: tracing the spectrum recolours every dot (or the selection) live, one undo step per drag; swatches and Random colour do the same |
 | 0.50.6 | 2026-11-26 | `v0.50.6` | Image slider renamed Spread |
 | 0.50.5 | 2026-11-26 | `v0.50.5` | Image slider renamed Outline (0% = whole shape, 100% = outline only) |
