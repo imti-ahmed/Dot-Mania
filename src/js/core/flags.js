@@ -26,7 +26,7 @@
     exportSvg: true,            // Export > Media: "SVG" (a plain still of the drawing, not animated, as scalable vector)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
-    gridSizes: true,            // Canvas on its own (other panels hidden for now) with a Small / Medium / Large picker, 16x16, 32x32 or 64x64 dots (src/js/layout/gridsizes.js)
+    gridSizes: false,            // Canvas on its own (other panels hidden for now) with a Small / Medium / Large picker, 16x16, 32x32 or 64x64 dots (src/js/layout/gridsizes.js)
     gridPicker: false,          // Grid view: the Small / Medium / Large (16 / 32 / 64) picker; off until grid size moves to a settings panel (the grid stays 64 x 64)
     playBar: false,             // Left column (with gridSizes): a panel under Layers with Play and Pause icon buttons side by side (src/js/layout/playbar.js)
     layerStrip: false,          // Left column (with gridSizes): a Layers strip, one preview card per layer, Add layer below, up to 5 (src/js/layout/layerstrip.js)
