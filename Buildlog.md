@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.45.11 | 2026-11-26 | `v0.45.11` | Navbar tab button padding 12px left and right (your call, an exception to the multiples of 8) |
 | 0.45.10 | 2026-11-26 | `v0.45.10` | Gap between navbar tab buttons back to 2px (your call, an exception to the 4px minimum) |
 | 0.45.9 | 2026-11-26 | `v0.45.9` | Spacing too small for a multiple of 8 uses 4px (the 1-3px values became 4px) |
 | 0.45.8 | 2026-11-26 | `v0.45.8` | Canvas height maths follows the 16px bottom inset (was 12px before snapping) |

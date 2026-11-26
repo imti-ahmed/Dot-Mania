@@ -156,7 +156,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   align-items: center;
   gap: 8px;
   height: 32px;
-  padding: 0 16px;
+  padding: 0 12px;
   border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1704,7 +1704,7 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
 /* Top navigation: the open tab is flat and glows blue instead of getting a red dot */
 .navbtn { border-radius: 6px; }
 .navbtn[aria-pressed="true"] {
-  padding-left: 16px;
+  padding-left: 12px;
   color: var(--glow);
   background: none;
   box-shadow: none;
