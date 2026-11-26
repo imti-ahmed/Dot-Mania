@@ -1769,3 +1769,8 @@ kbd { background: #3a3a3c; }
 #imageControls .img-opts .style-list { gap: 4px; margin-bottom: 8px; }
 .panel2 > .panel2-image { flex: 1 1 0; min-height: 0; }
 .panel2 > .panel2-bottom { flex: 0 0 auto; }
+
+/* Image card, round three: Upload / Remove under the whole section (icon + text, side by side); Style and Dots on titles like the other group titles */
+#imageControls > .pair { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 8px; }
+#imageControls > .pair .key { height: 40px; padding: 0 8px; gap: 8px; justify-content: center; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+#imageControls .sub-label { margin: 0; padding: 0; font-size: 11px; letter-spacing: 1.1px; color: var(--muted); }

@@ -1900,8 +1900,8 @@
     var btns = document.createElement('div');
     btns.className = 'pair';
     btns.innerHTML =
-      '<button class="key" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture">' + ph('upload', 16) + '</button>' +
-      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" aria-label="Remove the picture" disabled>' + ph('trash', 16) + '</button>';
+      '<button class="key" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture">' + ph('upload', 16) + '<span>Upload</span></button>' +
+      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" aria-label="Remove the picture" disabled>' + ph('trash', 16) + '<span>Remove</span></button>';
     el.appendChild(left);
 
     // Right: Upload / Remove, then Style and Dots on as radio buttons.
@@ -1939,8 +1939,9 @@
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
       function () { return imgOpts.fit; }, function (v) { imgOpts.fit = v; imgRaster = null; applyImage(); });
     if (FLAGS.imageAdvanced) { opts.appendChild(levelRow); opts.appendChild(fitRow); }
-    right.appendChild(btns); right.appendChild(opts);
+    right.appendChild(opts);
     el.appendChild(right);
+    el.appendChild(btns);          // Upload / Remove sit under the whole section
 
     // The preview: the whole picture, fitted into the square (blank again when there is no picture).
     var preview = left.querySelector('#imgPreview'), canvas = preview.querySelector('canvas'), pctx = canvas.getContext('2d');
