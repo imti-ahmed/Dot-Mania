@@ -620,6 +620,90 @@
   // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
   // To drop one: move it into EXTRA_PRESETS (behind the extraPresets flag) or delete it.
   window.TRIAL_PRESETS = [
+    {
+      id: 'flame', name: 'Flame', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'height', label: 'Height', min: 0.2, max: 1.5, step: 0.01, def: 0.8, fmt: pct },
+        { key: 'flicker', label: 'Flicker', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct }
+      ],
+      // Hot at the bottom, fading upwards, with licking tips: every dot flickers on its own and the whole flame sways.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5;
+        var h = (c.vy - (1 - p.height)) / p.height;                                      // 0 at the tip level, 1 at the bottom
+        var n = 0.5 + 0.25 * Math.sin((2 * f + c.rnd) * TAU) + 0.25 * Math.sin((3 * f + c.rnd2) * TAU);
+        var sway = 0.18 * p.flicker * Math.sin((c.ux * 1.5 - 2 * f) * TAU);
+        var v = h + p.flicker * (n - 0.5) * 1.2 + sway;
+        v = v < 0 ? 0 : v > 1 ? 1 : v;
+        return 0.04 + 0.96 * Math.pow(v, 1.2);
+      }
+    },
+    {
+      id: 'weave', name: 'Weave', defaults: base(0.7, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'thread', label: 'Thread', min: 1, max: 4, step: 1, def: 2, fmt: num },
+        { key: 'shine', label: 'Shine', min: 1, max: 6, step: 0.1, def: 2.5, fmt: dec1 }
+      ],
+      // Threads go over and under like fabric; a glint runs along the threads that are on top, the others stay dim.
+      fn: function (c, t, p) {
+        var w = Math.round(p.thread), ph = t * p.speed * 0.5;
+        var over = (Math.floor(c.col / w) + Math.floor(c.row / w)) % 2;
+        var s = 0.5 + 0.5 * Math.cos(((over ? c.col : c.row) * 0.1 - ph) * TAU);
+        return over ? 0.25 + 0.75 * Math.pow(s, p.shine) : 0.06 + 0.3 * Math.pow(s, p.shine);
+      }
+    },
+    {
+      id: 'mosaic', name: 'Mosaic', defaults: base(0.7, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'tile', label: 'Tile', min: 2, max: 10, step: 1, def: 4, fmt: num },
+        { key: 'punch', label: 'Contrast', min: 1, max: 5, step: 0.1, def: 2, fmt: dec1 }
+      ],
+      // The shape is cut into square tiles; each tile fades in and out on its own beat, like a wall of lit windows.
+      fn: function (c, t, p) {
+        var k = Math.round(p.tile), r = hash(Math.floor(c.col / k), Math.floor(c.row / k));
+        var s = 0.5 + 0.5 * Math.sin((t * p.speed * 0.5 + r) * TAU);
+        return 0.05 + 0.95 * Math.pow(s, p.punch);
+      }
+    },
+    {
+      id: 'veil', name: 'Veil', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'folds', label: 'Folds', min: 1, max: 8, step: 0.1, def: 3, fmt: dec1 },
+        { key: 'sway', label: 'Sway', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // A curtain of light hangs from the top, in vertical folds that drift sideways, its lower edge swaying like the northern lights.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5, h = (c.uy + 1) / 2;
+        var edge = 0.55 + p.sway * 0.4 * Math.sin((c.ux * 0.8 + f) * TAU);
+        var fade = (edge - h) / 0.5;
+        fade = fade < 0 ? 0 : fade > 1 ? 1 : fade;
+        var ray = 0.5 + 0.5 * Math.sin((c.ux * p.folds * 0.5 - f) * TAU);
+        return 0.04 + 0.96 * fade * (0.35 + 0.65 * ray);
+      }
+    },
+    {
+      id: 'lattice', name: 'Lattice', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'spacing', label: 'Spacing', min: 2, max: 8, step: 1, def: 3, fmt: num },
+        { key: 'wave', label: 'Wave', min: 0, max: 3, step: 0.1, def: 1, fmt: dec1 }
+      ],
+      // Only every few dots on the grid light up, like stars on a net; a pulse travels across them from the centre.
+      fn: function (c, t, p) {
+        var s = Math.round(p.spacing);
+        if (c.col % s !== 0 || c.row % s !== 0) return 0.05;
+        var pulse = 0.5 + 0.5 * Math.cos((c.d * p.wave * 2 - t * p.speed * 0.5) * TAU);
+        return 0.25 + 0.75 * pulse;
+      }
+    }
   ];
 
   // Slider ranges for the controls every preset shares.
