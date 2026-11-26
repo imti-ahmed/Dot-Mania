@@ -1827,8 +1827,8 @@ aside.panel .group-label:not(.first)::before,
 
 /* Collapsible titles (collapse.js): the title on the left, a caret at the end; folded = only the title and the caret */
 .acc-head { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
-.acc-head:hover { color: var(--text); }
-.acc-caret { flex: none; display: inline-flex; margin-right: 4px; transition: transform .15s; }
+.acc-caret { flex: none; display: inline-flex; margin-right: 4px; opacity: 0; transition: transform .15s, opacity .15s; }      /* the caret shows when the title is hovered or focused, or while the title is folded; the title itself does not change colour */
+.acc-head:hover .acc-caret, .acc-head:focus-visible .acc-caret, .acc-head[aria-expanded="false"] .acc-caret { opacity: 1; }
 .acc-head[aria-expanded="false"] .acc-caret { transform: rotate(-90deg); }
 .acc-body { display: flex; flex-direction: column; gap: 16px; }
 .acc-body.collapsed, .acc-body:not(:has(> :not([hidden]))) { display: none; }

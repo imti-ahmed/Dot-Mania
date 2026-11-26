@@ -1,12 +1,12 @@
 /*
  * Collapsible titles (collapseTitles flag, the normal three-column layout). Every functionality title in the Properties, Image
- * and Export panels gets a caret (Phosphor, solid) at its end. Click the title or the caret and what is under it folds away,
+ * and Export panels gets a caret (Phosphor, regular weight) at its end; it shows on hover, and stays showing on a folded title. Click the title or the caret and what is under it folds away,
  * leaving just the title and the caret; click again to open it. Which ones are folded is remembered in the browser.
  * (The canvas-only view has its own version of this in panels.js.) Loaded after app.js, which builds the controls.
  */
 (function () {
   if (!window.FLAGS || !FLAGS.collapseTitles || FLAGS.gridSizes) return;
-  var CARET = '<svg class="ph" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/></svg>';
+  var CARET = '<svg class="ph" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>';
   var KEY = 'dotmania.foldedTitles', folded = {};
   try { folded = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
   function remember(id, isFolded) { if (isFolded) folded[id] = 1; else delete folded[id]; try { localStorage.setItem(KEY, JSON.stringify(folded)); } catch (e) {} }

@@ -64,7 +64,6 @@ body.reordering, body.reordering * { cursor: grabbing !important; }
 .main > .slot { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 16px; }
 .slot > .panel-body { margin-top: 8px; }
 .slot .acc-head { display: flex; align-items: center; justify-content: space-between; flex: none; height: 32px; margin: 0; padding: 0 8px; border-radius: 8px; cursor: pointer; user-select: none; }
-.slot .acc-head:hover { color: var(--text); background: rgba(255, 255, 255, .04); }
 .slot .acc-head::after { content: ""; width: 8px; height: 8px; margin-right: 4px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
 .slot .acc-head[aria-expanded="false"]::after { transform: translateX(-2px) rotate(-45deg); }
 .slot .acc-body { display: flex; flex-direction: column; gap: 16px; }
