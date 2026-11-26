@@ -5,10 +5,11 @@ body.gridonly {
   --stage-size: max(320px, min(calc(100vh - 116px), calc(100vw - 80px - 130px)));
 }
 body.gridonly .main[data-page="canvas"] {
-  grid-template-columns: 112px var(--stage-size);
+  grid-template-columns: var(--stage-size);      /* just the canvas, flush left, when no left column is built */
   justify-content: start;
   align-content: start;
 }
+body.gridonly .main[data-page="canvas"]:has(> .leftcol) { grid-template-columns: 112px var(--stage-size); }
 body.gridonly .main > .sidebar,
 body.gridonly .main > .panel,
 body.gridonly .main > .panel2 { display: none; }

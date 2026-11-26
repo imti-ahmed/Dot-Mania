@@ -28,8 +28,8 @@
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
     gridSizes: true,            // Canvas on its own (other panels hidden for now) with a Small / Medium / Large picker, 16x16, 32x32 or 64x64 dots (src/js/layout/gridsizes.js)
     gridPicker: false,          // Grid view: the Small / Medium / Large (16 / 32 / 64) picker; off until grid size moves to a settings panel (the grid stays 64 x 64)
-    playBar: true,              // Left column (with gridSizes): a panel under Layers with Play and Pause icon buttons side by side (src/js/layout/playbar.js)
-    layerStrip: true,           // Left column (with gridSizes): a Layers strip, one preview card per layer, Add layer below, up to 5 (src/js/layout/layerstrip.js)
+    playBar: false,             // Left column (with gridSizes): a panel under Layers with Play and Pause icon buttons side by side (src/js/layout/playbar.js)
+    layerStrip: false,          // Left column (with gridSizes): a Layers strip, one preview card per layer, Add layer below, up to 5 (src/js/layout/layerstrip.js)
     screenSize: true,           // Top of the page: a small always-visible label with the window size (width x height), live
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
