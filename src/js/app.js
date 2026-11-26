@@ -1968,7 +1968,11 @@
     sizeEl.className = 'screen-size';
     sizeEl.setAttribute('aria-hidden', 'true');
     document.body.appendChild(sizeEl);
-    var showSize = function () { sizeEl.textContent = window.innerWidth + ' x ' + window.innerHeight + ' px'; };
+    // Both sizes: the real window, and the page as it is laid out (1600 x 732 when scale.js shrinks it), with the scale it is drawn at
+    var showSize = function () {
+      var b = document.body, k = b.offsetWidth ? b.getBoundingClientRect().width / b.offsetWidth : 1;
+      sizeEl.textContent = 'window ' + window.innerWidth + ' x ' + window.innerHeight + ' | page ' + b.offsetWidth + ' x ' + b.offsetHeight + ' | scale ' + Math.round(k * 100) + '%';
+    };
     window.addEventListener('resize', showSize);
     showSize();
   }

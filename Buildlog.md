@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.46.2 | 2026-11-26 | `v0.46.2` | Size label shows the real window size, the laid-out page size and the scale it is drawn at |
 | 0.46.1 | 2026-11-26 | `v0.46.1` | Back out the always-scaled 1600 x 732 page (0.47.0); small screens shrink to 1600 x 732 as in 0.46.0 |
 | 0.46.0 | 2026-11-26 | `v0.46.0` | Space right of the canvas split into two equal empty cards; windows smaller than 1600 x 732 draw the page at 1600 x 732 and scale it down to fit (new scale.js) |
 | 0.45.11 | 2026-11-26 | `v0.45.11` | Navbar tab button padding 12px left and right (your call, an exception to the multiples of 8) |
