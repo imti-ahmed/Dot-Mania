@@ -53,7 +53,7 @@
     whiteColor: false,          // Color group: the "White" preset
     extraTools: false,          // Left bar: the Line tool (the Eraser is always in the Clear group)
     imageDither: false,         // Image group: the "Dither" style (Threshold and Outline stay)
-    imageTuning: true,          // Image card: a Tuning group of sliders under the picture (Level)
+    imageTuning: true,          // Image card: a Tuning group under the picture: Style, Dots on, Level, Fit
     imageOptions: false,        // Image group: the Style (Threshold / Outline) and Dots on options (they stay at their defaults while off)
     imageAdvanced: false,       // Image group: "Level" slider and "Fit / Fill" (default is 50% level, fit)
     interaction: false,         // Interaction group: Auto / Hover / Click playback (exported component too)

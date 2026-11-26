@@ -1914,7 +1914,8 @@
     var styles = [{ v: 'threshold', label: 'Threshold' }];
     if (FLAGS.imageDither) styles.push({ v: 'dither', label: 'Dither' });
     styles.push({ v: 'outline', label: 'Outline' });
-    opts.appendChild(segRow('Style', styles, function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); }));
+    var styleRow = segRow('Style', styles, function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); });
+    opts.appendChild(styleRow);
     var onRow = segRow('Dots on', [{ v: 'dark', label: 'Dark' }, { v: 'light', label: 'Light' }],
       function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
     onRow.set = onRow.repaint;
@@ -1931,13 +1932,13 @@
     if (FLAGS.imageOptions) right.appendChild(opts);      // Style and Dots on: switched off for now
     el.appendChild(right);
 
-    // Image tuning sliders, in their own group under the image (Level is the only one the image engine has so far)
+    // Image tuning, in their own group under the image: Style, Dots on, Level and Fit (the settings the image engine has so far)
     var tune = document.createElement('div');
     tune.className = 'group img-tune is-empty';
     if (FLAGS.imageTuning) {
       var tl = document.createElement('div');
       tl.className = 'group-label'; tl.textContent = 'Tuning';
-      tune.appendChild(levelRow);
+      [styleRow, onRow, levelRow, fitRow].forEach(function (r) { tune.appendChild(r); });
       el.insertAdjacentElement('afterend', tune);
       tune.insertAdjacentElement('beforebegin', tl);
     }
