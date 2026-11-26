@@ -1957,6 +1957,17 @@
     $('#statusIdle').hidden = false;
   }
 
+  // Screen size flash: while the window is resized, the status bar briefly shows its size (flag: screenSize)
+  if (FLAGS.screenSize) {
+    var sizeTimer = 0;
+    window.addEventListener('resize', function () {
+      clearTimeout(sizeTimer);
+      sizeTimer = setTimeout(function () {
+        notify(window.innerWidth + ' x ' + window.innerHeight + ' px', { ms: 2000 });
+      }, 120);
+    });
+  }
+
   // Version, views and GitHub stars. A value that is not available (no counter set up, offline)
   // shows a dash.
   function buildStatus() {

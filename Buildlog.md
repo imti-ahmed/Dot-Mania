@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.42.0 | 2026-11-26 | `v0.42.0` | Status bar briefly shows the window size (width x height) when the window is resized; behind the new `screenSize` flag in flags.js |
 | 0.41.0 | 2026-11-11 | `v0.41.0` | Library cards show looping GIFs (assets/library/, 270 x 270, 15 fps, 31 colours, 13 to 330 KB each, 2.9 MB in all) made from each template with the app's own engine and GIF encoder; the browser plays and lazy-loads them, and the template HTML is fetched only when Load File is pressed; the frame-strip drawing code is gone |
 | 0.40.2 | 2026-11-11 | `v0.40.2` | Library cards all play again, cheaply: each card's loop is drawn once into a strip of up to 30 small (256px) frames, a few ms at a time and only for cards on or just below the screen, then playing = copying one ready frame (no per-dot drawing); frames are freed when a card scrolls away; hover-only playback removed; Welcome/Home/About previews still draw live |
 | 0.40.1 | 2026-11-11 | `v0.40.1` | Library made light: templates are fetched only when a card is about to scroll into view (nothing loads at start-up any more), each card is one still frame and animates only while hovered or focused, previews are 400px (was 640), drawing is capped at about 30 frames a second, and the loop stops when nothing is moving |

@@ -26,7 +26,8 @@
     exportSvg: true,            // Export > Media: "SVG" (a plain still of the drawing, not animated, as scalable vector)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
-    agentTools: true,           // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
+    screenSize: true,           // Status bar: briefly shows the window size (width x height) whenever the window is resized
+    agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */
 
