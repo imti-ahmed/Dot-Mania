@@ -1774,3 +1774,13 @@ kbd { background: #3a3a3c; }
 #imageControls > .pair { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 8px; }
 #imageControls > .pair .key { height: 40px; padding: 0 8px; gap: 8px; justify-content: center; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 #imageControls .sub-label { margin: 0; padding: 0; font-size: 11px; letter-spacing: 1.1px; color: var(--muted); }
+
+/* Image card, round four: like the Color group, two wells side by side with the 16px gap between them. Left: the preview. Right: Style and Dots on.
+   Upload / Remove are outside the group, normal keys (same height and text as the other buttons). */
+#imageControls { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+#imageControls .img-left, #imageControls .img-right { border-radius: 10px; background: var(--well); box-shadow: inset 0 2px 7px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .05); }
+#imageControls .img-left { display: flex; align-items: center; justify-content: center; padding: 8px; }
+#imageControls .img-preview { width: 100%; height: auto; aspect-ratio: 1; background: transparent; box-shadow: none; }
+#imageControls .img-right { display: flex; flex-direction: column; justify-content: center; padding: 16px; }
+.panel2-image .panel-body > .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: none; }
+.panel2-image .panel-body > .pair .key { height: var(--key-h); padding: 0 16px; }

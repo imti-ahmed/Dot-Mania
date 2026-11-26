@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.49.10 | 2026-11-26 | `v0.49.10` | Image card: preview and options in two wells with a gap between, like the Color group; Upload / Remove moved out of the group as normal-size keys |
 | 0.49.9 | 2026-11-26 | `v0.49.9` | Image card: Upload and Remove (icon + text, side by side) under the whole section; Style and Dots on titles in the normal grey group title style |
 | 0.49.8 | 2026-11-26 | `v0.49.8` | Image card: 144px preview showing the real photo (fixes an error that stopped it drawing), Upload / Remove in the right column, Style and Dots on as radios, Dither behind imageDither flag (off), card fills the free height above Export |
 | 0.49.7 | 2026-11-26 | `v0.49.7` | Image card reworked: clean preview with a Phosphor image icon when empty, 96px, Upload and Remove as Phosphor solid icon buttons, Style and Dots on beside it, no scrollbars, Export fills the rest of the panel height |

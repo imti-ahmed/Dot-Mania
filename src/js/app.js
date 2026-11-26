@@ -1941,7 +1941,7 @@
     if (FLAGS.imageAdvanced) { opts.appendChild(levelRow); opts.appendChild(fitRow); }
     right.appendChild(opts);
     el.appendChild(right);
-    el.appendChild(btns);          // Upload / Remove sit under the whole section
+    el.insertAdjacentElement('afterend', btns);          // Upload / Remove sit outside the group, under it
 
     // The preview: the whole picture, fitted into the square (blank again when there is no picture).
     var preview = left.querySelector('#imgPreview'), canvas = preview.querySelector('canvas'), pctx = canvas.getContext('2d');
