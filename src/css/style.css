@@ -1789,7 +1789,7 @@ kbd { background: #3a3a3c; }
 #imageControls { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
 #imageControls .img-right { background: none; box-shadow: none; padding: 0; justify-content: flex-start; }
 #imageControls .img-opts { gap: 16px; }
-#imageControls .img-opts .row { grid-template-columns: 1fr; gap: 8px; margin: 0; }
+#imageControls .img-opts .row { grid-template-columns: 1fr; gap: 16px; margin: 0; }      /* title to its buttons: 16px, same as the Code title to its group */
 #imageControls .img-opts .row .wide { grid-column: 1; }
 #imageControls .img-opts .row .lbl { font-size: 11px; }
 #imageControls .img-opts .seg .key { padding: 0 4px; }

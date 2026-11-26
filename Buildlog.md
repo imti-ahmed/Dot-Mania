@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.49.12 | 2026-11-26 | `v0.49.12` | Image card: title to buttons gap 16px like Export Code (was 8px); sections 16px apart |
 | 0.49.11 | 2026-11-26 | `v0.49.11` | Image card: Style and Dots on use the same title + segmented button rows as the rest of the panel (the radio circles are gone) |
 | 0.49.10 | 2026-11-26 | `v0.49.10` | Image card: preview and options in two wells with a gap between, like the Color group; Upload / Remove moved out of the group as normal-size keys |
 | 0.49.9 | 2026-11-26 | `v0.49.9` | Image card: Upload and Remove (icon + text, side by side) under the whole section; Style and Dots on titles in the normal grey group title style |
