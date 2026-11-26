@@ -10,6 +10,10 @@ body.gridonly .main[data-page="canvas"] {
   align-content: start;
 }
 body.gridonly .main[data-page="canvas"]:has(> .leftcol) { grid-template-columns: 112px var(--stage-size); }
+/* Canvas card: 6px from the card edge to the canvas frame, like the navbar's 6px around its buttons.
+   The canvas draws a 12px frame ring around itself, so the canvas sits 6 + 12 = 18px in. */
+body.gridonly .stage-card { padding: 6px; }
+body.gridonly .stage-area { padding: 12px; }
 body.gridonly .main > .sidebar,
 body.gridonly .main > .panel,
 body.gridonly .main > .panel2 { display: none; }

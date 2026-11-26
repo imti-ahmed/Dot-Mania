@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.45.6 | 2026-11-26 | `v0.45.6` | Canvas card padding matches the navbar (6px from the card edge to the canvas frame, was 12px + 16px) |
 | 0.45.5 | 2026-11-26 | `v0.45.5` | Back out the 44px header (0.45.4). Canvas gets the navbar's inset: 32px from the left, 28px from the bottom |
 | 0.45.3 | 2026-11-26 | `v0.45.3` | Layers strip and Play bar switched off (flags), canvas moves to the left edge |
 | 0.45.2 | 2026-11-26 | `v0.45.2` | Layer card delete x box is 28px (bigger x), and the active layer border is lighter |

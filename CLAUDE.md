@@ -32,7 +32,7 @@ Buildlog.md                    the build log
 ## Rules
 
 ### Spacing
-- Every panel, card or new element gets the same inset from the window edges as the navbar (32px from the left edge: app padding 16px plus 16px of header padding; 28px from the bottom, like the bar's 28px from the top). Panels sit 16px apart.
+- Every panel, card or new element gets the same inset from the window edges as the navbar (32px from the left edge: app padding 16px plus 16px of header padding; 28px from the bottom, like the bar's 28px from the top). Panels sit 16px apart. Inside a card, the padding around its content is the navbar's 6px (top and bottom of its buttons).
 
 ### Testing
 - Never open Chrome for testing. Do not call any `mcp__claude-in-chrome__*` tool.
