@@ -60,11 +60,14 @@
   moveAll(side, tools, '.crafted');
   var layers = el('div', 'acc-plain');
   moveAll(p2.querySelector('.panel2-top .panel-body'), layers);
+  var img = p2.querySelector('.panel2-image .panel-body');
+  var imgBox = el('div', 'acc-plain');
+  if (img) moveAll(img, imgBox);
   var exp = el('div', 'acc-plain');
   var expBody = p2.querySelector('.panel2-bottom .panel-body');
   moveAll(expBody, exp);
   collapsible(exp, 'export', function () { return true; });
-  [['Tools', tools], ['Layers', layers], ['Export', exp]].forEach(function (s) {
+  [['Tools', tools], ['Layers', layers], ['Image', imgBox], ['Export', exp]].forEach(function (s) {
     body.appendChild(el('div', 'group-label', s[0]));
     body.appendChild(s[1]);
   });

@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.49.6 | 2026-11-26 | `v0.49.6` | Left bar: one icon button per row (bar 56px wide). New Image card above Export in the second panel holds the image upload (imageUpload flag back on) |
 | 0.49.5 | 2026-11-26 | `v0.49.5` | Image group and Layers card hidden (imageUpload off, new layersPanel flag off); Export sits on top of the second panel |
 | 0.49.4 | 2026-11-26 | `v0.49.4` | Crafted By credit removed from the left bar (craftedBy flag, off) |
 | 0.49.3 | 2026-11-26 | `v0.49.3` | Left bar: icon-only 40px buttons, two in a row, bar narrowed from 164px to 104px |
