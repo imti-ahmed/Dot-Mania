@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.52.2 | 2026-11-26 | `v0.52.2` | Divider between the image and its Tuning section removed |
 | 0.52.1 | 2026-11-26 | `v0.52.1` | Title caret is the regular (outline) Phosphor caret, shown on hover (always while folded), titles no longer turn white on hover; left panel icons 4px smaller (20 to 16) |
 | 0.52.0 | 2026-11-26 | `v0.52.0` | A Phosphor caret at the end of every functionality title folds its section (Properties, Image, Export; collapseTitles flag); the left panel icons are all solid Phosphor |
 | 0.51.4 | 2026-11-26 | `v0.51.4` | Image card: a functionality divider between the picture and its Tuning section |

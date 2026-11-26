@@ -1821,10 +1821,6 @@ aside.panel .group-label:not(.first)::before,
 .panel-header { position: relative; border-bottom: 0; box-shadow: none; }
 .panel-header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
 
-/* Image card: the functionality divider between the picture and its Tuning section (same as the other panels) */
-.panel2-image .group-label:not(.first) { position: relative; margin-top: 8px; padding-top: 16px; }
-.panel2-image .group-label:not(.first)::before { content: ""; position: absolute; top: 0; left: -14px; right: -14px; height: 0; border-top: 2px solid #070707; box-shadow: 0 1px 0 #3a3a3a; }
-
 /* Collapsible titles (collapse.js): the title on the left, a caret at the end; folded = only the title and the caret */
 .acc-head { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
 .acc-caret { flex: none; display: inline-flex; margin-right: 4px; opacity: 0; transition: transform .15s, opacity .15s; }      /* the caret shows when the title is hovered or focused, or while the title is folded; the title itself does not change colour */
