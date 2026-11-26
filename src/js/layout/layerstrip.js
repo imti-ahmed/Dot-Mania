@@ -21,9 +21,7 @@
 
   var title = document.createElement('div');
   title.className = 'gp-title';
-  var count = document.createElement('span');
-  title.innerHTML = '<span>Layers</span>';
-  title.appendChild(count);
+  title.textContent = 'Layers';
   strip.appendChild(title);
 
   var listEl = document.createElement('div');
@@ -33,7 +31,7 @@
   var add = document.createElement('button');
   add.type = 'button';
   add.className = 'key ls-add';
-  add.textContent = '+ Add layer';
+  add.textContent = '+ Add New';
   add.addEventListener('click', function () { A.addLayer(); render(true); });
   strip.appendChild(add);
 
@@ -74,9 +72,8 @@
     var sig = view.map(function (L) { return (L.active ? '*' : '-'); }).join('|');
     if (force === true || sig !== shown) { build(view); shown = sig; }
     view.forEach(function (L, i) { paint(thumbs[i], L, g); });
-    count.textContent = view.length + '/' + A.layerMax;
     add.disabled = view.length >= A.layerMax;
-    add.title = add.disabled ? 'Up to ' + A.layerMax + ' layers' : 'Add a layer: its own dots and its own animation';
+    add.title = add.disabled ? 'Up to ' + A.layerMax + ' layers' : 'Add a new layer: its own dots and its own animation';
   }
 
   render(true);

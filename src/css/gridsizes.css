@@ -21,14 +21,14 @@ body.gridonly .main > .panel2 { display: none; }
   gap: 6px;
   padding: 10px;
 }
-.gridpick .gp-title { padding: 2px 4px 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.gridpick .gp-title { text-align: center; padding: 2px 4px 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .gridpick .key { width: 100%; justify-content: flex-start; padding: 0 10px; white-space: nowrap; }
 .gridpick .dim { color: var(--muted); margin-left: 4px; font-family: var(--font-mono); font-size: 11px; }
 .gridpick .key[aria-pressed="true"] .dim { color: inherit; }
 
 /* Layers strip: a card per layer with a preview of that layer's dots only */
 .layerstrip { display: flex; flex-direction: column; gap: 6px; padding: 10px; }
-.layerstrip .gp-title { padding: 2px 4px 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+.layerstrip .gp-title { padding: 2px 4px 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: center; }
 .ls-card { position: relative; aspect-ratio: 1 / 1; width: 100%; border-radius: 10px; overflow: hidden; background: #050505; box-shadow: inset 0 0 0 1px #1d1d1d; cursor: pointer; }
 .ls-card[aria-current="true"] { box-shadow: 0 0 0 2px #7a7a7a; }
 .ls-card canvas { display: block; width: 100%; height: 100%; }
