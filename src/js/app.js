@@ -478,6 +478,7 @@
   // live = true while a colour is being dragged on the spectrum: no undo step per move, the caller makes one at the end.
   function recolorSelection(live) {
     if (drag || !cells.size) return;
+    if (imgSrc && !sel) { if (!imgOpts.colored) applyImage(); return; }      // a picture: its shades follow the new colour (Colored keeps the picture's own colours)
     var before = live ? null : beginEdit(), snap = colorSnap(), n = 0;
     cells.forEach(function (k) {
       if (sel) {
@@ -1881,6 +1882,17 @@
     return imgRaster;
   }
 
+  // A shade of one colour: light 0..1 (0.5 = the colour itself) mixes it towards white above and towards black below.
+  function shadeOf(hex, light) {
+    var n = parseInt(hex.slice(1), 16), ch = [n >> 16 & 255, n >> 8 & 255, n & 255], L = (light - 0.5) * 2, out = '#';
+    ch.forEach(function (v) {
+      v = L >= 0 ? v + (255 - v) * L * 0.7 : v * (1 + L * 0.6);
+      v = Math.round(Math.max(0, Math.min(255, v)));
+      out += (v < 16 ? '0' : '') + v.toString(16);
+    });
+    return out;
+  }
+
   // The picture becomes the drawing: every animation then runs on it.
   function applyImage() {
     if (!imgSrc) return;
@@ -1895,7 +1907,17 @@
       }
     } else {
       var arr2 = window.DotImage.toCells(getRaster(), cols, rows, imgOpts);
-      for (i = 0; i < arr2.length; i++) next.add(arr2[i][0] + ',' + arr2[i][1]);       // the dots take the colour that is selected
+      var base = state.color.mode === 'solid' ? state.color.hex : null, shades = {};
+      for (i = 0; i < arr2.length; i++) {
+        var k2 = arr2[i][0] + ',' + arr2[i][1];
+        next.add(k2);
+        // One colour picked: the dots are shades of it, lighter where that part of the picture is light, darker where it is dark (depth).
+        // Contrast sets how far apart the shades are. A gradient colour keeps its own look instead.
+        if (base) {
+          var hx = shadeOf(base, arr2[i][2]);
+          nextColor.set(k2, shades[hx] || (shades[hx] = { mode: 'solid', hex: hx, cycle: 1 }));
+        }
+      }
     }
     cells = next; cellColor = nextColor;
     dirty = true;

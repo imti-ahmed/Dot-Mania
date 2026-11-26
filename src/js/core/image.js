@@ -5,7 +5,7 @@
  * RGBA pixels here. Pure functions, no DOM, so they are easy to test.
  *
  *   DotImage.suggestOn(px)                      'dark' | 'light'  which tones should become dots
- *   DotImage.toCells(px, cols, rows, opts)      [[col,row], ...]
+ *   DotImage.toCells(px, cols, rows, opts)      [[col,row,lightness 0..1], ...]
  *
  * opts: { style: 'density' (brightness becomes how many dots, the app's default) | 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light',
  *         tone: 0..1 (the tone the dots sit on: 0 = dark, 1 = light, between = that band of mid tones; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style),
@@ -131,9 +131,11 @@
     var tone = o.tone !== undefined ? o.tone : (o.on === 'light' ? 1 : 0);
     var kc = contrastK(o.contrast);
     var bias = (o.level === undefined ? 0.5 : o.level) - 0.5, v = new Float32Array(n);
+    var tt = new Float32Array(n);
     for (p = 0; p < n; p++) {
       var t = stretch ? Math.max(0, Math.min(1, (l[p] - base) / span)) : l[p];
       t = Math.max(0, Math.min(1, (t - 0.5) * kc + 0.5));      // contrast around the middle grey (kc 1 = unchanged)
+      tt[p] = t;                                                // remembered: how light that part of the picture is (0..1)
       var ink = 1 - Math.abs(t - tone) / Math.max(tone, 1 - tone);   // dots gather around the chosen tone: 0 = the dark tones, 1 = the light ones, between = the mid tones in that band
       v[p] = Math.max(0, Math.min(1, ink + bias));
     }
@@ -183,6 +185,7 @@
       out = erode(out, cols, rows, o.edge);
     }
     if (o.style === 'density') out = erode(out, cols, rows, o.edge);      // Spread still keeps just a border of the shape
+    for (var m = 0; m < out.length; m++) out[m][2] = tt[out[m][1] * cols + out[m][0]];      // each dot also carries the lightness of its part of the picture, for shading
     return out;
   }
 
