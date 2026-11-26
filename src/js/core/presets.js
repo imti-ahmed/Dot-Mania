@@ -294,99 +294,6 @@
         var v = 0.5 + 0.25 * Math.sin((c.ux * p.scale + f) * TAU) + 0.25 * Math.sin((c.uy * p.scale * 1.3 - 2 * f + c.ux * p.twist) * TAU);
         return Math.pow(v < 0 ? 0 : v > 1 ? 1 : v, 1.5);
       }
-    },
-    {
-      id: 'twinkle', name: 'Twinkle', defaults: base(0.6, 0.7),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.3); },
-      params: [
-        { key: 'sparkle', label: 'Sparkle', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct },
-        { key: 'floor', label: 'Floor', min: 0, max: 0.5, step: 0.01, def: 0, fmt: pct }
-      ],
-      fn: function (c, t, p) {
-        var s = 0.5 + 0.5 * Math.sin((t * p.speed * 0.3 * (1 + Math.floor(c.rnd2 * 2)) + c.rnd) * TAU);
-        return Math.max(p.floor, Math.pow(s, 1 + p.sparkle * 8));
-      }
-    },
-    {
-      id: 'radar', name: 'Radar', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.3); },
-      params: [
-        { key: 'trail', label: 'Trail', min: 0.05, max: 1, step: 0.01, def: 0.5, fmt: pct },
-        { key: 'hollow', label: 'Hollow', min: 0, max: 1, step: 0.01, def: 0, fmt: pct }
-      ],
-      // A sweep arm rotates around the centre, leaving a fading trail.
-      fn: function (c, t, p) {
-        var ph = frac(c.a / TAU - t * p.speed * 0.3);
-        return Math.pow(1 - ph, 1 + (1 - p.trail) * 14) * (1 - p.hollow * (1 - c.d));
-      }
-    },
-    {
-      id: 'orbit', name: 'Orbit', defaults: base(0.75, 0.7),
-      period: function (p) { return TAU / (p.speed * 1.4); },
-      params: [
-        { key: 'radius', label: 'Radius', min: 0.15, max: 1, step: 0.01, def: 0.6, fmt: pct },
-        { key: 'tail', label: 'Tail', min: 0.05, max: 1, step: 0.01, def: 0.4, fmt: pct }
-      ],
-      // A comet circles the centre on a ring.
-      fn: function (c, t, p) {
-        var da = (((c.a - t * p.speed * 1.4) % TAU) + TAU) % TAU;
-        var tail = Math.max(0, 1 - da / (p.tail * TAU));
-        var ring = Math.exp(-Math.pow((c.d - p.radius) / 0.2, 2));
-        return tail * tail * ring;
-      }
-    },
-    {
-      id: 'bounce', name: 'Bounce', defaults: base(0.65, 0.5),
-      period: function (p) { return 1 / (p.speed * 0.35); },
-      params: [
-        { key: 'spread', label: 'Spread', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct },
-        { key: 'width', label: 'Thickness', min: 0.05, max: 0.5, step: 0.01, def: 0.18, fmt: pct }
-      ],
-      // Each column has a bright cell bouncing up and down.
-      fn: function (c, t, p) {
-        var pos = Math.abs(frac(t * p.speed * 0.35 + c.colRnd * p.spread) * 2 - 1);
-        var x = (c.vy - pos) / p.width;
-        return Math.exp(-x * x);
-      }
-    },
-    {
-      id: 'fireworks', name: 'Fireworks', defaults: base(0.7, 0.8),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'width', label: 'Thickness', min: 0.05, max: 0.3, step: 0.01, def: 0.1, fmt: pct },
-        { key: 'fade', label: 'Fade', min: 0.5, max: 3, step: 0.1, def: 1.3, fmt: dec1 }
-      ],
-      // Three bursts go off one after another from different spots, each ring expanding and fading.
-      fn: function (c, t, p) {
-        var best = 0, cx = [-0.5, 0.45, 0.1], cy = [-0.3, -0.4, 0.45];
-        for (var k = 0; k < 3; k++) {
-          var ph = frac(t * p.speed * 0.5 + k / 3);
-          var dx = c.ux - cx[k], dy = c.uy - cy[k];
-          var e = (Math.sqrt(dx * dx + dy * dy) - ph * 0.9) / p.width;
-          var v = Math.exp(-e * e) * Math.pow(1 - ph, p.fade);
-          if (v > best) best = v;
-        }
-        return best < 0.04 ? 0.04 : best;
-      }
-    },
-    {
-      id: 'tide', name: 'Tide', defaults: base(0.75, 0.5),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'chop', label: 'Chop', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct },
-        { key: 'rise', label: 'Rise', min: 0.1, max: 0.45, step: 0.01, def: 0.38, fmt: pct }
-      ],
-      // A water level rises and falls across the whole shape, with a rippling surface.
-      fn: function (c, t, p) {
-        var f = t * p.speed * 0.5;
-        var surface = 0.5 + p.rise * Math.sin(f * TAU) + p.chop * 0.08 * Math.sin((c.ux * 4 - 2 * f) * TAU);
-        var v = (surface - (1 - c.vy)) * 10;
-        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
-      }
     }
   ];
 
@@ -612,6 +519,99 @@
       ],
       fn: function (c, t, p) {
         return frac(t * p.speed * 1.5) < p.duty ? 1 : p.off;
+      }
+    },
+    {
+      id: 'twinkle', name: 'Twinkle', defaults: base(0.6, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.3); },
+      params: [
+        { key: 'sparkle', label: 'Sparkle', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct },
+        { key: 'floor', label: 'Floor', min: 0, max: 0.5, step: 0.01, def: 0, fmt: pct }
+      ],
+      fn: function (c, t, p) {
+        var s = 0.5 + 0.5 * Math.sin((t * p.speed * 0.3 * (1 + Math.floor(c.rnd2 * 2)) + c.rnd) * TAU);
+        return Math.max(p.floor, Math.pow(s, 1 + p.sparkle * 8));
+      }
+    },
+    {
+      id: 'radar', name: 'Radar', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.3); },
+      params: [
+        { key: 'trail', label: 'Trail', min: 0.05, max: 1, step: 0.01, def: 0.5, fmt: pct },
+        { key: 'hollow', label: 'Hollow', min: 0, max: 1, step: 0.01, def: 0, fmt: pct }
+      ],
+      // A sweep arm rotates around the centre, leaving a fading trail.
+      fn: function (c, t, p) {
+        var ph = frac(c.a / TAU - t * p.speed * 0.3);
+        return Math.pow(1 - ph, 1 + (1 - p.trail) * 14) * (1 - p.hollow * (1 - c.d));
+      }
+    },
+    {
+      id: 'orbit', name: 'Orbit', defaults: base(0.75, 0.7),
+      period: function (p) { return TAU / (p.speed * 1.4); },
+      params: [
+        { key: 'radius', label: 'Radius', min: 0.15, max: 1, step: 0.01, def: 0.6, fmt: pct },
+        { key: 'tail', label: 'Tail', min: 0.05, max: 1, step: 0.01, def: 0.4, fmt: pct }
+      ],
+      // A comet circles the centre on a ring.
+      fn: function (c, t, p) {
+        var da = (((c.a - t * p.speed * 1.4) % TAU) + TAU) % TAU;
+        var tail = Math.max(0, 1 - da / (p.tail * TAU));
+        var ring = Math.exp(-Math.pow((c.d - p.radius) / 0.2, 2));
+        return tail * tail * ring;
+      }
+    },
+    {
+      id: 'bounce', name: 'Bounce', defaults: base(0.65, 0.5),
+      period: function (p) { return 1 / (p.speed * 0.35); },
+      params: [
+        { key: 'spread', label: 'Spread', min: 0, max: 1, step: 0.01, def: 0.6, fmt: pct },
+        { key: 'width', label: 'Thickness', min: 0.05, max: 0.5, step: 0.01, def: 0.18, fmt: pct }
+      ],
+      // Each column has a bright cell bouncing up and down.
+      fn: function (c, t, p) {
+        var pos = Math.abs(frac(t * p.speed * 0.35 + c.colRnd * p.spread) * 2 - 1);
+        var x = (c.vy - pos) / p.width;
+        return Math.exp(-x * x);
+      }
+    },
+    {
+      id: 'fireworks', name: 'Fireworks', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'width', label: 'Thickness', min: 0.05, max: 0.3, step: 0.01, def: 0.1, fmt: pct },
+        { key: 'fade', label: 'Fade', min: 0.5, max: 3, step: 0.1, def: 1.3, fmt: dec1 }
+      ],
+      // Three bursts go off one after another from different spots, each ring expanding and fading.
+      fn: function (c, t, p) {
+        var best = 0, cx = [-0.5, 0.45, 0.1], cy = [-0.3, -0.4, 0.45];
+        for (var k = 0; k < 3; k++) {
+          var ph = frac(t * p.speed * 0.5 + k / 3);
+          var dx = c.ux - cx[k], dy = c.uy - cy[k];
+          var e = (Math.sqrt(dx * dx + dy * dy) - ph * 0.9) / p.width;
+          var v = Math.exp(-e * e) * Math.pow(1 - ph, p.fade);
+          if (v > best) best = v;
+        }
+        return best < 0.04 ? 0.04 : best;
+      }
+    },
+    {
+      id: 'tide', name: 'Tide', defaults: base(0.75, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'chop', label: 'Chop', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct },
+        { key: 'rise', label: 'Rise', min: 0.1, max: 0.45, step: 0.01, def: 0.38, fmt: pct }
+      ],
+      // A water level rises and falls across the whole shape, with a rippling surface.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5;
+        var surface = 0.5 + p.rise * Math.sin(f * TAU) + p.chop * 0.08 * Math.sin((c.ux * 4 - 2 * f) * TAU);
+        var v = (surface - (1 - c.vy)) * 10;
+        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
       }
     }
   ];
