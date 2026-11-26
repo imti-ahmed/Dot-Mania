@@ -1916,17 +1916,15 @@
     var styles = [{ v: 'threshold', label: 'Threshold' }];
     if (FLAGS.imageDither) styles.push({ v: 'dither', label: 'Dither' });
     styles.push({ v: 'outline', label: 'Outline' });
-    // Style and Dots on are real sliders: Style goes from the filled shape to just its outline, Dots on from the dark tones to the light ones
+    // Threshold (the shape from filled to just its outline) and Tone (which tones get the dots, dark to light) are real sliders, all in percent
     function pct(v) { return Math.round(v * 100) + '%'; }
     var styleRow = sliderRow({
-      label: 'Style', min: 0, max: 1, step: 0.01, value: imgOpts.edge,
-      fmt: function (v) { return v < 0.02 ? 'Filled' : v > 0.98 ? 'Outline' : pct(v); },
-      onChange: function (v) { imgOpts.edge = v; applyImage(); }
+      label: 'Threshold', min: 0, max: 1, step: 0.01, value: imgOpts.edge,
+      fmt: pct, onChange: function (v) { imgOpts.edge = v; applyImage(); }
     });
     var onRow = sliderRow({
-      label: 'Dots on', min: 0, max: 1, step: 0.01, value: imgOpts.tone,
-      fmt: function (v) { return v < 0.02 ? 'Dark' : v > 0.98 ? 'Light' : pct(v); },
-      onChange: function (v) { imgOpts.tone = v; applyImage(); }
+      label: 'Tone', min: 0, max: 1, step: 0.01, value: imgOpts.tone,
+      fmt: pct, onChange: function (v) { imgOpts.tone = v; applyImage(); }
     });
     onRow.set = function (v) { onRow.setValue(v); };
 

@@ -8,7 +8,7 @@
  *   DotImage.toCells(px, cols, rows, opts)      [[col,row], ...]
  *
  * opts: { style: 'threshold' | 'dither' | 'outline' ('halftone' still works, no button), level: 0..1, on: 'dark' | 'light',
- *         tone: 0..1 (0 = dots on dark, 1 = on light, between blends; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style) }
+ *         tone: 0..1 (the tone the dots sit on: 0 = dark, 1 = light, between = that band of mid tones; overrides on), edge: 0..1 (0 = filled, 1 = outline only; threshold style) }
  *   level is the amount of "ink": higher means more dots.
  *   Transparent pixels (alpha < 50%) never become dots, so logos with transparent backgrounds just work.
  */
@@ -57,7 +57,7 @@
     var bias = (o.level === undefined ? 0.5 : o.level) - 0.5, v = new Float32Array(n);
     for (p = 0; p < n; p++) {
       var t = stretch ? Math.max(0, Math.min(1, (l[p] - base) / span)) : l[p];
-      var ink = (1 - tone) * (1 - t) + tone * t;       // tone 0 = dots on the dark tones, 1 = on the light ones, between = a blend
+      var ink = 1 - Math.abs(t - tone) / Math.max(tone, 1 - tone);   // dots gather around the chosen tone: 0 = the dark tones, 1 = the light ones, between = the mid tones in that band
       v[p] = Math.max(0, Math.min(1, ink + bias));
     }
 
