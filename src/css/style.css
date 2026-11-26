@@ -107,7 +107,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   display: flex;
   align-items: center;
   gap: 16px;                  /* same as the gap between the panels below */
-  height: 44px;
+  height: 68px;
   padding: 0 16px;
 }
 
@@ -1351,10 +1351,10 @@ body[data-view="home"] .app {
 @media (max-width: 1150px) { .sidebar > .crafted { display: none; } }
 
 /* ---------- Canvas view: square card, side panels take the free width ---------- */
-/* The canvas card is a square as tall as the screen allows (header 44 + padding 32 + gap 16 = 92px). The width left over
+/* The canvas card is a square as tall as the screen allows (header 68 + padding 32 + gap 16 = 116px). The width left over
    is shared: a slim fixed 164px to the left bar (icons + text), all the rest to the right panel. */
 :root {
-  --stage-size: max(360px, min(calc(100vh - 92px), calc(100vw - 80px - 164px - 340px - 220px)));
+  --stage-size: max(360px, min(calc(100vh - 116px), calc(100vw - 80px - 164px - 340px - 220px)));
   --rest-w: calc(100vw - 80px - var(--stage-size));
   --side-w: 164px;
   --panel-w: max(340px, calc((var(--rest-w) - var(--side-w)) * .6));   /* the main right panel; the second right panel takes what is left */
