@@ -1830,3 +1830,11 @@ aside.panel .group-label:not(.first)::before,
 .acc-body.collapsed, .acc-body:not(:has(> :not([hidden]))) { display: none; }
 /* Left panel: the solid icons are 20px in the 40px keys */
 .main > .sidebar .key svg.ph { flex: none; }
+
+/* Cards fit their content: folding a section shrinks the whole outer card instead of leaving empty space; they never grow past the canvas height (then the body scrolls) */
+.main[data-page="canvas"] > .panel, .main[data-page="canvas"] > .panel2 { align-self: start; max-height: var(--stage-size); }
+.panel2 > .panel2-image, .panel2 > .panel2-bottom { flex: 0 1 auto; min-height: 0; }
+.panel2 > .panel2-image > .panel-body, .panel2 > .panel2-bottom > .panel-body { flex: 0 1 auto; }
+/* Caret: always there, a little dimmer than the title so it does not distract */
+.acc-caret { opacity: .5; }
+.acc-head:hover .acc-caret, .acc-head:focus-visible .acc-caret, .acc-head[aria-expanded="false"] .acc-caret { opacity: .5; }
