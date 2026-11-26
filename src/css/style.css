@@ -15,7 +15,7 @@
 
 * { box-sizing: border-box; margin: 0; }
 [hidden] { display: none !important; }      /* feature flags hide things with the hidden attribute */
-.agent-note { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* read by AI agents, invisible on screen */
+.agent-note { position: absolute; width: 1px; height: 1px; margin: -4px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* read by AI agents, invisible on screen */
 html, body { height: 100%; }
 body {
   background: var(--bg);
@@ -148,7 +148,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   letter-spacing: 1.6px;
   white-space: nowrap;
 }
-.tabs { display: flex; gap: 2px; }
+.tabs { display: flex; gap: 4px; }
 
 .navbtn {
   position: relative;
@@ -248,7 +248,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .toolstrip .sep {
   height: 2px;
-  margin: 2px 4px;
+  margin: 4px 4px;
   border-radius: 1px;
   background: linear-gradient(to right, #080808, #262626);
 }
@@ -390,7 +390,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  padding-bottom: 2px;
+  padding-bottom: 4px;
 }
 .presets .key {
   height: 32px;
@@ -506,7 +506,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .keygrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .keygrid .key {
   height: 32px;
-  padding: 0 2px;
+  padding: 0 4px;
   border-radius: 9px;
   font-size: 10px;
   letter-spacing: .05em;
@@ -515,7 +515,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* Swatches */
 /* spread evenly, the last one ending flush with the right edge of the colour buttons above */
-.swatches { display: flex; align-items: center; justify-content: space-between; padding-left: 3px; }
+.swatches { display: flex; align-items: center; justify-content: space-between; padding-left: 4px; }
 .row.color-row { padding-right: 0; }
 .swatch {
   position: relative;
@@ -564,7 +564,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   .stage-card { height: 70vh; }
   .sidebar { flex-direction: row; flex-wrap: wrap; justify-content: center; }
   .toolstrip { flex-direction: row; }
-  .toolstrip .sep { width: 2px; height: auto; margin: 4px 2px; }
+  .toolstrip .sep { width: 2px; height: auto; margin: 4px 4px; }
   .sizes { flex-direction: row; }
   .panel { overflow: visible; }
   .panel-body { overflow: visible; }
@@ -656,7 +656,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 kbd {
   display: inline-block;
   min-width: 22px;
-  padding: 2px 8px;
+  padding: 4px 8px;
   border-radius: 5px;
   background: #252525;
   box-shadow: 0 1px 0 #080808;
@@ -696,7 +696,7 @@ kbd {
 .statusbar .readout { padding: 0; }
 .stat { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 .stat svg { flex: none; }
-.stat .unit { margin-left: -1px; }
+.stat .unit { margin-left: -4px; }
 a.stat:hover { color: var(--text); }
 /* The bar is a dark well, so the divider is cut in: a black groove with a grey lip beside it. */
 .branddiv { width: 2px; height: 26px; background: #000; box-shadow: 1px 0 0 #3a3a3a; }   /* same carved line as before the status bar */
@@ -1117,7 +1117,7 @@ a.stat:hover { color: var(--text); }
 .b-hero { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 40px; padding: 16px clamp(24px, 3vw, 40px); }
 .about-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
 .about-title {
-  margin-top: 2px;
+  margin-top: 4px;
   font-family: var(--font-display);
   font-weight: 800;
   font-variation-settings: 'ROND' 0;
@@ -1141,7 +1141,7 @@ a.stat:hover { color: var(--text); }
   box-shadow: inset 0 1px 0 #3a3a3a;
 }
 .feat-body b { display: block; font-size: 16px; font-weight: 500; color: var(--text); }
-.feat-body span:not(.bento-icon) { display: block; margin-top: 2px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.feat-body span:not(.bento-icon) { display: block; margin-top: 4px; font-size: 14px; line-height: 1.5; color: var(--muted); }
 .mini .group { gap: 8px; }
 .mini .presets, .mini .keygrid { padding-bottom: 0; }
 .mini-tools { display: flex; gap: 8px; }
@@ -1381,7 +1381,7 @@ body[data-view="home"] .app {
 /* Credit: two lines, pinned to the bottom end of the left bar, no sideways scroll */
 .sidebar { overflow-x: hidden; }
 .sidebar > .crafted { margin-top: auto; flex: none; padding: 16px 8px; text-align: center; }
-.sidebar > .crafted span { display: flex; flex-direction: column; gap: 3px; align-items: center; line-height: 1.3; }
+.sidebar > .crafted span { display: flex; flex-direction: column; gap: 4px; align-items: center; line-height: 1.3; }
 
 /* ---------- Right panel: uniform grid whatever the width ---------- */
 /* The panel is wider now, so the animation grid adds columns instead of stretching each button: 4 columns when narrow,
@@ -1447,7 +1447,7 @@ body[data-view="home"] .app {
 .img-opts .row .lbl { font-size: 11px; }
 .img-opts .seg { gap: 8px; }
 .img-opts .seg:has(.key:nth-child(3)) { grid-template-columns: repeat(3, 1fr); gap: 4px; }
-.img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 2px; font-size: 10px; }
+.img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 4px; font-size: 10px; }
 .img-opts .seg .key { height: var(--key-h); padding: 0 8px; font-size: 11px; }
 
 /* Left panel: the Select options sit where Eraser / Invert / Clear were */
@@ -1465,7 +1465,7 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 /* ---------- Colour: circles in two rows, then a spectrum card ---------- */
 #colorControls { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 8px 16px; align-items: stretch; }
 #colorControls > .row, #colorControls > .key { grid-column: 1 / -1; }
-#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px 0; align-content: space-between; justify-items: center; padding: 2px 0; }
+#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px 0; align-content: space-between; justify-items: center; padding: 4px 0; }
 #colorControls .swatch { width: 22px; height: 22px; background: var(--c); }
 .spectrum {
   position: relative;
@@ -1520,7 +1520,7 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 .img-opts { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .style-list { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-evenly; gap: 4px; }
 /* radio buttons: a ring with a dot in it, the name beside it */
-.style-radio { display: flex; align-items: center; gap: 8px; min-height: 26px; padding: 0 2px; background: none; box-shadow: none; color: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; text-align: left; }
+.style-radio { display: flex; align-items: center; gap: 8px; min-height: 26px; padding: 0 4px; background: none; box-shadow: none; color: var(--muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; text-align: left; }
 .style-radio i { flex: none; position: relative; width: 16px; height: 16px; border-radius: 50%; background: var(--well); box-shadow: inset 0 2px 5px rgba(0, 0, 0, .86), 0 1px 0 rgba(255, 255, 255, .08); }
 .style-radio i::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); transform: scale(0); transition: transform .12s; }
 .style-radio:hover { color: var(--text); }
@@ -1530,7 +1530,7 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 .img-opts .row .lbl { font-size: 11px; }
 .img-opts .seg { gap: 8px; }
 .img-opts .seg:has(.key:nth-child(3)) { grid-template-columns: repeat(3, 1fr); gap: 4px; }
-.img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 2px; font-size: 10px; }
+.img-opts .seg:has(.key:nth-child(3)) .key { padding: 0 4px; font-size: 10px; }
 .img-opts .seg .key { height: var(--key-h); padding: 0 8px; font-size: 11px; }
 
 /* Left panel: the Select options sit where Eraser / Invert / Clear were */
@@ -1548,7 +1548,7 @@ aside.panel .group-label:not(.first)::before { content: ""; position: absolute; 
 /* ---------- Colour: circles in two rows, then a spectrum card ---------- */
 #colorControls { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 8px 16px; align-items: stretch; }
 #colorControls > .row, #colorControls > .key { grid-column: 1 / -1; }
-#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px 0; align-content: space-between; justify-items: center; padding: 2px 0; }
+#colorControls .swatch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px 0; align-content: space-between; justify-items: center; padding: 4px 0; }
 #colorControls .swatch { width: 22px; height: 22px; background: var(--c); }
 .spectrum {
   position: relative;
@@ -1729,4 +1729,4 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
 kbd { background: #3a3a3c; }
 
 /* Screen size label: fixed at the top, always visible (flag: screenSize) */
-.screen-size { position: fixed; top: 4px; left: 50%; transform: translateX(-50%); z-index: 50; padding: 2px 8px; border-radius: 999px; background: rgba(0, 0, 0, .55); color: var(--text); font-size: 11px; line-height: 16px; letter-spacing: .04em; pointer-events: none; }
+.screen-size { position: fixed; top: 4px; left: 50%; transform: translateX(-50%); z-index: 50; padding: 4px 8px; border-radius: 999px; background: rgba(0, 0, 0, .55); color: var(--text); font-size: 11px; line-height: 16px; letter-spacing: .04em; pointer-events: none; }

@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.45.9 | 2026-11-26 | `v0.45.9` | Spacing too small for a multiple of 8 uses 4px (the 1-3px values became 4px) |
 | 0.45.8 | 2026-11-26 | `v0.45.8` | Canvas height maths follows the 16px bottom inset (was 12px before snapping) |
 | 0.45.7 | 2026-11-26 | `v0.45.7` | All padding, margin and gap values snapped to multiples of 8 (6/10 to 8, 12/14/18 to 16, 20/22/26 to 24, 28 to 32 ...); 1-4px hairlines left as is |
 | 0.45.6 | 2026-11-26 | `v0.45.6` | Canvas card padding matches the navbar (6px from the card edge to the canvas frame, was 12px + 16px) |
