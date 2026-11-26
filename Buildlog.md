@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.43.2 | 2026-11-26 | `v0.43.2` | `gridSizes` view now shows only the canvas (same size as before) with a small Grid picker (Small 16x16, Medium 32x32, Large 64x64) beside it; the left bar and both right panels are hidden for now, not deleted (src/css/gridsizes.css) |
 | 0.43.1 | 2026-11-26 | `v0.43.1` | Floating panels removed for now (floating.js and floating.css deleted); the canvas keeps its old size. New `gridSizes` flag (on) adds a Small 16x16 / Medium 32x32 / Large 64x64 dot picker to the left bar (src/js/layout/gridsizes.js, `setGrid` hook in app.js); starts on Large |
 | 0.43.0 | 2026-11-26 | `v0.43.0` | Sample floating layout behind the new `floatingLayout` flag (off by default): canvas fills the area under the nav, every control group opens as a draggable, minimisable floating panel, a right rail reopens them, and a pill picks the grid (Small 64x64, Medium 360x360, Large 540x540 dots); new files src/js/layout/floating.js and src/css/floating.css, plus a small `setGrid` hook in app.js |
 | 0.42.1 | 2026-11-26 | `v0.42.1` | Window size now sits in its own small label fixed at the top of the page, always visible and live, instead of flashing in the status bar (`screenSize` flag) |

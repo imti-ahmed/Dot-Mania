@@ -16,7 +16,7 @@ src/
   js/
     app.js                     editor UI, tools, state
     agent.js                   helper tools for AI agents (window.dotMania, WebMCP), through window.DotApp at the end of app.js
-    layout/                    gridsizes.js (the Small / Medium / Large grid picker, gridSizes flag)
+    layout/                    gridsizes.js (canvas-only view with the Small / Medium / Large grid picker, gridSizes flag; styles in css/gridsizes.css)
     core/                      engine.js (rendering), presets.js (animations), shapes.js, image.js, flags.js (feature flags)
     export/                    export.js (HTML component), gif.js (GIF encoder)
     data/                      site.js (version, repo, views), library.js (template list), whatsnew.js (What's New content)

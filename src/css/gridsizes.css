@@ -1,0 +1,26 @@
+/* Grid-only view (gridSizes flag adds body.gridonly, see src/js/layout/gridsizes.js): the canvas on its own, same size as
+   before, with a small grid size picker beside it. The other panels are hidden for now, not deleted. */
+
+body.gridonly {
+  --stage-size: max(320px, min(calc(100vh - 116px), calc(100vw - 80px - 170px)));
+}
+body.gridonly .main[data-page="canvas"] {
+  grid-template-columns: 154px var(--stage-size);
+  justify-content: center;
+  align-content: start;
+}
+body.gridonly .main > .sidebar,
+body.gridonly .main > .panel,
+body.gridonly .main > .panel2 { display: none; }
+
+.gridpick {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+.gridpick .gp-title { padding: 2px 4px 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.gridpick .key { width: 100%; justify-content: flex-start; padding: 0 10px; white-space: nowrap; }
+.gridpick .dim { color: var(--muted); margin-left: 4px; font-family: var(--font-mono); font-size: 11px; }
+.gridpick .key[aria-pressed="true"] .dim { color: inherit; }
