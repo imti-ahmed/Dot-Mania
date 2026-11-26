@@ -2,7 +2,7 @@
    before, with a small grid size picker beside it. The other panels are hidden for now, not deleted. */
 
 body.gridonly {
-  --stage-size: max(320px, min(calc(100vh - 128px), calc(100vw - 112px - 130px)));
+  --stage-size: max(320px, min(calc(100vh - 132px), calc(100vw - 112px - 130px)));
 }
 body.gridonly .main[data-page="canvas"] {
   grid-template-columns: var(--stage-size);      /* just the canvas, flush left, when no left column is built */
@@ -17,7 +17,7 @@ body.gridonly .main > .sidebar,
 body.gridonly .main > .panel,
 body.gridonly .main > .panel2 { display: none; }
 
-.leftcol { align-self: start; display: flex; flex-direction: column; gap: 16px; min-height: 0; max-height: calc(100vh - 128px); overflow-y: auto; }
+.leftcol { align-self: start; display: flex; flex-direction: column; gap: 16px; min-height: 0; max-height: calc(100vh - 132px); overflow-y: auto; }
 
 .gridpick {
   display: flex;
