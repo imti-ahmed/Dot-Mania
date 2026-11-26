@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.53.5 | 2026-11-26 | `v0.53.5` | Properties panel no longer scrolls inside: less space around the dividers (all panels), the card is as tall as its content |
 | 0.53.4 | 2026-11-26 | `v0.53.4` | Grid Size: title and its four radios on one line (title left, options right) |
 | 0.53.3 | 2026-11-26 | `v0.53.3` | Grid Size: first group in Properties, always open (no caret), four radio buttons side by side (16, 32, 48, 64) |
 | 0.53.2 | 2026-11-26 | `v0.53.2` | Image Remove button uses the solid trash-simple icon, like Clear and Delete |
