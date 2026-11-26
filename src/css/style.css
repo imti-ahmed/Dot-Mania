@@ -1838,3 +1838,8 @@ aside.panel .group-label:not(.first)::before,
 /* Caret: always there, a little dimmer than the title so it does not distract */
 .acc-caret { opacity: .5; }
 .acc-head:hover .acc-caret, .acc-head:focus-visible .acc-caret, .acc-head[aria-expanded="false"] .acc-caret { opacity: .5; }
+
+/* Image and Export cards never scroll inside: they are exactly as tall as their content (fold a section to make room) */
+.main[data-page="canvas"] > .panel2 { max-height: none; }
+.panel2 > .panel2-image, .panel2 > .panel2-bottom { flex: none; overflow: visible; }
+.panel2 > .panel2-image > .panel-body, .panel2 > .panel2-bottom > .panel-body { flex: none; overflow: visible; }
