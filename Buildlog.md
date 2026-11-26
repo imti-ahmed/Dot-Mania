@@ -8,7 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
-| 0.47.0 | 2026-11-26 | `v0.47.0` | Fixed 1600 x 732 page scaled to fit the window at any size and browser zoom (fitScreen flag on again; canvas fit and colour picker use page pixels) |
+| 0.47.1 | 2026-11-26 | `v0.47.1` | Fixed 1600 x 732 page scaled to fit the window at any size and browser zoom (fitScreen flag on again; canvas fit and colour picker use page pixels) |
 | 0.46.3 | 2026-11-26 | `v0.46.3` | Small-screen scaling switched off behind a fitScreen flag: page lays out at the window size, scale 100% |
 | 0.46.2 | 2026-11-26 | `v0.46.2` | Size label shows the real window size, the laid-out page size and the scale it is drawn at |
 | 0.46.1 | 2026-11-26 | `v0.46.1` | Back out the always-scaled 1600 x 732 page (0.47.0); small screens shrink to 1600 x 732 as in 0.46.0 |
