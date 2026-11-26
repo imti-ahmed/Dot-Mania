@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.50.6 | 2026-11-26 | `v0.50.6` | Image slider renamed Spread |
 | 0.50.5 | 2026-11-26 | `v0.50.5` | Image slider renamed Outline (0% = whole shape, 100% = outline only) |
 | 0.50.4 | 2026-11-26 | `v0.50.4` | Image slider Edge renamed Fill (100% = whole shape, 0% = outline only) |
 | 0.50.3 | 2026-11-26 | `v0.50.3` | Image slider Threshold renamed Edge |
