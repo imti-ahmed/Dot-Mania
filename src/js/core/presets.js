@@ -337,21 +337,6 @@
       }
     },
     {
-      id: 'glitter', name: 'Glitter', defaults: base(0.7, 0.8),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'band', label: 'Band', min: 0.1, max: 0.8, step: 0.01, def: 0.35, fmt: pct },
-        { key: 'sparkle', label: 'Sparkle', min: 0.2, max: 1, step: 0.01, def: 0.6, fmt: pct }
-      ],
-      // A band of light sweeps across, and inside it the dots glitter, each sparkling on its own beat.
-      fn: function (c, t, p) {
-        var f = frac(t * p.speed * 0.5), pos = f * 2.8 - 1.4, e = ((c.ux + c.uy) * 0.5 - pos) / p.band;
-        var band = Math.exp(-e * e), s = 0.5 + 0.5 * Math.sin((4 * f + c.rnd) * TAU);
-        return 0.04 + 0.96 * band * (0.2 + 0.8 * Math.pow(s, 1 + (1 - p.sparkle) * 8));
-      }
-    },
-    {
       id: 'chain', name: 'Chain', defaults: base(0.7, 0.8),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },

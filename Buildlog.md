@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.65.1 | 2026-11-26 | `v0.65.1` | Glitter removed from Trying Out |
 | 0.65.0 | 2026-11-26 | `v0.65.0` | Trying Out replaced with five bold ones in the spirit of Flash, Beam and Type: Shockwave, Spiral In, Clock, Glitter, Chain |
 | 0.64.0 | 2026-11-26 | `v0.64.0` | Flash joins the main Animations list (16 now); Lava renamed Blobs; Trying Out replaced with five new simple ones: Alternate, Inside Out, Static, Fill, Stripes |
 | 0.63.0 | 2026-11-26 | `v0.63.0` | Beam joins the main Animations list (15 now); Trying Out replaced with five new simple ones: Tilt, Scanlines, Frames, Bounce, Flash |
