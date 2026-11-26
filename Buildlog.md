@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.57.1 | 2026-11-26 | `v0.57.1` | Animations: 12 presets kept (Shimmer, Pulse, Ripple, Wave, Spiral, Scan, Rain, Breathe, Flicker, Reveal, Bars, Glint); Beats, Sweep, Zigzag, Dissolve, Helix and Plasma go back to the hidden set |
 | 0.57.0 | 2026-11-26 | `v0.57.0` | Image sliders: Spread works like Level did (how many dots), Tone = spread of shades, Contrast = how strongly light and dark parts differ in dot density (never flat); the outline behaviour is no longer on a slider |
 | 0.56.3 | 2026-11-26 | `v0.56.3` | Image single colour: the Tone slider only changes the shades, so the picture no longer breaks into random dots when it is low |
 | 0.56.2 | 2026-11-26 | `v0.56.2` | Image: the Tone and Contrast sliders swap jobs (Tone = spread of shades, Contrast = how many dots / how light) |

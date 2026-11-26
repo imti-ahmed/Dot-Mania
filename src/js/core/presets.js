@@ -127,21 +127,6 @@
       }
     },
     {
-      id: 'heartbeat', name: 'Beats', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.6); },
-      params: [
-        { key: 'spread', label: 'Spread', min: 0, max: 1, step: 0.01, def: 0.3, fmt: pct },
-        { key: 'echo', label: 'Echo', min: 0, max: 1, step: 0.01, def: 0.7, fmt: pct }
-      ],
-      // Lub-dub, with the beat rippling outward from the centre.
-      fn: function (c, t, p) {
-        var ph = frac(t * p.speed * 0.6 - c.d * p.spread * 0.4);
-        var a = (ph - 0.12) / 0.06, b = (ph - 0.32) / 0.07;
-        return Math.min(1, Math.exp(-a * a) + p.echo * Math.exp(-b * b));
-      }
-    },
-    {
       id: 'breathe', name: 'Breathe', defaults: base(0.75, 0.5),
       // seconds for one seamless loop
       period: function (p) { return 1 / (p.speed * 0.35); },
@@ -153,22 +138,6 @@
       fn: function (c, t, p) {
         var s = 0.5 + 0.5 * Math.sin((t * p.speed * 0.35 - c.d * p.lag * 0.5) * TAU);
         return (1 - p.depth) + p.depth * s * s;
-      }
-    },
-    {
-      id: 'sweep', name: 'Sweep', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.4); },
-      params: [
-        { key: 'angle', label: 'Angle', min: 0, max: 360, step: 5, def: 0, fmt: deg },
-        { key: 'trail', label: 'Trail', min: 0.05, max: 1, step: 0.01, def: 0.5, fmt: pct }
-      ],
-      // A bright front crosses the shape in one direction and leaves a fading trail.
-      fn: function (c, t, p) {
-        var a = p.angle * Math.PI / 180;
-        var proj = c.ux * Math.cos(a) + c.uy * Math.sin(a);
-        var ph = frac(proj * 0.5 - t * p.speed * 0.4);
-        return Math.pow(1 - ph, 1 + (1 - p.trail) * 12);
       }
     },
     {
@@ -184,21 +153,6 @@
         var f = t * p.speed * 0.5;
         var n = 0.5 + 0.25 * Math.sin((2 * f + c.rnd) * TAU) + p.rough * Math.sin((3 * f + c.rnd2) * TAU);
         return (1 - p.chaos) + p.chaos * n;
-      }
-    },
-    {
-      id: 'zigzag', name: 'Zigzag', defaults: base(0.65, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.4); },
-      params: [
-        { key: 'waves', label: 'Waves', min: 0.5, max: 4, step: 0.1, def: 1.5, fmt: dec1 },
-        { key: 'stagger', label: 'Stagger', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
-      ],
-      // A wave where every other row runs half a beat behind, so the front zigzags.
-      fn: function (c, t, p) {
-        var u = c.ux * p.waves * 0.5 + (c.row % 2) * p.stagger - t * p.speed * 0.4;
-        var tri = Math.abs(frac(u) * 2 - 1);
-        return tri * tri;
       }
     },
     {
@@ -234,21 +188,6 @@
       }
     },
     {
-      id: 'dissolve', name: 'Dissolve', defaults: base(0.65, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 1 / (p.speed * 0.3); },
-      params: [
-        { key: 'soft', label: 'Softness', min: 0.05, max: 1, step: 0.01, def: 0.35, fmt: pct },
-        { key: 'order', label: 'Order', min: 0, max: 1, step: 0.01, def: 0, fmt: pct }
-      ],
-      // The shape fades in and out dot by dot in random order, like a pixel dissolve.
-      fn: function (c, t, p) {
-        var progress = Math.abs(frac(t * p.speed * 0.3) * 2 - 1);
-        var v = (progress * (1 + p.soft) - (c.rnd * (1 - p.order) + c.d * p.order)) / p.soft;
-        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
-      }
-    },
-    {
       id: 'glint', name: 'Glint', defaults: base(0.7, 0.6),
       // seconds for one seamless loop
       period: function (p) { return 1 / (p.speed * 0.35); },
@@ -262,37 +201,6 @@
         var proj = c.ux * Math.cos(a) + c.uy * Math.sin(a);
         var x = (proj - (frac(t * p.speed * 0.35) * 3.2 - 1.6)) / p.width;
         return 0.28 + 0.72 * Math.exp(-x * x);
-      }
-    },
-    {
-      id: 'helix', name: 'Helix', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'waves', label: 'Waves', min: 0.5, max: 3, step: 0.1, def: 1.5, fmt: dec1 },
-        { key: 'width', label: 'Thickness', min: 0.05, max: 0.3, step: 0.01, def: 0.14, fmt: pct }
-      ],
-      // Two strands twist around each other like DNA, brighter where they come towards you.
-      fn: function (c, t, p) {
-        var ph = (c.ux * p.waves * 0.5 - t * p.speed * 0.5) * TAU, y = 0.6 * Math.sin(ph);
-        var a = (c.uy - y) / p.width, b = (c.uy + y) / p.width;
-        var v = Math.max(Math.exp(-a * a) * (0.55 + 0.45 * Math.cos(ph)), Math.exp(-b * b) * (0.55 - 0.45 * Math.cos(ph)));
-        return v < 0.05 ? 0.05 : v;
-      }
-    },
-    {
-      id: 'plasma', name: 'Plasma', defaults: base(0.7, 0.5),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'scale', label: 'Scale', min: 0.5, max: 3, step: 0.1, def: 1.2, fmt: dec1 },
-        { key: 'twist', label: 'Twist', min: 0, max: 1.5, step: 0.05, def: 0.5, fmt: dec2 }
-      ],
-      // Slow, swirling bands from two waves crossing each other.
-      fn: function (c, t, p) {
-        var f = t * p.speed * 0.5;
-        var v = 0.5 + 0.25 * Math.sin((c.ux * p.scale + f) * TAU) + 0.25 * Math.sin((c.uy * p.scale * 1.3 - 2 * f + c.ux * p.twist) * TAU);
-        return Math.pow(v < 0 ? 0 : v > 1 ? 1 : v, 1.5);
       }
     }
   ];
@@ -612,6 +520,98 @@
         var surface = 0.5 + p.rise * Math.sin(f * TAU) + p.chop * 0.08 * Math.sin((c.ux * 4 - 2 * f) * TAU);
         var v = (surface - (1 - c.vy)) * 10;
         return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
+      }
+    },
+    {
+      id: 'heartbeat', name: 'Beats', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.6); },
+      params: [
+        { key: 'spread', label: 'Spread', min: 0, max: 1, step: 0.01, def: 0.3, fmt: pct },
+        { key: 'echo', label: 'Echo', min: 0, max: 1, step: 0.01, def: 0.7, fmt: pct }
+      ],
+      // Lub-dub, with the beat rippling outward from the centre.
+      fn: function (c, t, p) {
+        var ph = frac(t * p.speed * 0.6 - c.d * p.spread * 0.4);
+        var a = (ph - 0.12) / 0.06, b = (ph - 0.32) / 0.07;
+        return Math.min(1, Math.exp(-a * a) + p.echo * Math.exp(-b * b));
+      }
+    },
+    {
+      id: 'sweep', name: 'Sweep', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.4); },
+      params: [
+        { key: 'angle', label: 'Angle', min: 0, max: 360, step: 5, def: 0, fmt: deg },
+        { key: 'trail', label: 'Trail', min: 0.05, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // A bright front crosses the shape in one direction and leaves a fading trail.
+      fn: function (c, t, p) {
+        var a = p.angle * Math.PI / 180;
+        var proj = c.ux * Math.cos(a) + c.uy * Math.sin(a);
+        var ph = frac(proj * 0.5 - t * p.speed * 0.4);
+        return Math.pow(1 - ph, 1 + (1 - p.trail) * 12);
+      }
+    },
+    {
+      id: 'zigzag', name: 'Zigzag', defaults: base(0.65, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.4); },
+      params: [
+        { key: 'waves', label: 'Waves', min: 0.5, max: 4, step: 0.1, def: 1.5, fmt: dec1 },
+        { key: 'stagger', label: 'Stagger', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // A wave where every other row runs half a beat behind, so the front zigzags.
+      fn: function (c, t, p) {
+        var u = c.ux * p.waves * 0.5 + (c.row % 2) * p.stagger - t * p.speed * 0.4;
+        var tri = Math.abs(frac(u) * 2 - 1);
+        return tri * tri;
+      }
+    },
+    {
+      id: 'dissolve', name: 'Dissolve', defaults: base(0.65, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 1 / (p.speed * 0.3); },
+      params: [
+        { key: 'soft', label: 'Softness', min: 0.05, max: 1, step: 0.01, def: 0.35, fmt: pct },
+        { key: 'order', label: 'Order', min: 0, max: 1, step: 0.01, def: 0, fmt: pct }
+      ],
+      // The shape fades in and out dot by dot in random order, like a pixel dissolve.
+      fn: function (c, t, p) {
+        var progress = Math.abs(frac(t * p.speed * 0.3) * 2 - 1);
+        var v = (progress * (1 + p.soft) - (c.rnd * (1 - p.order) + c.d * p.order)) / p.soft;
+        return v < 0.05 ? 0.05 : v > 1 ? 1 : v;
+      }
+    },
+    {
+      id: 'helix', name: 'Helix', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'waves', label: 'Waves', min: 0.5, max: 3, step: 0.1, def: 1.5, fmt: dec1 },
+        { key: 'width', label: 'Thickness', min: 0.05, max: 0.3, step: 0.01, def: 0.14, fmt: pct }
+      ],
+      // Two strands twist around each other like DNA, brighter where they come towards you.
+      fn: function (c, t, p) {
+        var ph = (c.ux * p.waves * 0.5 - t * p.speed * 0.5) * TAU, y = 0.6 * Math.sin(ph);
+        var a = (c.uy - y) / p.width, b = (c.uy + y) / p.width;
+        var v = Math.max(Math.exp(-a * a) * (0.55 + 0.45 * Math.cos(ph)), Math.exp(-b * b) * (0.55 - 0.45 * Math.cos(ph)));
+        return v < 0.05 ? 0.05 : v;
+      }
+    },
+    {
+      id: 'plasma', name: 'Plasma', defaults: base(0.7, 0.5),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'scale', label: 'Scale', min: 0.5, max: 3, step: 0.1, def: 1.2, fmt: dec1 },
+        { key: 'twist', label: 'Twist', min: 0, max: 1.5, step: 0.05, def: 0.5, fmt: dec2 }
+      ],
+      // Slow, swirling bands from two waves crossing each other.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5;
+        var v = 0.5 + 0.25 * Math.sin((c.ux * p.scale + f) * TAU) + 0.25 * Math.sin((c.uy * p.scale * 1.3 - 2 * f + c.ux * p.twist) * TAU);
+        return Math.pow(v < 0 ? 0 : v > 1 ? 1 : v, 1.5);
       }
     }
   ];
