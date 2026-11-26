@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.53.3 | 2026-11-26 | `v0.53.3` | Grid Size: first group in Properties, always open (no caret), four radio buttons side by side (16, 32, 48, 64) |
 | 0.53.2 | 2026-11-26 | `v0.53.2` | Image Remove button uses the solid trash-simple icon, like Clear and Delete |
 | 0.53.1 | 2026-11-26 | `v0.53.1` | Left panel icons: Select is the bold selection-plus, Clear uses the solid trash-simple, Randomize is the bold dice-four |
 | 0.53.0 | 2026-11-26 | `v0.53.0` | Properties: a Size group (16x16 / 32x32 / 64x64 dots, gridSizePicker flag); Color and the image Tuning start folded |

@@ -1843,3 +1843,7 @@ aside.panel .group-label:not(.first)::before,
 .main[data-page="canvas"] > .panel2 { max-height: none; }
 .panel2 > .panel2-image, .panel2 > .panel2-bottom { flex: none; overflow: visible; }
 .panel2 > .panel2-image > .panel-body, .panel2 > .panel2-bottom > .panel-body { flex: none; overflow: visible; }
+
+/* Grid Size: four radio buttons side by side */
+.size-radios { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 0 4px; }
+.size-radios .style-radio { min-width: 0; white-space: nowrap; }

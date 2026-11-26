@@ -19,6 +19,7 @@
     while (i < kids.length) {
       var label = kids[i];
       if (!label.classList.contains('group-label')) { i++; continue; }
+      if (label.hasAttribute('data-always-open')) { i++; continue; }      // e.g. Grid Size: never folds, no caret
       var body = document.createElement('div');
       body.className = 'acc-body';
       i++;

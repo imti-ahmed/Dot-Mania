@@ -1755,15 +1755,24 @@
     }));
   }
 
-  // Size: 16 x 16, 32 x 32 or 64 x 64 dots. The dots keep the same size on every grid: a smaller grid is a smaller area in the middle of the card.
+  // Grid Size: 16, 32, 48 or 64 dots across and down, as radio buttons side by side. The dots keep the same size on every grid:
+  // a smaller grid is a smaller area in the middle of the card.
   function buildSize() {
-    var el = $('#sizeControls');
-    var row = segRow('', [{ v: '16', label: '16 × 16' }, { v: '32', label: '32 × 32' }, { v: '64', label: '64 × 64' }],
-      function () { return cols === rows && (cols === 16 || cols === 32 || cols === 64) ? String(cols) : ''; },
-      function (v) { fitRef = { w: 1024, h: 1024 }; setGrid(+v, 16); layout(); });
-    row.querySelectorAll('.key').forEach(function (k) { k.title = { '16': 'Small: 16 x 16 dots', '32': 'Medium: 32 x 32 dots', '64': 'Large: 64 x 64 dots' }[k.dataset.v]; });
-    el.appendChild(row);
-    setInterval(row.repaint, 600);                // Randomize and Open HTML can change the grid too
+    var el = $('#sizeControls'), SIZES = [16, 32, 48, 64];
+    var box = document.createElement('div');
+    box.className = 'size-radios'; box.setAttribute('role', 'radiogroup'); box.setAttribute('aria-label', 'Grid size');
+    SIZES.forEach(function (n) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'style-radio'; b.dataset.n = n; b.setAttribute('role', 'radio');
+      b.title = n + ' x ' + n + ' dots';
+      b.innerHTML = '<i></i><span>' + n + ' × ' + n + '</span>';
+      b.addEventListener('click', function () { fitRef = { w: 1024, h: 1024 }; setGrid(n, 16); layout(); paint(); });
+      box.appendChild(b);
+    });
+    function paint() { box.querySelectorAll('.style-radio').forEach(function (b) { b.setAttribute('aria-checked', String(cols === rows && cols === +b.dataset.n)); }); }
+    paint();
+    el.appendChild(box);
+    setInterval(paint, 600);                      // Randomize and Open HTML can change the grid too
   }
 
   /* ---------- Header, status, shortcuts ---------- */
