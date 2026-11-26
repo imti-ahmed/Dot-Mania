@@ -16,7 +16,7 @@ src/
   js/
     app.js                     editor UI, tools, state
     agent.js                   helper tools for AI agents (window.dotMania, WebMCP), through window.DotApp at the end of app.js
-    layout/                    gridsizes.js (canvas-only view with the Small / Medium / Large grid picker, gridSizes flag; styles in css/gridsizes.css), layerstrip.js (Layers strip with a preview card per layer, layerStrip flag), playbar.js (Play / Pause icon buttons, playBar flag), reorder.js (hover grip strip to swap the three sections, reorder flag), scale.js (windows under 1600 x 732 draw the page at 1600 x 732 and scale it down to fit; sets --vw / --vh)
+    layout/                    gridsizes.js (canvas-only view with the Small / Medium / Large grid picker, gridSizes flag; styles in css/gridsizes.css), layerstrip.js (Layers strip with a preview card per layer, layerStrip flag), playbar.js (Play / Pause icon buttons, playBar flag), panels.js (the old panels in the two right cards, collapsible sections, panelSlots flag), reorder.js (hover grip strip to swap the three sections, reorder flag), scale.js (windows under 1600 x 732 draw the page at 1600 x 732 and scale it down to fit; sets --vw / --vh)
     core/                      engine.js (rendering), presets.js (animations), shapes.js, image.js, flags.js (feature flags)
     export/                    export.js (HTML component), gif.js (GIF encoder)
     data/                      site.js (version, repo, views), library.js (template list), whatsnew.js (What's New content)

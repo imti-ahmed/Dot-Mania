@@ -59,3 +59,15 @@ body.gridonly .main > .panel2 { display: none; }
 body.reordering, body.reordering * { cursor: grabbing !important; }
 .main > .card.dragging { opacity: .6; }
 .main > .card.drop-slot { box-shadow: 0 0 0 2px var(--accent); }
+
+/* Panel slots (panelSlots flag): the old panels inside the two right cards, every group a collapsible section */
+.main > .slot { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 16px; }
+.slot > .panel-body { margin-top: 8px; }
+.slot .acc-head { display: flex; align-items: center; justify-content: space-between; flex: none; height: 32px; margin: 0; padding: 0 8px; border-radius: 8px; cursor: pointer; user-select: none; }
+.slot .acc-head:hover { color: var(--text); background: rgba(255, 255, 255, .04); }
+.slot .acc-head::after { content: ""; width: 8px; height: 8px; margin-right: 4px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+.slot .acc-head[aria-expanded="false"]::after { transform: translateX(-2px) rotate(-45deg); }
+.slot .acc-body { display: flex; flex-direction: column; gap: 16px; }
+.slot .acc-body.collapsed, .slot .acc-body:not(:has(> :not([hidden]))) { display: none; }
+.slot .acc-plain { display: flex; flex-direction: column; gap: 16px; }
+.slot .sidebar { align-items: stretch; width: 100%; }

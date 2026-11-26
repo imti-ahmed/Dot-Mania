@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.49.0 | 2026-11-26 | `v0.49.0` | The old panels fill the two right cards: Properties on the left; Tools, Layers and Export on the right; every group is a collapsible section, open state remembered (panelSlots flag, panels.js) |
 | 0.48.1 | 2026-11-26 | `v0.48.1` | Section reorder switched off (reorder flag set to false) |
 | 0.48.0 | 2026-11-26 | `v0.48.0` | Reorder: hover a section for a dark strip with a 6 dot grip, drag it onto another to swap the three sections; order is remembered (reorder flag) |
 | 0.47.2 | 2026-11-26 | `v0.47.2` | Scaling only below 1600 x 732: at 1600 x 732 or bigger the page is not scaled or limited |
