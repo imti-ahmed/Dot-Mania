@@ -1793,3 +1793,10 @@ kbd { background: #3a3a3c; }
 #imageControls .img-opts .row .wide { grid-column: 1; }
 #imageControls .img-opts .row .lbl { font-size: 11px; }
 #imageControls .img-opts .seg .key { padding: 0 4px; }
+
+/* Image card, round six: the preview is as tall as the two stacked buttons beside it (32 + 8 + 32 = 72px) */
+#imageControls { grid-template-columns: 72px minmax(0, 1fr); gap: 8px; align-items: start; }
+#imageControls .img-left { padding: 0; width: 72px; height: 72px; }
+#imageControls .img-right { display: flex; flex-direction: column; justify-content: flex-start; gap: 8px; }
+#imageControls .img-right > .pair { display: grid; grid-template-columns: 1fr; gap: 8px; }
+#imageControls .img-right > .pair .key { height: var(--key-h); padding: 0 16px; }
