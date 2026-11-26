@@ -82,7 +82,7 @@
   function fitStage(force) {
     var availW = area.clientWidth - 32, availH = area.clientHeight - 32;      // layout size, not the on-screen size (the page may be scaled, see layout/scale.js)
     if (availW <= 0 || availH <= 0) { if (!canvasSized) resizeCanvases(); return; }   // card not on screen yet: still give the canvas a size
-    var ref = fitRef || state.art;                                  // fitRef (gridSizes): scale by a fixed reference size so dots keep their size
+    var ref = fitRef || state.art;                                  // fitRef (the Grid Size picker): scale by a fixed reference size so dots keep their size
     var s = Math.min(availW / ref.w, availH / ref.h);               // the artboard fits whole
     var nw = Math.max(state.art.w, Math.round(availW / s)), nh = Math.max(state.art.h, Math.round(availH / s));
     stage.style.width = Math.floor(availW) + 'px';
@@ -126,7 +126,7 @@
     });
   }
 
-  // Grid sizes (gridSizes flag): n x n dots, each dot cell px wide (the artboard is n * cell px square)
+  // Grid Size picker: n x n dots, each dot cell px wide (the artboard is n * cell px square)
   function setGrid(n, cell) { CELL = cell; setArt(n * cell, n * cell); }
 
   function drawIdle() {
@@ -2093,21 +2093,6 @@
     $('#statusIdle').hidden = false;
   }
 
-  // Screen size: a small label fixed at the top of the page, always visible, live (flag: screenSize)
-  if (FLAGS.screenSize) {
-    var sizeEl = document.createElement('div');
-    sizeEl.className = 'screen-size';
-    sizeEl.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(sizeEl);
-    // Both sizes: the real window, and the page as it is laid out (1600 x 732 when scale.js shrinks it), with the scale it is drawn at
-    var showSize = function () {
-      var b = document.body, k = b.offsetWidth ? b.getBoundingClientRect().width / b.offsetWidth : 1;
-      sizeEl.textContent = 'window ' + window.innerWidth + ' x ' + window.innerHeight + ' | page ' + b.offsetWidth + ' x ' + b.offsetHeight + ' | scale ' + Math.round(k * 100) + '%';
-    };
-    window.addEventListener('resize', showSize);
-    showSize();
-  }
-
   // Version, views and GitHub stars. A value that is not available (no counter set up, offline)
   // shows a dash.
   function buildStatus() {
@@ -2902,15 +2887,8 @@
   // agent.js gives AI agents that visit the page a small set of helper tools (window.dotMania). They work through
   // the editor's own functions below, so the panels, the canvas and undo stay in step as if the change was made by
   // hand. Switched off with the agentTools flag.
-  if (FLAGS.agentTools || FLAGS.gridSizes) window.DotApp = {
+  if (FLAGS.agentTools) window.DotApp = {
     state: state, presets: PRESETS, colorModes: COLOR_MODES, dotShapes: DOT_SHAPES, interactions: INTERACTIONS,
-    // Layer strip (layerStrip flag): what the strip needs to draw a card per layer, and to pick, add and remove them
-    layerView: function () {
-      return layers.map(function (L, i) {
-        var live = i === activeLayer;
-        return { name: L.name, active: live, cells: live ? cells : L.cells, colors: live ? cellColor : L.colors, color: live ? state.color : L.color };
-      });
-    },
     selectLayer: selectLayer, addLayer: addLayer, removeLayer: removeLayer, layerMax: LAYER_MAX,
     stackMax: STACK_MAX, exportOpts: exportOpts,
     grid: function () { return { cols: cols, rows: rows, cell: CELL }; },
@@ -2922,7 +2900,7 @@
     // One undoable change, like a hand stroke: fn changes the drawing with setCell / clearCells / floodFill.
     edit: function (fn) { var before = beginEdit(); fn(); sel = null; dirty = true; endEdit(before); updateInfo(); },
     setCell: setCell, clearCells: function () { cells.clear(); }, floodFill: floodFill, lineCells: lineCells, shapeCells: shapeCells,
-    undo: undo, redo: redo, randomize: randomize, setArt: setArt, setGrid: setGrid, setFitRef: function (r) { fitRef = r; layout(); },
+    undo: undo, redo: redo, randomize: randomize, setArt: setArt, setGrid: setGrid,
     selectPreset: selectPreset, onPresetClick: onPresetClick, setStacking: setStacking,
     repaintColor: function () { repaintColor(); }, repaintShapes: function () { repaintShapes(); }, drawIdle: drawIdle,
     setInteraction: setInteraction, setPlaying: setPlaying, playPressed: playPressed,

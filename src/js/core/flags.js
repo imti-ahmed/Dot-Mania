@@ -26,14 +26,7 @@
     exportSvg: true,            // Export > Media: "SVG" (a plain still of the drawing, not animated, as scalable vector)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
-    gridSizes: false,            // Canvas on its own (other panels hidden for now) with a Small / Medium / Large picker, 16x16, 32x32 or 64x64 dots (src/js/layout/gridsizes.js)
-    gridPicker: false,          // Grid view: the Small / Medium / Large (16 / 32 / 64) picker; off until grid size moves to a settings panel (the grid stays 64 x 64)
-    playBar: false,             // Left column (with gridSizes): a panel under Layers with Play and Pause icon buttons side by side (src/js/layout/playbar.js)
-    layerStrip: false,          // Left column (with gridSizes): a Layers strip, one preview card per layer, Add layer below, up to 5 (src/js/layout/layerstrip.js)
-    panelSlots: true,           // Grid view: the old panels (Properties, Tools, Layers, Export) fill the two right cards, every group a collapsible section (src/js/layout/panels.js)
-    reorder: false,             // Grid view: hover a section for a dark strip with a 6 dot grip, drag it onto another to swap the three sections (src/js/layout/reorder.js)
     fitScreen: true,            // Windows smaller than 1600 x 732 (or browser zoom): draw the page at 1600 x 732 and scale it down to fit (src/js/layout/scale.js); 1600 x 732 and bigger is left alone; off = never scaled
-    screenSize: true,           // Top of the page: a small always-visible label with the window size (width x height), live
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
     layersPanel: false,         // Second right panel: the Layers card (Add layer + layer list)

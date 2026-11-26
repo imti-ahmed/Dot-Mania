@@ -1728,9 +1728,6 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
 .page-table th, .page-table td { border-bottom-color: #3a3a3c; }
 kbd { background: #3a3a3c; }
 
-/* Screen size label: fixed at the top, always visible (flag: screenSize) */
-.screen-size { position: fixed; top: 4px; left: 50%; transform: translateX(-50%); z-index: 50; padding: 4px 8px; border-radius: 999px; background: rgba(0, 0, 0, .55); color: var(--text); font-size: 11px; line-height: 16px; letter-spacing: .04em; pointer-events: none; }
-
 /* Left bar: icon-only buttons, one in a row (the label is the tooltip). 56px = 8 + a 40px key + 8 */
 .main > .sidebar .toolstrip, .main > .sidebar .editstrip, .main > .sidebar .sizes { display: grid; grid-template-columns: 40px; gap: 8px; justify-content: center; padding: 8px; }
 .main > .sidebar .key { width: 40px; height: 40px; padding: 0; justify-content: center; }

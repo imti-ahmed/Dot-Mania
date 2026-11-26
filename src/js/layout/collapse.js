@@ -1,11 +1,11 @@
 /*
- * Collapsible titles (collapseTitles flag, the normal three-column layout). Every functionality title in the Properties, Image
+ * Collapsible titles (collapseTitles flag). Every functionality title in the Properties, Image
  * and Export panels gets a caret (Phosphor, regular weight) at its end; it shows on hover, and stays showing on a folded title. Click the title or the caret and what is under it folds away,
  * leaving just the title and the caret; click again to open it. Which ones are folded is remembered in the browser.
- * (The canvas-only view has its own version of this in panels.js.) Loaded after app.js, which builds the controls.
+ * Loaded after app.js, which builds the controls.
  */
 (function () {
-  if (!window.FLAGS || !FLAGS.collapseTitles || FLAGS.gridSizes) return;
+  if (!window.FLAGS || !FLAGS.collapseTitles) return;
   var CARET = '<svg class="ph" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>';
   // folded by default; once someone opens or folds a title their choice (1 = folded, 0 = open) is what is remembered
   var FOLDED_AT_START = { 'prop/Color': 1 };
