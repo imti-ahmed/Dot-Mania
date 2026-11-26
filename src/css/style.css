@@ -1847,3 +1847,9 @@ aside.panel .group-label:not(.first)::before,
 /* Grid Size: four radio buttons side by side */
 .size-radios { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 0 4px; }
 .size-radios .style-radio { min-width: 0; white-space: nowrap; }
+
+/* Grid Size only: the title on the left and its options on the same line, on the right */
+.inline-group { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.inline-group > .group-label { margin: 0; flex: none; }
+.inline-group > .group { flex: none; }
+.inline-group .size-radios { display: flex; gap: 16px; padding: 0 8px; }
