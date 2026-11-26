@@ -30,7 +30,7 @@
     gridPicker: false,          // Grid view: the Small / Medium / Large (16 / 32 / 64) picker; off until grid size moves to a settings panel (the grid stays 64 x 64)
     playBar: false,             // Left column (with gridSizes): a panel under Layers with Play and Pause icon buttons side by side (src/js/layout/playbar.js)
     layerStrip: false,          // Left column (with gridSizes): a Layers strip, one preview card per layer, Add layer below, up to 5 (src/js/layout/layerstrip.js)
-    fitScreen: false,           // Windows smaller than 1600 x 732: draw the page at 1600 x 732 and scale it down to fit (src/js/layout/scale.js); off = laid out at the window's real size, scale 100%
+    fitScreen: true,            // The page is always 1600 x 732 and scaled to fit the window, whatever the window size or browser zoom (src/js/layout/scale.js); off = laid out at the window's real size, scale 100%
     screenSize: true,           // Top of the page: a small always-visible label with the window size (width x height), live
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 

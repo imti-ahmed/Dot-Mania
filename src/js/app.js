@@ -80,8 +80,7 @@
 
   // Make the stage fill the card, and keep its drawing resolution in step with the card's shape.
   function fitStage(force) {
-    var r = area.getBoundingClientRect();
-    var availW = r.width - 32, availH = r.height - 32;
+    var availW = area.clientWidth - 32, availH = area.clientHeight - 32;      // layout size, not the on-screen size (the page may be scaled, see layout/scale.js)
     if (availW <= 0 || availH <= 0) { if (!canvasSized) resizeCanvases(); return; }   // card not on screen yet: still give the canvas a size
     var ref = fitRef || state.art;                                  // fitRef (gridSizes): scale by a fixed reference size so dots keep their size
     var s = Math.min(availW / ref.w, availH / ref.h);               // the artboard fits whole
@@ -1067,9 +1066,11 @@
       fromHex(hex);
       el.hidden = false;
       show(false);
-      var r = node.getBoundingClientRect(), w = el.offsetWidth, ht = el.offsetHeight;
-      var left = Math.max(8, Math.min(window.innerWidth - w - 8, r.right - w));
-      var top = r.bottom + 10 + ht > window.innerHeight - 8 ? r.top - ht - 10 : r.bottom + 10;
+      var f = window.pageFit || { s: 1, x: 0, y: 0, W: window.innerWidth, H: window.innerHeight };     // window pixels to page pixels
+      var br = node.getBoundingClientRect(), w = el.offsetWidth, ht = el.offsetHeight;
+      var r = { top: (br.top - f.y) / f.s, bottom: (br.bottom - f.y) / f.s, right: (br.right - f.x) / f.s };
+      var left = Math.max(8, Math.min(f.W - w - 8, r.right - w));
+      var top = r.bottom + 10 + ht > f.H - 8 ? r.top - ht - 10 : r.bottom + 10;
       el.style.left = left + 'px'; el.style.top = Math.max(8, top) + 'px';
     }
     return { toggle: toggle };
