@@ -1957,15 +1957,15 @@
     $('#statusIdle').hidden = false;
   }
 
-  // Screen size flash: while the window is resized, the status bar briefly shows its size (flag: screenSize)
+  // Screen size: a small label fixed at the top of the page, always visible, live (flag: screenSize)
   if (FLAGS.screenSize) {
-    var sizeTimer = 0;
-    window.addEventListener('resize', function () {
-      clearTimeout(sizeTimer);
-      sizeTimer = setTimeout(function () {
-        notify(window.innerWidth + ' x ' + window.innerHeight + ' px', { ms: 2000 });
-      }, 120);
-    });
+    var sizeEl = document.createElement('div');
+    sizeEl.className = 'screen-size';
+    sizeEl.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(sizeEl);
+    var showSize = function () { sizeEl.textContent = window.innerWidth + ' x ' + window.innerHeight + ' px'; };
+    window.addEventListener('resize', showSize);
+    showSize();
   }
 
   // Version, views and GitHub stars. A value that is not available (no counter set up, offline)
