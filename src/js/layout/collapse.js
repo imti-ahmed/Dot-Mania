@@ -8,7 +8,7 @@
   if (!window.FLAGS || !FLAGS.collapseTitles || FLAGS.gridSizes) return;
   var CARET = '<svg class="ph" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>';
   // folded by default; once someone opens or folds a title their choice (1 = folded, 0 = open) is what is remembered
-  var FOLDED_AT_START = { 'prop/Color': 1, 'image/Tuning': 1 };
+  var FOLDED_AT_START = { 'prop/Color': 1 };
   var KEY = 'dotmania.foldedTitles2', folded = {};
   try { folded = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
   function remember(id, isFolded) { folded[id] = isFolded ? 1 : 0; try { localStorage.setItem(KEY, JSON.stringify(folded)); } catch (e) {} }

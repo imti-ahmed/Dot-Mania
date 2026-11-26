@@ -1770,6 +1770,7 @@
       box.appendChild(b);
     });
     function paint() { box.querySelectorAll('.style-radio').forEach(function (b) { b.setAttribute('aria-checked', String(cols === rows && cols === +b.dataset.n)); }); }
+    fitRef = { w: 1024, h: 1024 }; setGrid(64, 16); layout();      // 64 x 64 to start with
     paint();
     el.appendChild(box);
     setInterval(paint, 600);                      // Randomize and Open HTML can change the grid too

@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.53.8 | 2026-11-26 | `v0.53.8` | The image Tuning group starts open; the grid starts at 64 x 64 |
 | 0.53.7 | 2026-11-26 | `v0.53.7` | Divider spacing back to almost what it was: 4px less above each divider (was 24px less in 0.53.5) |
 | 0.53.6 | 2026-11-26 | `v0.53.6` | Left panel icons 14px; the left panel card fits its content instead of stretching full height |
 | 0.53.5 | 2026-11-26 | `v0.53.5` | Properties panel no longer scrolls inside: less space around the dividers (all panels), the card is as tall as its content |
