@@ -1928,7 +1928,10 @@
     if (FLAGS.imageAdvanced) { opts.appendChild(levelRow); opts.appendChild(fitRow); }
     right.appendChild(opts);
     el.appendChild(right);
-    el.insertAdjacentElement('afterend', btns);          // Upload / Remove sit outside the group, under it
+    var btnGroup = document.createElement('div');          // Upload / Remove: their own container (a group card, like Export's Background), under the Image group
+    btnGroup.className = 'group';
+    btnGroup.appendChild(btns);
+    el.insertAdjacentElement('afterend', btnGroup);
 
     // The preview: the whole picture, fitted into the square (blank again when there is no picture).
     var preview = left.querySelector('#imgPreview'), canvas = preview.querySelector('canvas'), pctx = canvas.getContext('2d');

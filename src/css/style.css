@@ -1782,8 +1782,8 @@ kbd { background: #3a3a3c; }
 #imageControls .img-left { display: flex; align-items: center; justify-content: center; padding: 8px; }
 #imageControls .img-preview { width: 100%; height: auto; aspect-ratio: 1; background: transparent; box-shadow: none; }
 #imageControls .img-right { display: flex; flex-direction: column; justify-content: center; padding: 16px; }
-.panel2-image .panel-body > .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: none; }
-.panel2-image .panel-body > .pair .key { height: var(--key-h); padding: 0 16px; }
+.panel2-image .panel-body > .group .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.panel2-image .panel-body > .group .pair .key { height: var(--key-h); padding: 0 16px; }
 
 /* Image card, round five: Style and Dots on are the app's normal rows (title over a segmented button), no well of their own */
 #imageControls { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
