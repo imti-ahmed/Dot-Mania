@@ -1898,6 +1898,7 @@
     if (imgUI.drop) {
       imgUI.drop.classList.toggle('has-image', !!on);
       $('#imgUpload').title = on ? 'Replace the picture (or drop one on the canvas)' : 'Upload a picture (or drop one on the canvas)';
+      $('#imgUpload span').textContent = on ? 'Replace' : 'Upload';
       imgUI.thumb();
     }
   }

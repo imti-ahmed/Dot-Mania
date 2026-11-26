@@ -1861,3 +1861,8 @@ aside.panel .group-label:not(.first), .panel2-bottom .group-label:not(.first) { 
 
 /* Left panel: the card is only as tall as its buttons, not the full height */
 .main[data-page="canvas"] > .sidebar { align-self: start; }
+
+/* Image card: Upload (it reads Replace once there is a picture) and Remove side by side, beside the preview */
+#imageControls .img-right { justify-content: center; }
+#imageControls .img-right > .pair { grid-template-columns: none; grid-auto-flow: column; gap: 8px; justify-content: start; }
+#imageControls .img-right > .pair .key { padding: 0 8px; gap: 4px; }
