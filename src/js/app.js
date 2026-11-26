@@ -2014,11 +2014,11 @@
     onRow.set = function (v) { onRow.setValue(v); };
 
     var levelRow = sliderRow({
-      label: 'Tone', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
+      label: 'Contrast', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,      // swapped: the slider called Contrast now does the old Tone job (how many dots / how light)
       fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.level = v; applyImage(); }
     });
     var contrastRow = sliderRow({
-      label: 'Contrast', min: 0, max: 1, step: 0.01, value: imgOpts.contrast,      // 50% = as it is
+      label: 'Tone', min: 0, max: 1, step: 0.01, value: imgOpts.contrast,      // swapped: the slider called Tone now does the old Contrast job (the spread of shades); 50% = as it is
       fmt: pct, onChange: function (v) { imgOpts.contrast = v; applyImage(); }
     });
     var fitRow = segRow('Fit', [{ v: 'fit', label: 'Fit' }, { v: 'fill', label: 'Fill' }],
@@ -2043,13 +2043,13 @@
     if (FLAGS.imageOptions) right.appendChild(opts);      // Style and Dots on: switched off for now
     el.appendChild(right);
 
-    // Image tuning, in their own group under the image: Spread, Tone and Contrast, all sliders (the old Dark / Light band slider and Fit / Fill are not shown)
+    // Image tuning, in their own group under the image: Spread, Tone (spread of shades) and Contrast (how many dots), all sliders (the old Dark / Light band slider and Fit / Fill are not shown)
     var tune = document.createElement('div');
     tune.className = 'group img-tune is-empty';
     if (FLAGS.imageTuning) {
       var tl = document.createElement('div');
       tl.className = 'group-label'; tl.textContent = 'Tuning';
-      [styleRow, levelRow, contrastRow].forEach(function (r) { tune.appendChild(r); });
+      [styleRow, contrastRow, levelRow].forEach(function (r) { tune.appendChild(r); });
       el.insertAdjacentElement('afterend', tune);
       tune.insertAdjacentElement('beforebegin', tl);
     }
