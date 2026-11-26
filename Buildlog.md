@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.62.0 | 2026-11-26 | `v0.62.0` | Trying Out replaced with five simple whole-shape animations that work on any drawing: Seesaw, Sectors, Steps, Checker, Beam |
 | 0.61.0 | 2026-11-26 | `v0.61.0` | Trying Out replaced with six animations based on things people recognise: Spinner, Signal, Marquee, Timer, Wiper, Puddle |
 | 0.60.0 | 2026-11-26 | `v0.60.0` | Lava and Type join the main Animations list (14 now); Type loses its cursor and gets a Direction slider (right, down, left, up); the other trial animations are dropped and five fresh ones go in Trying Out: Bloom, Warp, Moire, Sparks, Halo |
 | 0.59.0 | 2026-11-26 | `v0.59.0` | Unused animations removed (the 27 hidden ones, the extraPresets flag and the random-start recipes that used them); the first trial batch replaced with six fresh ones in Trying Out: Lava, Iris, Drip, Ridge, Monitor, Type |
