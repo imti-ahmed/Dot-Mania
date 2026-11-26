@@ -248,75 +248,6 @@
         v *= env;
         return v < 0.04 ? 0.04 : v;
       }
-    }
-  ];
-
-  // New animations being tried out. They show in their own "Trying Out" group in the panel.
-  // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
-  // To drop one: delete its block.
-  window.TRIAL_PRESETS = [
-    {
-      id: 'seesaw', name: 'Seesaw', defaults: base(0.7, 0.6),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'angle', label: 'Angle', min: 0, max: 180, step: 5, def: 0, fmt: deg },
-        { key: 'soft', label: 'Softness', min: 0.05, max: 1, step: 0.01, def: 0.4, fmt: pct }
-      ],
-      // The shape is split in two by a line through the middle; the halves take turns, one fades up while the other fades down.
-      fn: function (c, t, p) {
-        var a = p.angle * Math.PI / 180, side = (c.ux * Math.cos(a) + c.uy * Math.sin(a)) / p.soft;
-        side = side < -1 ? -1 : side > 1 ? 1 : side;
-        var v = 0.5 + 0.5 * side * Math.sin(t * p.speed * 0.5 * TAU);
-        return 0.05 + 0.95 * v * v;
-      }
-    },
-    {
-      id: 'sectors', name: 'Sectors', defaults: base(0.7, 0.7),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'parts', label: 'Parts', min: 2, max: 8, step: 1, def: 4, fmt: num },
-        { key: 'overlap', label: 'Overlap', min: 0, max: 1, step: 0.01, def: 0.3, fmt: pct }
-      ],
-      // The shape is cut into slices like a pie, and they light up one after another, clockwise.
-      fn: function (c, t, p) {
-        var n = Math.round(p.parts), k = Math.floor((c.a + Math.PI) / TAU * n) % n;
-        var x = Math.abs(frac(t * p.speed * 0.5) * n - (k + 0.5)); x = Math.min(x, n - x);     // how far this slice is from the lit one
-        var v = 1 - x / (0.5 + p.overlap * 1.5);
-        return 0.05 + 0.95 * (v < 0 ? 0 : v);
-      }
-    },
-    {
-      id: 'steps', name: 'Steps', defaults: base(0.7, 0.5),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'levels', label: 'Levels', min: 2, max: 8, step: 1, def: 4, fmt: num },
-        { key: 'angle', label: 'Angle', min: 0, max: 360, step: 5, def: 0, fmt: deg }
-      ],
-      // A soft gradient moves across the shape, but in chunky steps of brightness, like a staircase.
-      fn: function (c, t, p) {
-        var a = p.angle * Math.PI / 180, L = Math.round(p.levels);
-        var w = frac((c.ux * Math.cos(a) + c.uy * Math.sin(a)) * 0.5 + 0.5 - t * p.speed * 0.5);
-        return 0.05 + 0.95 * Math.floor(w * L) / (L - 1);                                  // L is at least 2
-      }
-    },
-    {
-      id: 'checker', name: 'Checker', defaults: base(0.7, 0.4),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'square', label: 'Square', min: 1, max: 6, step: 1, def: 2, fmt: num },
-        { key: 'soft', label: 'Softness', min: 0, max: 1, step: 0.01, def: 0.3, fmt: pct }
-      ],
-      // A chessboard: the light squares fade out as the dark ones fade in, and back again.
-      fn: function (c, t, p) {
-        var k = Math.round(p.square), parity = (Math.floor(c.col / k) + Math.floor(c.row / k)) & 1;
-        var s = 0.5 + 0.5 * Math.sin(t * p.speed * 0.5 * TAU), v = parity ? s : 1 - s;
-        v = (v - 0.5) * (1 + (1 - p.soft) * 10) + 0.5;
-        return 0.05 + 0.95 * (v < 0 ? 0 : v > 1 ? 1 : v);
-      }
     },
     {
       id: 'beam', name: 'Beam', defaults: base(0.7, 0.7),
@@ -330,6 +261,92 @@
       fn: function (c, t, p) {
         var n = Math.round(p.beams), x = frac(c.a / TAU * n - t * p.speed * 0.5), dist = Math.min(x, 1 - x) / (p.width * 0.5);
         return 0.05 + 0.95 * Math.exp(-dist * dist);
+      }
+    }
+  ];
+
+  // New animations being tried out. They show in their own "Trying Out" group in the panel.
+  // To approve one: move its block into window.PRESETS above (it then joins the main Animations list).
+  // To drop one: delete its block.
+  window.TRIAL_PRESETS = [
+    {
+      id: 'tilt', name: 'Tilt', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'punch', label: 'Contrast', min: 1, max: 5, step: 0.1, def: 2, fmt: dec1 },
+        { key: 'turns', label: 'Turns', min: 1, max: 3, step: 1, def: 1, fmt: num }
+      ],
+      // A light moves round the shape: the side facing it is bright, the far side dark, like a ball lit by a lamp that circles it.
+      fn: function (c, t, p) {
+        var th = t * p.speed * 0.5 * p.turns * TAU, s = (c.ux * Math.cos(th) + c.uy * Math.sin(th)) * 0.7 * 0.5 + 0.5;
+        s = s < 0 ? 0 : s > 1 ? 1 : s;
+        return 0.05 + 0.95 * Math.pow(s, p.punch);
+      }
+    },
+    {
+      id: 'scanlines', name: 'Scanlines', defaults: base(0.7, 0.4),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'thick', label: 'Thickness', min: 1, max: 6, step: 1, def: 2, fmt: num },
+        { key: 'axis', label: 'Lines', min: 0, max: 90, step: 90, def: 0, fmt: function (v) { return v < 45 ? 'Rows' : 'Columns'; } }
+      ],
+      // Alternate lines of dots, like an old screen: the even lines fade out as the odd ones fade in, and back.
+      fn: function (c, t, p) {
+        var k = Math.round(p.thick), parity = Math.floor((p.axis < 45 ? c.row : c.col) / k) & 1;
+        var s = 0.5 + 0.5 * Math.sin(t * p.speed * 0.5 * TAU), v = (parity ? s : 1 - s);
+        v = (v - 0.5) * 4 + 0.5;
+        return 0.05 + 0.95 * (v < 0 ? 0 : v > 1 ? 1 : v);
+      }
+    },
+    {
+      id: 'frames', name: 'Frames', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'frames', label: 'Frames', min: 1, max: 6, step: 1, def: 3, fmt: num },
+        { key: 'sharp', label: 'Sharpness', min: 1, max: 6, step: 0.1, def: 2, fmt: dec1 }
+      ],
+      // Square frames, one inside the next, spread outwards from the middle like ripples that keep the shape of a box.
+      fn: function (c, t, p) {
+        var m = Math.max(Math.abs(c.ux), Math.abs(c.uy)), v = 0.5 + 0.5 * Math.cos((m * p.frames - t * p.speed * 0.5) * TAU);
+        return 0.05 + 0.95 * Math.pow(v, p.sharp);
+      }
+    },
+    {
+      id: 'bounce', name: 'Bounce', defaults: base(0.75, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'spot', label: 'Spot', min: 0.1, max: 0.7, step: 0.01, def: 0.3, fmt: pct },
+        { key: 'trail', label: 'Trail', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
+      ],
+      // A glowing spot bounces off the edges of the shape and back, like the logo on an idle screen, leaving a short glow behind it.
+      fn: function (c, t, p) {
+        var f = t * p.speed * 0.5, best = 0;
+        for (var i = 0; i < 5; i++) {
+          var g = f - i * p.trail * 0.03;
+          var x = (Math.abs(frac(g * 2 + 0.1) * 2 - 1) * 2 - 1) * 0.85, y = (Math.abs(frac(g * 3 + 0.4) * 2 - 1) * 2 - 1) * 0.85;
+          var dx = c.ux - x, dy = c.uy - y, e = Math.sqrt(dx * dx + dy * dy) / p.spot;
+          var v = Math.exp(-e * e) * (1 - i * 0.2);
+          if (v > best) best = v;
+        }
+        return best < 0.05 ? 0.05 : best;
+      }
+    },
+    {
+      id: 'flash', name: 'Flash', defaults: base(0.7, 0.8),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'flashes', label: 'Flashes', min: 1, max: 4, step: 1, def: 2, fmt: num },
+        { key: 'decay', label: 'Decay', min: 0.5, max: 6, step: 0.1, def: 2.5, fmt: dec1 }
+      ],
+      // The whole shape flashes bright all at once and fades away, then flashes again, like a camera flash.
+      fn: function (c, t, p) {
+        var ph = frac(t * p.speed * 0.5 * Math.round(p.flashes));
+        return 0.05 + 0.95 * Math.pow(1 - ph, p.decay);
       }
     }
   ];
