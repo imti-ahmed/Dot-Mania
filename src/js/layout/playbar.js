@@ -22,6 +22,13 @@
   bar.setAttribute('role', 'group');
   bar.setAttribute('aria-label', 'Playback');
 
+  var title = document.createElement('div');       // reads Playing or Paused
+  title.className = 'gp-title';
+  bar.appendChild(title);
+  var row = document.createElement('div');
+  row.className = 'pb-row';
+  bar.appendChild(row);
+
   function button(icon, label, on) {
     var b = document.createElement('button');
     b.type = 'button';
@@ -31,7 +38,7 @@
     b.setAttribute('aria-label', label);
     b.setAttribute('aria-pressed', 'false');
     b.addEventListener('click', function () { A.setPlaying(on); sync(); });
-    bar.appendChild(b);
+    row.appendChild(b);
     return b;
   }
   var play = button(ICON_PLAY, 'Play', true);
@@ -44,6 +51,7 @@
     var on = !!A.state.playing;
     play.setAttribute('aria-pressed', String(on));
     pause.setAttribute('aria-pressed', String(!on));
+    title.textContent = on ? 'Playing' : 'Paused';
   }
   sync();
   setInterval(sync, 250);                           // Space and Randomize also change playback

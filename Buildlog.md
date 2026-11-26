@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.45.1 | 2026-11-26 | `v0.45.1` | Layer cards show a grey x box on hover, flush to the top right corner, to delete the layer; the add button reads + Add; the Play bar has a centred title that reads Playing or Paused |
 | 0.45.0 | 2026-11-26 | `v0.45.0` | New Play bar (`playBar` flag, src/js/layout/playbar.js): a title-less panel under the Layers strip with Play and Pause icon buttons side by side |
 | 0.44.2 | 2026-11-26 | `v0.44.2` | Layers strip: no layer count, centred panel titles, button reads + Add New; the grid is fixed at 64x64 and the Small / Medium / Large picker is behind the new `gridPicker` flag (off) until grid size moves to a settings panel |
 | 0.44.1 | 2026-11-26 | `v0.44.1` | Layer cards are square previews filling the strip (no names, no delete button for now); left column narrowed to 112px to fit; Grid picker buttons now read 16×16 / 32×32 / 64×64 |

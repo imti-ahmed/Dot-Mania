@@ -1,7 +1,7 @@
 /*
  * Layers strip (layerStrip flag, part of the grid-only view). A straight strip at the top of the left column, above the
  * Grid picker: one small card per layer that previews only the dots in that layer, then an Add layer button.
- * Up to DotApp.layerMax (5) layers. The cards are square, with no names. Click a card to edit that layer.
+ * Up to DotApp.layerMax (5) layers. The cards are square, with no names. Click a card to edit that layer; hover one to show the x that deletes it.
  * Loaded after gridsizes.js. The editor does the work through window.DotApp (layerView, selectLayer, addLayer, removeLayer).
  */
 (function () {
@@ -31,7 +31,7 @@
   var add = document.createElement('button');
   add.type = 'button';
   add.className = 'key ls-add';
-  add.textContent = '+ Add New';
+  add.textContent = '+ Add';
   add.addEventListener('click', function () { A.addLayer(); render(true); });
   strip.appendChild(add);
 
@@ -50,6 +50,16 @@
       cv.width = cv.height = 184;
       card.addEventListener('click', function () { A.selectLayer(i); render(true); });
       card.appendChild(cv);
+      if (view.length > 1) {                        // x on hover, in the top right corner (a layer cannot be the last one removed)
+        var del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'ls-del';
+        del.textContent = '\u00d7';
+        del.title = 'Delete layer';
+        del.setAttribute('aria-label', 'Delete ' + L.name);
+        del.addEventListener('click', function (e) { e.stopPropagation(); A.removeLayer(i); render(true); });
+        card.appendChild(del);
+      }
       listEl.appendChild(card);
       return cv;
     });
