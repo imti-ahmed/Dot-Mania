@@ -125,6 +125,9 @@
     });
   }
 
+  // Floating layout (sample): n x n dots, each dot cell px wide (the artboard is n * cell px square)
+  function setGrid(n, cell) { CELL = cell; setArt(n * cell, n * cell); }
+
   function drawIdle() {
     idleCtx.clearRect(0, 0, w(), h());
     E.drawIdle(idleCtx, cols, rows, geo(), GRID_VIS);
@@ -2762,7 +2765,7 @@
   // agent.js gives AI agents that visit the page a small set of helper tools (window.dotMania). They work through
   // the editor's own functions below, so the panels, the canvas and undo stay in step as if the change was made by
   // hand. Switched off with the agentTools flag.
-  if (FLAGS.agentTools) window.DotApp = {
+  if (FLAGS.agentTools || FLAGS.floatingLayout) window.DotApp = {
     state: state, presets: PRESETS, colorModes: COLOR_MODES, dotShapes: DOT_SHAPES, interactions: INTERACTIONS,
     stackMax: STACK_MAX, exportOpts: exportOpts,
     grid: function () { return { cols: cols, rows: rows, cell: CELL }; },
@@ -2774,7 +2777,7 @@
     // One undoable change, like a hand stroke: fn changes the drawing with setCell / clearCells / floodFill.
     edit: function (fn) { var before = beginEdit(); fn(); sel = null; dirty = true; endEdit(before); updateInfo(); },
     setCell: setCell, clearCells: function () { cells.clear(); }, floodFill: floodFill, lineCells: lineCells, shapeCells: shapeCells,
-    undo: undo, redo: redo, randomize: randomize, setArt: setArt,
+    undo: undo, redo: redo, randomize: randomize, setArt: setArt, setGrid: setGrid,
     selectPreset: selectPreset, onPresetClick: onPresetClick, setStacking: setStacking,
     repaintColor: function () { repaintColor(); }, repaintShapes: function () { repaintShapes(); }, drawIdle: drawIdle,
     setInteraction: setInteraction, setPlaying: setPlaying, playPressed: playPressed,

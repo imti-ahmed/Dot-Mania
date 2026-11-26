@@ -16,6 +16,7 @@ src/
   js/
     app.js                     editor UI, tools, state
     agent.js                   helper tools for AI agents (window.dotMania, WebMCP), through window.DotApp at the end of app.js
+    layout/                    floating.js (sample floating-panel layout, floatingLayout flag; styles in css/floating.css)
     core/                      engine.js (rendering), presets.js (animations), shapes.js, image.js, flags.js (feature flags)
     export/                    export.js (HTML component), gif.js (GIF encoder)
     data/                      site.js (version, repo, views), library.js (template list), whatsnew.js (What's New content)
