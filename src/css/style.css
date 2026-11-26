@@ -17,7 +17,6 @@
 [hidden] { display: none !important; }      /* feature flags hide things with the hidden attribute */
 .agent-note { position: absolute; width: 1px; height: 1px; margin: -4px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* read by AI agents, invisible on screen */
 html, body { height: 100%; }
-html { background: var(--bg); }
 body {
   background: var(--bg);
   color: var(--text);

@@ -16,7 +16,7 @@ src/
   js/
     app.js                     editor UI, tools, state
     agent.js                   helper tools for AI agents (window.dotMania, WebMCP), through window.DotApp at the end of app.js
-    layout/                    gridsizes.js (canvas-only view with the Small / Medium / Large grid picker, gridSizes flag; styles in css/gridsizes.css), layerstrip.js (Layers strip with a preview card per layer, layerStrip flag), playbar.js (Play / Pause icon buttons, playBar flag), scale.js (the page is always 1600 x 732 and scaled to fit the window; sets --vw / --vh and window.pageFit)
+    layout/                    gridsizes.js (canvas-only view with the Small / Medium / Large grid picker, gridSizes flag; styles in css/gridsizes.css), layerstrip.js (Layers strip with a preview card per layer, layerStrip flag), playbar.js (Play / Pause icon buttons, playBar flag), scale.js (windows under 1600 x 732 draw the page at 1600 x 732 and scale it down to fit; sets --vw / --vh)
     core/                      engine.js (rendering), presets.js (animations), shapes.js, image.js, flags.js (feature flags)
     export/                    export.js (HTML component), gif.js (GIF encoder)
     data/                      site.js (version, repo, views), library.js (template list), whatsnew.js (What's New content)
@@ -35,7 +35,7 @@ Buildlog.md                    the build log
 - Every panel, card or new element gets the same inset from the window edges as the navbar (32px from the left edge: app padding 16px plus 16px of header padding; 28px from the bottom, like the bar's 28px from the top). Panels sit 16px apart. Inside a card, the padding around its content is the navbar's 8px (top and bottom of its buttons). All padding, margin and gap values are multiples of 8 (8, 16, 24, 32, 40...); anything too small for 8 uses multiples of 4 (4px).
 
 ### Screen size
-- The design size is 1600 x 732 px. The page is always drawn at that size and scaled to fit the window, bigger or smaller, whatever the browser zoom (scale.js); it never reflows. Code that mixes window pixels (getBoundingClientRect, innerWidth) with page pixels must convert with `window.pageFit`. Size things from `var(--vw, 100vw)` and `var(--vh, 100vh)`, not plain `vw` / `vh`.
+- The design size is 1600 x 732 px. Smaller windows shrink everything to that size (scale.js), they do not reflow. Size things from `var(--vw, 100vw)` and `var(--vh, 100vh)`, not plain `vw` / `vh`.
 
 ### Testing
 - Never open Chrome for testing. Do not call any `mcp__claude-in-chrome__*` tool.
