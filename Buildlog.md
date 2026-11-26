@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.44.0 | 2026-11-26 | `v0.44.0` | Grid view moves to the left edge; new Layers strip (`layerStrip` flag, src/js/layout/layerstrip.js) at the top of the left column above the Grid picker: one card per layer previewing only that layer's dots, click to edit, x to delete, + Add layer below, up to 5 layers (hooks added to DotApp in app.js) |
 | 0.43.3 | 2026-11-26 | `v0.43.3` | Dots keep the same size on every grid: Small 16x16 and Medium 32x32 are now smaller areas centred in the canvas card instead of scaling up (fixed stage scale via `setFitRef` in app.js) |
 | 0.43.2 | 2026-11-26 | `v0.43.2` | `gridSizes` view now shows only the canvas (same size as before) with a small Grid picker (Small 16x16, Medium 32x32, Large 64x64) beside it; the left bar and both right panels are hidden for now, not deleted (src/css/gridsizes.css) |
 | 0.43.1 | 2026-11-26 | `v0.43.1` | Floating panels removed for now (floating.js and floating.css deleted); the canvas keeps its old size. New `gridSizes` flag (on) adds a Small 16x16 / Medium 32x32 / Large 64x64 dot picker to the left bar (src/js/layout/gridsizes.js, `setGrid` hook in app.js); starts on Large |

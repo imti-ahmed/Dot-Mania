@@ -2769,6 +2769,14 @@
   // hand. Switched off with the agentTools flag.
   if (FLAGS.agentTools || FLAGS.gridSizes) window.DotApp = {
     state: state, presets: PRESETS, colorModes: COLOR_MODES, dotShapes: DOT_SHAPES, interactions: INTERACTIONS,
+    // Layer strip (layerStrip flag): what the strip needs to draw a card per layer, and to pick, add and remove them
+    layerView: function () {
+      return layers.map(function (L, i) {
+        var live = i === activeLayer;
+        return { name: L.name, active: live, cells: live ? cells : L.cells, colors: live ? cellColor : L.colors, color: live ? state.color : L.color };
+      });
+    },
+    selectLayer: selectLayer, addLayer: addLayer, removeLayer: removeLayer, layerMax: LAYER_MAX,
     stackMax: STACK_MAX, exportOpts: exportOpts,
     grid: function () { return { cols: cols, rows: rows, cell: CELL }; },
     anyCells: anyCells,

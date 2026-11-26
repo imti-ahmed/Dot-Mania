@@ -40,7 +40,9 @@
     group.appendChild(b);
   });
 
-  main.insertBefore(group, main.querySelector('.stage-card'));
+  var col = main.querySelector('.leftcol');
+  if (!col) { col = document.createElement('div'); col.className = 'leftcol'; main.insertBefore(col, main.querySelector('.stage-card')); }
+  col.appendChild(group);
 
   function sync() {
     var g = A.grid();
