@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.50.2 | 2026-11-26 | `v0.50.2` | Image tuning sliders: the title column is as wide as the longest title (Threshold), the sliders get the rest |
 | 0.50.1 | 2026-11-26 | `v0.50.1` | Image sliders all read in percent; Style renamed Threshold; Dots on is now Tone, a real dark-to-light position (dots gather on the chosen tone band) |
 | 0.50.0 | 2026-11-26 | `v0.50.0` | Image Style and Dots on are real sliders: Style = filled to outline (border thickness), Dots on = dark to light tones (blend); engine gets edge and tone options |
 | 0.49.19 | 2026-11-26 | `v0.49.19` | Image Tuning: Style and Dots on are stepped sliders like Level; Fit / Fill no longer shown |
