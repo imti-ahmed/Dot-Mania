@@ -37,6 +37,9 @@ Buildlog.md                    the build log
 ### Screen size
 - The design size is 1600 x 732 px (`fitScreen` flag). Windows (or browser zoom levels) smaller than that draw the page at that size and scale it down to fit (scale.js), they do not reflow; at 1600 x 732 or bigger nothing is scaled or limited. Code that mixes window pixels (getBoundingClientRect, innerWidth) with page pixels must convert with `window.pageFit`. Size things from `var(--vw, 100vw)` and `var(--vh, 100vh)`, not plain `vw` / `vh`.
 
+### Design
+- When a control or group moves into a new container, carry its look with it: styles scoped to the old container (button sizes, divider lines) stop applying, so check them and replace them. Buttons are compact (icon-only squares, labels as tooltips) unless a label is needed; sections are always separated by the carved divider.
+
 ### Testing
 - Never open Chrome for testing. Do not call any `mcp__claude-in-chrome__*` tool.
 - No simulated or automated tests, and no auto-running of the app, until the user says so. Offer first; run only after the user agrees.

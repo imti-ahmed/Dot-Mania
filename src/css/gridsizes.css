@@ -71,3 +71,15 @@ body.reordering, body.reordering * { cursor: grabbing !important; }
 .slot .acc-body.collapsed, .slot .acc-body:not(:has(> :not([hidden]))) { display: none; }
 .slot .acc-plain { display: flex; flex-direction: column; gap: 16px; }
 .slot .sidebar { align-items: stretch; width: 100%; }
+
+/* Tools card: compact icon buttons in rows (the label is the tooltip), a carved vertical divider between the groups */
+.slot .sidebar { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 8px; padding: 0; }
+.slot .sidebar > .toolstrip, .slot .sidebar > .editstrip, .slot .sidebar > .sizes { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; width: auto; padding: 0; margin: 0; }
+.slot .sidebar > * + * { border-top: 0; border-left: 2px solid #070707; box-shadow: inset 1px 0 0 #3a3a3a; padding-left: 8px; }
+.slot .sidebar .key { width: 40px; height: 40px; padding: 0; justify-content: center; flex: none; }
+.slot .sidebar .key .lbl, .slot .sidebar #fileLabel, .slot .sidebar #playLabel { display: none; }
+.slot .sidebar .toolstrip .sep { width: 2px; height: 24px; margin: 0 4px; }
+
+/* Carved horizontal divider above every section title but the first (same look as the old panels) */
+.slot .acc-head { position: relative; }
+.slot .acc-head:not(:first-child)::before { content: ""; position: absolute; left: -16px; right: -16px; top: -8px; height: 2px; background: #070707; box-shadow: 0 1px 0 #3a3a3a; }
