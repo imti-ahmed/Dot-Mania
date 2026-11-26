@@ -1805,3 +1805,6 @@ kbd { background: #3a3a3c; }
 #imageControls { grid-template-columns: 128px minmax(0, 1fr); }
 #imageControls .img-left { width: 128px; height: 72px; }
 #imageControls .img-preview { width: 100%; height: 100%; aspect-ratio: auto; }
+
+/* Image card: the tuning sliders wait (greyed) until there is a picture */
+.img-tune.is-empty { opacity: .38; pointer-events: none; transition: opacity .15s; }

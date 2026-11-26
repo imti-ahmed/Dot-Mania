@@ -1842,6 +1842,7 @@
 
   function setImageActive(on) {
     imgUI.opts.classList.toggle('is-empty', !on);
+    if (imgUI.tune) imgUI.tune.classList.toggle('is-empty', !on);
     imgUI.remove.disabled = !on;
     if (imgUI.drop) {
       imgUI.drop.classList.toggle('has-image', !!on);
@@ -1930,6 +1931,17 @@
     if (FLAGS.imageOptions) right.appendChild(opts);      // Style and Dots on: switched off for now
     el.appendChild(right);
 
+    // Image tuning sliders, in their own group under the image (Level is the only one the image engine has so far)
+    var tune = document.createElement('div');
+    tune.className = 'group img-tune is-empty';
+    if (FLAGS.imageTuning) {
+      var tl = document.createElement('div');
+      tl.className = 'group-label'; tl.textContent = 'Tuning';
+      tune.appendChild(levelRow);
+      el.insertAdjacentElement('afterend', tune);
+      tune.insertAdjacentElement('beforebegin', tl);
+    }
+
     // The preview: the whole picture, fitted into the square (blank again when there is no picture).
     var preview = left.querySelector('#imgPreview'), canvas = preview.querySelector('canvas'), pctx = canvas.getContext('2d');
     function drawThumb() {
@@ -1938,7 +1950,7 @@
       var sc = Math.min(288 / imgSrc.w, 162 / imgSrc.h), w = imgSrc.w * sc, h = imgSrc.h * sc;
       pctx.drawImage(imgSrc.el, (288 - w) / 2, (162 - h) / 2, w, h);
     }
-    imgUI = { opts: opts, onRow: onRow, remove: btns.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
+    imgUI = { tune: tune, opts: opts, onRow: onRow, remove: btns.querySelector('#imgRemove'), drop: left, thumb: drawThumb };
 
     var input = $('#imageFile');
     function pick() { input.click(); }
