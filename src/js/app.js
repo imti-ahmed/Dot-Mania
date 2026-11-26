@@ -1888,11 +1888,18 @@
     // Left: a preview box with the picture, and Replace / Remove below it.
     var left = document.createElement('div');
     left.className = 'img-left';
+    // Phosphor icons (solid "fill" weight, https://phosphoricons.com), inlined
+    var PH = {
+      image: '<path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM156,88a12,12,0,1,1-12,12A12,12,0,0,1,156,88Zm60,112H40V160.69l46.34-46.35a8,8,0,0,1,11.32,0h0L165,181.66a8,8,0,0,0,11.32-11.32l-17.66-17.65L173,138.34a8,8,0,0,1,11.31,0L216,170.07V200Z"/>',
+      upload: '<path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM88,80h32v64a8,8,0,0,0,16,0V80h32a8,8,0,0,0,5.66-13.66l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,88,80Z"/>',
+      trash: '<path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM112,168a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm0-120H96V40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8Z"/>'
+    };
+    function ph(name, size) { return '<svg class="ph" viewBox="0 0 256 256" width="' + size + '" height="' + size + '" fill="currentColor" aria-hidden="true">' + PH[name] + '</svg>'; }
     left.innerHTML =
-      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)"><canvas width="160" height="160"></canvas></button>' +
+      '<button class="img-preview" id="imgPreview" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture"><canvas width="160" height="160"></canvas>' + ph('image', 32) + '</button>' +
       '<div class="pair">' +
-      '<button class="key" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)"><span>Upload</span></button>' +
-      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" disabled><span>Remove</span></button>' +
+      '<button class="key" id="imgUpload" type="button" title="Upload a picture (or drop one on the canvas)" aria-label="Upload a picture">' + ph('upload', 16) + '</button>' +
+      '<button class="key" id="imgRemove" type="button" title="Stop using the picture (the dots stay)" aria-label="Remove the picture" disabled>' + ph('trash', 16) + '</button>' +
       '</div>';
     el.appendChild(left);
 

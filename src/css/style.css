@@ -1744,3 +1744,17 @@ kbd { background: #3a3a3c; }
 /* Second right panel: Image card on top, then Export */
 .panel2 > .panel2-image { order: -2; flex: 0 0 auto; }
 .panel2 > .panel2-image > .panel-body { flex: 0 1 auto; }
+
+/* Image card: a small preview (clean, with an image icon when empty) over Upload / Remove icon buttons, and Style and Dots on beside it */
+#imageControls { grid-template-columns: 96px minmax(0, 1fr); gap: 8px 16px; align-items: start; }
+#imageControls .img-preview { width: 96px; height: 96px; aspect-ratio: auto; background: var(--well); display: flex; align-items: center; justify-content: center; color: #5c5c5e; }
+#imageControls .img-left.has-image .img-preview .ph { display: none; }
+#imageControls .img-left .pair { gap: 8px; }
+#imageControls .img-left .pair .key { height: 32px; padding: 0; justify-content: center; }
+#imageControls .img-opts { gap: 8px; }
+#imageControls .img-opts .style-list { flex: none; gap: 4px; }
+
+/* Second panel: the Image card takes what it needs, Export takes the rest of the height, no scrollbars */
+.panel2 > .panel2-bottom { flex: 1 1 0; min-height: 0; }
+.panel2 > .card > .panel-body { overflow-y: auto; scrollbar-width: none; }
+.panel2 > .card > .panel-body::-webkit-scrollbar { display: none; }
