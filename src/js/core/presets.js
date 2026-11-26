@@ -256,94 +256,120 @@
   // To drop one: delete its block.
   window.TRIAL_PRESETS = [
     {
-      id: 'bloom', name: 'Bloom', defaults: base(0.7, 0.7),
+      id: 'spinner', name: 'Spinner', defaults: base(0.7, 0.7),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },
       params: [
-        { key: 'petals', label: 'Petals', min: 3, max: 10, step: 1, def: 5, fmt: num },
-        { key: 'depth', label: 'Depth', min: 0.1, max: 0.8, step: 0.01, def: 0.4, fmt: pct }
+        { key: 'dots', label: 'Dots', min: 6, max: 16, step: 2, def: 10, fmt: num },
+        { key: 'tail', label: 'Tail', min: 0.2, max: 1, step: 0.01, def: 0.6, fmt: pct }
       ],
-      // A flower outline: petals around the centre that slowly turn and breathe in and out.
+      // The loading spinner: a ring of dots, one bright and the ones behind it fading, stepping round and round.
       fn: function (c, t, p) {
-        var n = Math.round(p.petals), f = t * p.speed * 0.5;
-        var r = (0.5 + p.depth * 0.5 * Math.cos(n * c.a - f * TAU)) * (0.85 + 0.15 * Math.sin(f * TAU));
-        var e = (c.d - r) / 0.09;
-        return 0.04 + 0.96 * Math.exp(-e * e) + (c.d < r ? 0.1 : 0);
+        if (c.d < 0.5 || c.d > 0.9) return 0.04;
+        var n = Math.round(p.dots), pos = (c.a + Math.PI) / TAU * n, k = Math.floor(pos) % n, within = pos - Math.floor(pos);
+        if (within < 0.18 || within > 0.82) return 0.04;                                   // the gap between dots
+        var step = Math.floor(frac(t * p.speed * 0.5) * n), age = (((step - k) % n) + n) % n / n;
+        return 0.04 + 0.96 * Math.pow(1 - age, 1 + (1 - p.tail) * 6);
       }
     },
     {
-      id: 'warp', name: 'Warp', defaults: base(0.7, 0.7),
+      id: 'signal', name: 'Signal', defaults: base(0.7, 0.8),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },
       params: [
-        { key: 'lines', label: 'Lines', min: 2, max: 10, step: 1, def: 5, fmt: num },
-        { key: 'pull', label: 'Pull', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
+        { key: 'arcs', label: 'Arcs', min: 2, max: 5, step: 1, def: 3, fmt: num },
+        { key: 'angle', label: 'Angle', min: 20, max: 70, step: 1, def: 45, fmt: deg }
       ],
-      // A grid of lines that bends and swells around a heavy point drifting across it, like space around a planet.
+      // The wireless symbol: a dot at the bottom, then arcs lighting up one after another, outwards, and starting over.
       fn: function (c, t, p) {
-        var f = t * p.speed * 0.5, cx = 0.55 * Math.sin(f * TAU), cy = 0.55 * Math.sin(2 * f * TAU);
-        var dx = c.ux - cx, dy = c.uy - cy, g = Math.exp(-(dx * dx + dy * dy) / 0.2);
-        var wx = (c.ux - p.pull * 0.9 * dx * g) * p.lines * 0.5 + 0.5, wy = (c.uy - p.pull * 0.9 * dy * g) * p.lines * 0.5 + 0.5;
-        var lx = Math.abs(frac(wx + 0.5) - 0.5), ly = Math.abs(frac(wy + 0.5) - 0.5);
-        var v = Math.max(Math.exp(-Math.pow(lx / 0.07, 2)), Math.exp(-Math.pow(ly / 0.07, 2)));
-        return 0.04 + 0.96 * v;
-      }
-    },
-    {
-      id: 'moire', name: 'Moire', defaults: base(0.7, 0.5),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'lines', label: 'Lines', min: 4, max: 20, step: 1, def: 10, fmt: num },
-        { key: 'twist', label: 'Twist', min: 0, max: 1, step: 0.01, def: 0.5, fmt: pct }
-      ],
-      // Two fine line patterns lie on top of each other and turn against one another, making slow ripples appear and melt away.
-      fn: function (c, t, p) {
-        var f = t * p.speed * 0.5, a = p.twist * 0.3 * Math.sin(f * TAU);
-        var g1 = 0.5 + 0.5 * Math.cos((c.ux * p.lines + f) * TAU);
-        var g2 = 0.5 + 0.5 * Math.cos(((c.ux * Math.cos(a) + c.uy * Math.sin(a)) * p.lines - f) * TAU);
-        return 0.04 + 0.96 * Math.pow(g1 * g2, 0.6);
-      }
-    },
-    {
-      id: 'sparks', name: 'Sparks', defaults: base(0.7, 0.8),
-      // seconds for one seamless loop
-      period: function (p) { return 2 / p.speed; },
-      params: [
-        { key: 'rays', label: 'Rays', min: 3, max: 16, step: 1, def: 9, fmt: num },
-        { key: 'trail', label: 'Trail', min: 0.1, max: 1, step: 0.01, def: 0.5, fmt: pct }
-      ],
-      // Sparks shoot out of the centre along their own straight lines, each leaving a fading streak.
-      fn: function (c, t, p) {
-        var n = Math.round(p.rays), f = t * p.speed * 0.5, best = 0;
-        for (var i = 0; i < n; i++) {
-          var ai = (i + 0.6 * hash(i, 3)) / n * TAU - Math.PI;
-          var da = Math.abs(((c.a - ai + 3 * Math.PI) % TAU) - Math.PI);
-          var head = frac(f + hash(i, 7)) * 1.15, back = head - c.d;
-          if (back < 0) continue;
-          var v = Math.exp(-Math.pow(da / 0.13, 2)) * Math.exp(-back / (0.05 + p.trail * 0.5));
+        var n = Math.round(p.arcs), ph = frac(t * p.speed * 0.5), on = Math.floor(ph * (n + 1));   // how many arcs are lit right now
+        var dx = c.ux, dy = c.uy - 0.9, r = Math.sqrt(dx * dx + dy * dy);
+        if (r < 0.12) return 1;                                                           // the dot
+        var cone = Math.atan2(Math.abs(dx), -dy);                                          // 0 = straight up
+        if (dy >= 0 || cone > p.angle * Math.PI / 180) return 0.04;
+        var best = 0.04;
+        for (var k = 0; k < n; k++) {
+          var e = (r - (0.3 + k * 0.28)) / 0.06, v = Math.exp(-e * e) * (k < on ? 1 : 0.1);
           if (v > best) best = v;
         }
-        return best < 0.04 ? 0.04 : best;
+        return best;
       }
     },
     {
-      id: 'halo', name: 'Halo', defaults: base(0.7, 0.7),
+      id: 'marquee', name: 'Marquee', defaults: base(0.7, 0.8),
       // seconds for one seamless loop
       period: function (p) { return 2 / p.speed; },
       params: [
-        { key: 'bars', label: 'Bars', min: 8, max: 48, step: 2, def: 24, fmt: num },
-        { key: 'reach', label: 'Reach', min: 0.2, max: 0.9, step: 0.01, def: 0.5, fmt: pct }
+        { key: 'bulbs', label: 'Bulbs', min: 12, max: 48, step: 2, def: 28, fmt: num },
+        { key: 'gap', label: 'Gap', min: 2, max: 5, step: 1, def: 3, fmt: num }
       ],
-      // A ring of bars around the centre, each rising and falling to its own beat, like a round sound meter.
+      // Theatre sign lights: a row of bulbs around the edge, every few lit, the lit ones running round.
       fn: function (c, t, p) {
-        var n = Math.round(p.bars), f = t * p.speed * 0.5, pos = (c.a + Math.PI) / TAU * n, b = Math.floor(pos) % n;
-        var within = pos - Math.floor(pos);
-        if (within < 0.12 || within > 0.88) return 0.04;                                     // the gap between bars
-        var h = 0.2 + p.reach * (0.5 + 0.5 * Math.sin((f * (1 + Math.floor(hash(b, 3) * 3)) + hash(b, 9)) * TAU));
-        var v = (0.28 + h - c.d) / 0.07;
-        v = v < 0 ? 0 : v > 1 ? 1 : v;
-        return c.d < 0.26 ? 0.04 : (v < 0.04 ? 0.04 : v);
+        var m = Math.max(Math.abs(c.ux), Math.abs(c.uy));
+        if (m < 0.8) return 0.04;
+        var n = Math.round(p.bulbs), g = Math.round(p.gap), b = Math.floor((c.a + Math.PI) / TAU * n) % n;
+        var shift = Math.floor(frac(t * p.speed * 0.5) * g);
+        return ((b + shift) % g === 0) ? 1 : 0.14;
+      }
+    },
+    {
+      id: 'timer', name: 'Timer', defaults: base(0.7, 0.6),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'hole', label: 'Hole', min: 0, max: 0.8, step: 0.01, def: 0, fmt: pct },
+        { key: 'hand', label: 'Hand', min: 0.005, max: 0.05, step: 0.005, def: 0.015, fmt: pct }
+      ],
+      // A countdown clock: a pie fills up clockwise from the top, with a bright hand at its edge, then it starts again.
+      fn: function (c, t, p) {
+        if (c.d < p.hole) return 0.04;
+        var ph = frac(t * p.speed * 0.5), prog = Math.min(1, ph / 0.92);
+        var turn = (((Math.atan2(c.ux, -c.uy)) % TAU) + TAU) % TAU / TAU;                  // 0 at the top, clockwise
+        if (Math.abs(turn - prog) < p.hand && prog < 1) return 1;
+        return turn <= prog ? 0.55 : 0.06;
+      }
+    },
+    {
+      id: 'wiper', name: 'Wiper', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'wipers', label: 'Wipers', min: 1, max: 3, step: 1, def: 2, fmt: num },
+        { key: 'sweep', label: 'Sweep', min: 30, max: 90, step: 1, def: 65, fmt: deg }
+      ],
+      // Windscreen wipers: blades pivoting at the bottom swing back and forth across the shape.
+      fn: function (c, t, p) {
+        var n = Math.round(p.wipers), a = p.sweep * Math.PI / 180 * Math.sin(t * p.speed * 0.5 * TAU), best = 0.04;
+        for (var k = 0; k < n; k++) {
+          var px = n === 1 ? 0 : -0.55 + 1.1 * k / (n - 1), dx = c.ux - px, dy = c.uy - 1.05;
+          var r = Math.sqrt(dx * dx + dy * dy), phi = Math.atan2(dx, -dy);                 // 0 = straight up
+          if (r < 0.1) { best = 1; continue; }
+          var e = r * Math.sin(phi - a) / 0.07;
+          var v = Math.exp(-e * e);
+          if (v > best) best = v;
+        }
+        return best;
+      }
+    },
+    {
+      id: 'puddle', name: 'Puddle', defaults: base(0.7, 0.7),
+      // seconds for one seamless loop
+      period: function (p) { return 2 / p.speed; },
+      params: [
+        { key: 'drops', label: 'Drops', min: 1, max: 6, step: 1, def: 4, fmt: num },
+        { key: 'reach', label: 'Reach', min: 0.3, max: 1.2, step: 0.01, def: 0.7, fmt: pct }
+      ],
+      // Raindrops land on water: each one makes a small splash, then a ring that spreads out and fades.
+      fn: function (c, t, p) {
+        var n = Math.round(p.drops), f = t * p.speed * 0.5, best = 0.04;
+        for (var k = 0; k < n; k++) {
+          var ph = frac(f + k / n), dx = c.ux - (hash(k, 11) * 1.4 - 0.7), dy = c.uy - (hash(k, 23) * 1.4 - 0.7);
+          var r = Math.sqrt(dx * dx + dy * dy), ring = ph * p.reach, e = (r - ring) / 0.07;
+          var v = Math.exp(-e * e) * Math.pow(1 - ph, 1.4);
+          if (ph < 0.1 && r < 0.1) v = 1;                                                  // the splash
+          if (v > best) best = v;
+        }
+        return best;
       }
     }
   ];
