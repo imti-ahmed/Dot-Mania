@@ -26,7 +26,7 @@
     exportSvg: true,            // Export > Media: "SVG" (a plain still of the drawing, not animated, as scalable vector)
     exportGif: true,            // Export: "GIF" (one seamless loop, 30 fps)
     exportCopyForLlm: true,     // Export: "Copy for LLM" (instructions + code)
-    floatingLayout: false,      // SAMPLE layout: floating, draggable, minimisable panels over a full-size canvas, and 64 / 360 / 540 dot grids (src/js/layout/floating.js)
+    gridSizes: true,            // Left bar: Small / Medium / Large grid picker, 16x16, 32x32 or 64x64 dots (src/js/layout/gridsizes.js)
     screenSize: true,           // Top of the page: a small always-visible label with the window size (width x height), live
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 

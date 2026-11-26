@@ -125,7 +125,7 @@
     });
   }
 
-  // Floating layout (sample): n x n dots, each dot cell px wide (the artboard is n * cell px square)
+  // Grid sizes (gridSizes flag): n x n dots, each dot cell px wide (the artboard is n * cell px square)
   function setGrid(n, cell) { CELL = cell; setArt(n * cell, n * cell); }
 
   function drawIdle() {
@@ -2765,7 +2765,7 @@
   // agent.js gives AI agents that visit the page a small set of helper tools (window.dotMania). They work through
   // the editor's own functions below, so the panels, the canvas and undo stay in step as if the change was made by
   // hand. Switched off with the agentTools flag.
-  if (FLAGS.agentTools || FLAGS.floatingLayout) window.DotApp = {
+  if (FLAGS.agentTools || FLAGS.gridSizes) window.DotApp = {
     state: state, presets: PRESETS, colorModes: COLOR_MODES, dotShapes: DOT_SHAPES, interactions: INTERACTIONS,
     stackMax: STACK_MAX, exportOpts: exportOpts,
     grid: function () { return { cols: cols, rows: rows, cell: CELL }; },
