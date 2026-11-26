@@ -189,6 +189,7 @@
     if (n < COLOR_MODES.length) state.color.mode = COLOR_MODES[n].id;
     else { state.color.mode = 'solid'; state.color.hex = SWATCHES[n - COLOR_MODES.length]; }
     repaintColor();
+    recolorSelection();
   }
   function previewColor() { return state.color.mode === 'solid' ? state.color.hex : '#f6efe3'; }
   /* ---------- Stacking ----------
@@ -473,16 +474,21 @@
     return same;
   }
   // The Select tool: choosing a colour while a rectangle is selected recolours the dots inside it (one undoable step).
-  function recolorSelection() {
-    if (!sel || drag || !cells.size) return;
-    var before = beginEdit(), snap = colorSnap(), n = 0;
+  // The picked colour goes onto the dots right away: the selection if there is one, otherwise every dot (there are no layers now).
+  // live = true while a colour is being dragged on the spectrum: no undo step per move, the caller makes one at the end.
+  function recolorSelection(live) {
+    if (drag || !cells.size) return;
+    var before = live ? null : beginEdit(), snap = colorSnap(), n = 0;
     cells.forEach(function (k) {
-      var q = k.split(','), c = +q[0], r = +q[1];
-      if (c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1) { cellColor.set(k, snap); n++; }
+      if (sel) {
+        var q = k.split(','), c = +q[0], r = +q[1];
+        if (c < sel.c0 || c > sel.c1 || r < sel.r0 || r > sel.r1) return;
+      }
+      cellColor.set(k, snap); n++;
     });
     if (!n) return;
     dirty = true;
-    endEdit(before);
+    if (!live) endEdit(before);
   }
   function endEdit(before) {
     if (sameSet(before, cells) && sameColors(before.colors, cellColor)) return;
@@ -1148,12 +1154,14 @@
       last = { x: x, y: y, hex: spectrumHex(x, y) };
       m.mode = 'solid'; m.hex = last.hex;
       paint();
+      recolorSelection(true);                     // the dots follow the colour while it is dragged
     }
     spec.addEventListener('pointerdown', function (e) {
+      var before = beginEdit();
       spec.setPointerCapture(e.pointerId); pick(e);
       var stop = function () {
         spec.removeEventListener('pointermove', pick); spec.removeEventListener('pointerup', stop);
-        recolorSelection();                       // one undo step for the whole drag
+        endEdit(before);                          // one undo step for the whole drag
       };
       spec.addEventListener('pointermove', pick); spec.addEventListener('pointerup', stop);
     });
