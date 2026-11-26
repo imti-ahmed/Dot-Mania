@@ -37,6 +37,7 @@
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
     layersPanel: false,         // Second right panel: the Layers card (Add layer + layer list)
+    gridSizePicker: true,       // Properties: a Size group, 16 x 16 / 32 x 32 / 64 x 64 dots (the picker that used to sit beside the canvas)
     collapseTitles: true,       // Normal layout: a caret at the end of every functionality title folds what is under it (src/js/layout/collapse.js)
     craftedBy: false,           // Left bar: the "Crafted By Imtiyaz Ahmed" credit at the bottom
 

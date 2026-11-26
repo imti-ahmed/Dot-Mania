@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.53.0 | 2026-11-26 | `v0.53.0` | Properties: a Size group (16x16 / 32x32 / 64x64 dots, gridSizePicker flag); Color and the image Tuning start folded |
 | 0.52.4 | 2026-11-26 | `v0.52.4` | Image and Export cards no longer scroll inside: always exactly as tall as their content |
 | 0.52.3 | 2026-11-26 | `v0.52.3` | Title carets always visible, dimmed; cards fit their content (folding shrinks the outer card; Export moves up under Image instead of the Image card growing) |
 | 0.52.2 | 2026-11-26 | `v0.52.2` | Divider between the image and its Tuning section removed |

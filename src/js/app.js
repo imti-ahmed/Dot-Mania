@@ -1755,6 +1755,17 @@
     }));
   }
 
+  // Size: 16 x 16, 32 x 32 or 64 x 64 dots. The dots keep the same size on every grid: a smaller grid is a smaller area in the middle of the card.
+  function buildSize() {
+    var el = $('#sizeControls');
+    var row = segRow('', [{ v: '16', label: '16 × 16' }, { v: '32', label: '32 × 32' }, { v: '64', label: '64 × 64' }],
+      function () { return cols === rows && (cols === 16 || cols === 32 || cols === 64) ? String(cols) : ''; },
+      function (v) { fitRef = { w: 1024, h: 1024 }; setGrid(+v, 16); layout(); });
+    row.querySelectorAll('.key').forEach(function (k) { k.title = { '16': 'Small: 16 x 16 dots', '32': 'Medium: 32 x 32 dots', '64': 'Large: 64 x 64 dots' }[k.dataset.v]; });
+    el.appendChild(row);
+    setInterval(row.repaint, 600);                // Randomize and Open HTML can change the grid too
+  }
+
   /* ---------- Header, status, shortcuts ---------- */
 
   function updateInfo() {
@@ -2876,6 +2887,7 @@
   if (FLAGS.imageUpload) buildImage();
   if (FLAGS.drawOptions) buildDraw();
   if (FLAGS.gridPanel) buildGrid();
+  if (FLAGS.gridSizePicker) buildSize();
   buildExportUI();
   buildPointer();
   buildStatus();
