@@ -1225,9 +1225,8 @@
     common('glow');
   }
 
-  // Three rows of four. When there are more presets than fit, the last slot is a quiet "More" button
-  // that reveals the rest (and turns into "Less").
-  var PRESET_SLOTS = 12, presetsOpen = false, presetMore = null;
+  // Four rows of six: 24 animations, all showing. Only if there were more than that would the last slot become a quiet "More" button.
+  var PRESET_SLOTS = 24, presetsOpen = false, presetMore = null;
   function renderPresets() {
     var keys = $('#presets').querySelectorAll('.key[data-id]'), fits = MAIN.length <= PRESET_SLOTS;
     keys.forEach(function (b, i) { b.hidden = !fits && !presetsOpen && i >= PRESET_SLOTS - 1; });

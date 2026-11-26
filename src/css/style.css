@@ -270,8 +270,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   box-shadow:
     0 0 0 10px #080808,
     0 0 0 11px #262626,
-    0 0 0 12px #0a0a0a,
-    0 30px 60px rgba(0, 0, 0, .6);
+    0 0 0 12px #0a0a0a;
 }
 .stage canvas {
   display: block;
@@ -1725,7 +1724,7 @@ body { background: var(--twill), linear-gradient(#1f1f20, #151516); background-c
 .slider .thumb::after { background: var(--glow); box-shadow: 0 0 6px rgba(var(--glow-rgb), .9); }
 
 .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px #232324, 0 0 0 3px var(--c), 0 0 10px var(--c); }
-.stage { box-shadow: 0 0 0 10px #09090a, 0 0 0 11px #3b3b3d, 0 0 0 12px #060607, 0 30px 60px rgba(0, 0, 0, .6); }
+.stage { box-shadow: 0 0 0 10px #09090a, 0 0 0 11px #3b3b3d, 0 0 0 12px #060607; }
 .page-table th, .page-table td { border-bottom-color: #3a3a3c; }
 kbd { background: #3a3a3c; }
 
