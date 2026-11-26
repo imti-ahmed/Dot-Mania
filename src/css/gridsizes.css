@@ -34,3 +34,7 @@ body.gridonly .main > .panel2 { display: none; }
 .ls-card canvas { display: block; width: 100%; height: 100%; }
 .layerstrip .ls-add { width: 100%; justify-content: center; margin-top: 2px; padding: 0 4px; font-size: 12px; }
 .layerstrip .ls-add:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Play bar: two icon buttons side by side, no title */
+.playbar { display: flex; gap: 6px; padding: 10px; }
+.playbar .key { flex: 1; min-width: 0; justify-content: center; padding: 0; }

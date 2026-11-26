@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.45.0 | 2026-11-26 | `v0.45.0` | New Play bar (`playBar` flag, src/js/layout/playbar.js): a title-less panel under the Layers strip with Play and Pause icon buttons side by side |
 | 0.44.2 | 2026-11-26 | `v0.44.2` | Layers strip: no layer count, centred panel titles, button reads + Add New; the grid is fixed at 64x64 and the Small / Medium / Large picker is behind the new `gridPicker` flag (off) until grid size moves to a settings panel |
 | 0.44.1 | 2026-11-26 | `v0.44.1` | Layer cards are square previews filling the strip (no names, no delete button for now); left column narrowed to 112px to fit; Grid picker buttons now read 16×16 / 32×32 / 64×64 |
 | 0.44.0 | 2026-11-26 | `v0.44.0` | Grid view moves to the left edge; new Layers strip (`layerStrip` flag, src/js/layout/layerstrip.js) at the top of the left column above the Grid picker: one card per layer previewing only that layer's dots, click to edit, x to delete, + Add layer below, up to 5 layers (hooks added to DotApp in app.js) |
