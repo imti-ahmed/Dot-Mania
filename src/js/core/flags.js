@@ -19,7 +19,7 @@
     welcomeOnce: false,         // Welcome popup: first visit only, then again after 5 hours (off = it shows on every visit, for testing)
     welcomePopup: false,        // Closed beta: a welcome popup (preview, intro, Let's Go / How to use / Feedback) over the tool
     dotShapes: true,            // Shapes group: Dot / Square / Diamond / Triangle marks
-    imageUpload: true,          // Image group: upload a picture (or drop one on the canvas) and animate it
+    imageUpload: false,         // Image group: upload a picture (or drop one on the canvas) and animate it
     exportCodeFile: true,       // Export: "Code File" (ready-to-open .html with the component)
     exportWebm: true,           // Export > Media: "WebM" video of the full loop (1-2 cycles, loops seamlessly)
     exportMp4: true,            // Export > Media: "MP4" video of the full loop (needs a browser that can record MP4)
@@ -36,6 +36,7 @@
     screenSize: true,           // Top of the page: a small always-visible label with the window size (width x height), live
     agentTools: true,          // Helper tools for AI agents visiting the page: window.dotMania (src/js/agent.js), also as WebMCP tools
 
+    layersPanel: false,         // Second right panel: the Layers card (Add layer + layer list)
     craftedBy: false,           // Left bar: the "Crafted By Imtiyaz Ahmed" credit at the bottom
 
     /* ---- OFF: removed from the product, kept behind a flag so it can be tested later ---- */

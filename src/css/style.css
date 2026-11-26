@@ -1737,3 +1737,6 @@ kbd { background: #3a3a3c; }
 .main > .sidebar .key { width: 40px; height: 40px; padding: 0; justify-content: center; }
 .main > .sidebar .key .lbl, .main > .sidebar #fileLabel, .main > .sidebar #playLabel { display: none; }
 .main > .sidebar .toolstrip .sep { grid-column: 1 / -1; margin: 0; }
+
+/* Second right panel: Export on top, Layers (when on) below it */
+.panel2 > .panel2-bottom { order: -1; }
