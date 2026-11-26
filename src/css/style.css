@@ -1784,3 +1784,12 @@ kbd { background: #3a3a3c; }
 #imageControls .img-right { display: flex; flex-direction: column; justify-content: center; padding: 16px; }
 .panel2-image .panel-body > .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: none; }
 .panel2-image .panel-body > .pair .key { height: var(--key-h); padding: 0 16px; }
+
+/* Image card, round five: Style and Dots on are the app's normal rows (title over a segmented button), no well of their own */
+#imageControls { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
+#imageControls .img-right { background: none; box-shadow: none; padding: 0; justify-content: flex-start; }
+#imageControls .img-opts { gap: 16px; }
+#imageControls .img-opts .row { grid-template-columns: 1fr; gap: 8px; margin: 0; }
+#imageControls .img-opts .row .wide { grid-column: 1; }
+#imageControls .img-opts .row .lbl { font-size: 11px; }
+#imageControls .img-opts .seg .key { padding: 0 4px; }

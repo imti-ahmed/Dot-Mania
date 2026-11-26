@@ -1909,28 +1909,15 @@
     right.className = 'img-right';
     var opts = document.createElement('div');
     opts.className = 'img-opts is-empty';
-    function radios(title, label, items, get, set) {
-      var cap = document.createElement('div');
-      cap.className = 'sub-label'; cap.textContent = title;
-      var list = document.createElement('div');
-      list.className = 'style-list'; list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-label', label);
-      items.forEach(function (s) {
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'style-radio'; b.dataset.v = s[0]; b.setAttribute('role', 'radio');
-        b.innerHTML = '<i></i><span>' + s[1] + '</span>';
-        b.addEventListener('click', function () { set(s[0]); paint(); });
-        list.appendChild(b);
-      });
-      function paint() { list.querySelectorAll('.style-radio').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.v === get())); }); }
-      paint();
-      opts.appendChild(cap); opts.appendChild(list);
-      return { set: paint };
-    }
-    var styles = [['threshold', 'Threshold']];
-    if (FLAGS.imageDither) styles.push(['dither', 'Dither']);
-    styles.push(['outline', 'Outline']);
-    radios('Style', 'Image style', styles, function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); });
-    var onRow = radios('Dots on', 'Dots on', [['dark', 'Dark'], ['light', 'Light']], function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
+    // The same rows the rest of the app uses: a title, then a segmented button
+    var styles = [{ v: 'threshold', label: 'Threshold' }];
+    if (FLAGS.imageDither) styles.push({ v: 'dither', label: 'Dither' });
+    styles.push({ v: 'outline', label: 'Outline' });
+    opts.appendChild(segRow('Style', styles, function () { return imgOpts.style; }, function (v) { imgOpts.style = v; applyImage(); }));
+    var onRow = segRow('Dots on', [{ v: 'dark', label: 'Dark' }, { v: 'light', label: 'Light' }],
+      function () { return imgOpts.on; }, function (v) { imgOpts.on = v; applyImage(); });
+    onRow.set = onRow.repaint;
+    opts.appendChild(onRow);
 
     var levelRow = sliderRow({
       label: 'Level', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,
