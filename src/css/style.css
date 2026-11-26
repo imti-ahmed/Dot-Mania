@@ -1798,5 +1798,5 @@ kbd { background: #3a3a3c; }
 #imageControls { grid-template-columns: 72px minmax(0, 1fr); gap: 8px; align-items: start; }
 #imageControls .img-left { padding: 0; width: 72px; height: 72px; }
 #imageControls .img-right { display: flex; flex-direction: column; justify-content: flex-start; gap: 8px; }
-#imageControls .img-right > .pair { display: grid; grid-template-columns: 1fr; gap: 8px; }
+#imageControls .img-right > .pair { display: grid; grid-template-columns: max-content; gap: 8px; justify-content: start; }      /* as wide as the longer label, both the same */
 #imageControls .img-right > .pair .key { height: var(--key-h); padding: 0 16px; }

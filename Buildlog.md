@@ -8,6 +8,7 @@ Entries from 0.17.6 to 0.22.18 were squashed into one commit ("Dot Mania 0.22 ..
 
 | Version | Date | Commit | Changes |
 |---|---|---|---|
+| 0.49.15 | 2026-11-26 | `v0.49.15` | Image card: Upload and Remove only as wide as their label (same width), not the full column |
 | 0.49.14 | 2026-11-26 | `v0.49.14` | Image card: Upload and Remove stacked beside a 72px preview (as tall as the two buttons); Style and Dots on switched off (imageOptions flag) |
 | 0.49.13 | 2026-11-26 | `v0.49.13` | Image card: Upload and Remove in their own group container, like Export Background |
 | 0.49.12 | 2026-11-26 | `v0.49.12` | Image card: title to buttons gap 16px like Export Code (was 8px); sections 16px apart |
