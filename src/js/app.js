@@ -1849,7 +1849,7 @@
 
   var imgSrc = null;          // { el, w, h } the uploaded picture
   var imgRaster = null;       // that picture drawn at one pixel per grid cell (cached)
-  var imgOpts = { style: 'density', level: 0.5, on: 'dark', tone: 0, edge: 0, smooth: 0, contrast: 0.5, colored: false, fit: 'fit' };
+  var imgOpts = { style: 'density', level: 0.5, on: 'dark', tone: 0, edge: 0, smooth: 0, contrast: 0.5, punch: 0.5, colored: false, fit: 'fit' };
   var imgUI = {};
 
   // Halve repeatedly until close to the target size; one big jump would alias badly.
@@ -2004,8 +2004,8 @@
     // Spread (the shape from filled to just its outline) and Tone (which tones get the dots, dark to light) are real sliders, all in percent
     function pct(v) { return Math.round(v * 100) + '%'; }
     var styleRow = sliderRow({
-      label: 'Spread', min: 0, max: 1, step: 0.01, value: 1 - imgOpts.edge,      // 100% = the whole shape, 0% = just its outline
-      fmt: pct, onChange: function (v) { imgOpts.edge = 1 - v; applyImage(); }
+      label: 'Spread', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,      // how much of the picture turns into dots: higher = more dots, lower = fewer (what Level did)
+      fmt: pct, onChange: function (v) { imgOpts.level = v; applyImage(); }
     });
     var onRow = sliderRow({
       label: 'Tone', min: 0, max: 1, step: 0.01, value: imgOpts.tone,
@@ -2014,8 +2014,8 @@
     onRow.set = function (v) { onRow.setValue(v); };
 
     var levelRow = sliderRow({
-      label: 'Contrast', min: 0.05, max: 0.95, step: 0.01, value: imgOpts.level,      // swapped: the slider called Contrast now does the old Tone job (how many dots / how light)
-      fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.level = v; applyImage(); }
+      label: 'Contrast', min: 0, max: 1, step: 0.01, value: imgOpts.punch,      // how strongly light and dark parts of the picture differ in how many dots they get; 50% = as it is
+      fmt: function (v) { return Math.round(v * 100) + '%'; }, onChange: function (v) { imgOpts.punch = v; applyImage(); }
     });
     var contrastRow = sliderRow({
       label: 'Tone', min: 0, max: 1, step: 0.01, value: imgOpts.contrast,      // swapped: the slider called Tone now does the old Contrast job (the spread of shades); 50% = as it is
@@ -2043,7 +2043,7 @@
     if (FLAGS.imageOptions) right.appendChild(opts);      // Style and Dots on: switched off for now
     el.appendChild(right);
 
-    // Image tuning, in their own group under the image: Spread, Tone (spread of shades) and Contrast (how many dots), all sliders (the old Dark / Light band slider and Fit / Fill are not shown)
+    // Image tuning, in their own group under the image: Spread (how many dots), Tone (spread of shades) and Contrast (dot density difference), all sliders (the old Dark / Light band slider and Fit / Fill are not shown)
     var tune = document.createElement('div');
     tune.className = 'group img-tune is-empty';
     if (FLAGS.imageTuning) {

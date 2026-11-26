@@ -61,6 +61,9 @@
   // Contrast slider 0..1 -> a multiplier: 0.5 = 1 (unchanged), 0 = nearly flat, 1 = 5x.
   function contrastK(c) { return c === undefined ? 1 : Math.max(0.1, c < 0.5 ? c * 2 : 1 + (c - 0.5) * 8); }
 
+  // Contrast slider 0..1 for the dot density -> a multiplier: 0.5 = 1 (unchanged), 0 = 0.5, 1 = 5x. Never flat.
+  function punchK(c) { return c === undefined ? 1 : c < 0.5 ? 0.5 + c : 1 + (c - 0.5) * 8; }
+
   // edge 0..1: 0 keeps the whole shape, 1 keeps only its outline, between keeps a border that gets thinner the higher it goes.
   // cells: [[col,row,...], ...]; returns the cells that stay.
   function erode(cells, cols, rows, edge) {
@@ -129,7 +132,7 @@
 
     // "ink" = how much a pixel wants to be a dot (1 = definitely), shifted by the level control.
     var tone = o.tone !== undefined ? o.tone : (o.on === 'light' ? 1 : 0);
-    var kc = contrastK(o.contrast);
+    var kc = contrastK(o.contrast), kd = punchK(o.punch);
     var bias = (o.level === undefined ? 0.5 : o.level) - 0.5, v = new Float32Array(n);
     var tt = new Float32Array(n);
     for (p = 0; p < n; p++) {
@@ -137,7 +140,8 @@
       // How light that part of the picture is, spread around the middle grey by the contrast setting; it only drives the shades of the dots
       // (low = flat colour, high = strong light and dark), so the picture itself and the number of dots stay put.
       tt[p] = Math.max(0, Math.min(1, (t - 0.5) * kc + 0.5));
-      var ink = 1 - Math.abs(t - tone) / Math.max(tone, 1 - tone);   // dots gather around the chosen tone: 0 = the dark tones, 1 = the light ones, between = the mid tones in that band
+      var ti = Math.max(0, Math.min(1, (t - 0.5) * kd + 0.5));      // contrast for the dot density (never flat: 0.5x at the low end)
+      var ink = 1 - Math.abs(ti - tone) / Math.max(tone, 1 - tone);   // dots gather around the chosen tone: 0 = the dark tones, 1 = the light ones, between = the mid tones in that band
       v[p] = Math.max(0, Math.min(1, ink + bias));
     }
 
