@@ -25,7 +25,7 @@
   strip.appendChild(title);
 
   var listEl = document.createElement('div');
-  listEl.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+  listEl.style.cssText = 'display:flex;flex-direction:column;gap:8px';
   strip.appendChild(listEl);
 
   var add = document.createElement('button');
